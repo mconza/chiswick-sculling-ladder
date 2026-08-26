@@ -201,6 +201,10 @@ var participation = data.participation || {};
 myManualRanks = data.manualRanks || {};
 myManualStarts = data.manualStarts || {};
 scullers.forEach(function(s) {
+s.nextParticipating = null;
+s.nextStartPos = null;
+});
+scullers.forEach(function(s) {
 if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
 });
 return fetch('/api/config');
