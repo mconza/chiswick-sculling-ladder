@@ -252,14 +252,13 @@ var newDate = new Date(ladderDate);
 newDate.setDate(newDate.getDate() + 14);
 nextLadder.date = formatDate(newDate);
 scullers.forEach(function(s) {
-s.lastStartPos = null;
-s.lastCaught = null;
 s.nextParticipating = null;
 s.nextStartPos = null;
 });
 myCaught = {};
 computeRankings();
 renderTable();
+updateUserCard();
 document.getElementById('nextLadderInfo').innerHTML =
 '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
 ' — ' + nextLadder.start + ' to ' + nextLadder.finish;
@@ -270,7 +269,6 @@ body: JSON.stringify({ nextLadder: nextLadder })
 }).catch(function() {});
 }
 }
-checkAndAdvanceLadder();
 fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
 if (data.nextLadder) {
 nextLadder = data.nextLadder;
