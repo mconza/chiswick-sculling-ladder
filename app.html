@@ -645,9 +645,6 @@ isAdmin ?
 '<th class="sortable col-rank" data-sort="rank">' +
 '<span class="th-label">Rank</span>' +
 '</th>' +
-'<th class="sortable col-next" data-sort="newRank">' +
-'<span class="th-label">New Rank</span>' +
-'</th>' +
 '</tr>';
 document.querySelectorAll('#tableHead .sortable').forEach(function(th) {
 th.addEventListener('click', function() {
@@ -733,10 +730,9 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
 (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
 '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
-'<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' +
 '</tr>';
 }).join('');
-document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 4) + '" class="empty-state">No scullers found</td></tr>';
+document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 3) + '" class="empty-state">No scullers found</td></tr>';
 document.querySelectorAll('.btn-table[data-type="participation"]').forEach(function(btn) {
 btn.addEventListener('click', function(e) {
 e.stopPropagation();
