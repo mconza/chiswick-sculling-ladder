@@ -27,9 +27,9 @@
 <span class="user-card-rank">#<span class="uc-value" id="ucRank"></span></span>
 </div>
 <div class="user-card-details">
-<div class="uc-box"><span class="uc-label">Last</span> <span class="uc-value" id="ucLastStart"></span></div>
-<div class="uc-box"><span class="uc-label">Caught</span> <span class="uc-value" id="ucCaught"></span></div>
-<div class="uc-box"><span class="uc-label">Next</span> <span class="uc-value uc-accent" id="ucNextStart"></span></div>
+<div class="uc-box"><span class="uc-label" id="ucLastLabel">Last Start</span> <span class="uc-value" id="ucLastStart"></span></div>
+<div class="uc-box"><span class="uc-label" id="ucCaughtLabel">Caught</span> <span class="uc-value" id="ucCaught"></span></div>
+<div class="uc-box"><span class="uc-label" id="ucNextLabel">Next Start</span> <span class="uc-value uc-accent" id="ucNextStart"></span></div>
 </div>
 <div class="user-card-actions">
 <div class="uc-action">
@@ -407,7 +407,29 @@ document.getElementById('ucName').textContent = me.name;
 document.getElementById('ucClub').textContent = me.club;
 document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
 document.getElementById('ucLastStart').textContent = me.lastStartPos || '-';
-document.getElementById('ucCaught').textContent = caughtVal || '-';
+// Caught label with date and caught-by
+var caughtLabel = 'Caught (' + lastLadder.date + ')';
+var caughtText = '-';
+if (caughtVal === 'Yes') {
+var myPos = me.lastStartPos ? parseInt(me.lastStartPos) : null;
+if (myPos) {
+var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+var caughtBy = participants.find(function(s) {
+return parseInt(s.lastStartPos) === myPos + 1;
+});
+caughtText = caughtBy ? 'by ' + caughtBy.name : 'Yes';
+} else {
+caughtText = 'Yes';
+}
+} else if (caughtVal === 'No') {
+caughtText = 'Not caught';
+} else if (caughtVal === 'PathFind') {
+caughtText = 'PathFind';
+}
+document.getElementById('ucCaughtLabel').textContent = caughtLabel;
+document.getElementById('ucCaught').textContent = caughtText;
+// Next label with date
+document.getElementById('ucNextLabel').textContent = 'Next (' + nextLadder.date + ')';
 var pos = computeNextPositions();
 document.getElementById('ucNextStart').textContent = pos[me.id] || '-';
 // Update card buttons
