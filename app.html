@@ -203,14 +203,26 @@ myManualStarts = data.manualStarts || {};
 scullers.forEach(function(s) {
 if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
 });
+return fetch('/api/config');
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.nextLadder) {
+nextLadder = data.nextLadder;
+}
+if (data.lastLadder) {
+lastLadder = data.lastLadder;
+}
+document.getElementById('nextLadderInfo').innerHTML =
+'<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
+' — ' + nextLadder.start + ' to ' + nextLadder.finish;
+checkAndAdvanceLadder();
 computeRankings();
 renderTable();
 updateUserCard();
 })
 .catch(function() {
-myCaught = JSON.parse(localStorage.getItem('csl_caught') || '{}');
-myManualRanks = JSON.parse(localStorage.getItem('csl_manualRanks') || '{}');
-myManualStarts = JSON.parse(localStorage.getItem('csl_manualStarts') || '{}');
+checkAndAdvanceLadder();
 computeRankings();
 renderTable();
 updateUserCard();
@@ -285,26 +297,6 @@ body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, 
 }).catch(function() {});
 }
 }
-fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
-if (data.nextLadder) {
-nextLadder = data.nextLadder;
-}
-if (data.lastLadder) {
-lastLadder = data.lastLadder;
-}
-document.getElementById('nextLadderInfo').innerHTML =
-'<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
-' — ' + nextLadder.start + ' to ' + nextLadder.finish;
-checkAndAdvanceLadder();
-computeRankings();
-renderTable();
-updateUserCard();
-}).catch(function() {
-checkAndAdvanceLadder();
-computeRankings();
-renderTable();
-updateUserCard();
-});
 function ladderDateToInput(dateStr) {
 var match = dateStr.match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
 if (!match) return '';
