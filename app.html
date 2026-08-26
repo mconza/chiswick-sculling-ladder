@@ -730,6 +730,7 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
 (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
 '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
+(isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
 '</tr>';
 }).join('');
 document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 3) + '" class="empty-state">No scullers found</td></tr>';
