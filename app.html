@@ -29,18 +29,17 @@
 <div class="user-card-details">
 <div class="uc-box"><span class="uc-label" id="ucLastLabel">Last Start</span> <span class="uc-value" id="ucLastStart"></span></div>
 <div class="uc-box"><span class="uc-label" id="ucCaughtLabel">Caught</span> <span class="uc-value" id="ucCaught"></span></div>
-<div class="uc-box"><span class="uc-label" id="ucNextLabel">Next Start</span> <span class="uc-value uc-accent" id="ucNextStart"></span></div>
 </div>
 <div class="user-card-actions">
 <div class="uc-action">
-<span class="uc-action-label">Caught?</span>
+<span class="uc-action-label" id="ucCaughtActionLabel">Caught?</span>
 <div class="btn-group">
-<button class="btn-table" data-uc="caught" data-val="Yes">✓</button>
-<button class="btn-table" data-uc="caught" data-val="No">✗</button>
+<button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
+<button class="btn-table" data-uc="caught" data-val="No">No</button>
 </div>
 </div>
 <div class="uc-action">
-<span class="uc-action-label">Next?</span>
+<span class="uc-action-label" id="ucNextActionLabel">Next?</span>
 <select class="inline-select" data-uc="confirmed">
 <option value="">-</option>
 <option value="Yes">Yes</option>
@@ -407,31 +406,19 @@ document.getElementById('ucName').textContent = me.name;
 document.getElementById('ucClub').textContent = me.club;
 document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
 document.getElementById('ucLastStart').textContent = me.lastStartPos || '-';
-// Caught label with date and caught-by
-var caughtLabel = 'Caught (' + lastLadder.date + ')';
-var caughtText = '-';
-if (caughtVal === 'Yes') {
-var myPos = me.lastStartPos ? parseInt(me.lastStartPos) : null;
-if (myPos) {
+// Caught label
+var caughtBy = '';
+if (caughtVal === 'Yes' && me.lastStartPos) {
+var myPos = parseInt(me.lastStartPos);
 var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
-var caughtBy = participants.find(function(s) {
-return parseInt(s.lastStartPos) === myPos + 1;
-});
-caughtText = caughtBy ? 'by ' + caughtBy.name : 'Yes';
-} else {
-caughtText = 'Yes';
+var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
+if (catcher) caughtBy = ' by ' + catcher.name;
 }
-} else if (caughtVal === 'No') {
-caughtText = 'Not caught';
-} else if (caughtVal === 'PathFind') {
-caughtText = 'PathFind';
-}
-document.getElementById('ucCaughtLabel').textContent = caughtLabel;
-document.getElementById('ucCaught').textContent = caughtText;
-// Next label with date
-document.getElementById('ucNextLabel').textContent = 'Next (' + nextLadder.date + ')';
-var pos = computeNextPositions();
-document.getElementById('ucNextStart').textContent = pos[me.id] || '-';
+document.getElementById('ucCaughtLabel').textContent = 'Caught (' + lastLadder.date + ')';
+document.getElementById('ucCaught').textContent = caughtVal === 'Yes' ? 'Yes' + caughtBy : (caughtVal === 'No' ? 'Not caught' : (caughtVal || '-'));
+// Action labels
+document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
+document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
 // Update card buttons
 document.querySelectorAll('#userCard .btn-table[data-uc]').forEach(function(btn) {
 var ucType = btn.dataset.uc;
