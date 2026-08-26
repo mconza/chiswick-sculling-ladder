@@ -363,8 +363,8 @@ body: JSON.stringify(payload)
 var store = myCaught;
 var current = store[currentUserId];
 if (val === '') {
-delete store[currentUserId];
-val = null;
+if (current === null) { delete store[currentUserId]; val = null; }
+else { store[currentUserId] = null; val = null; }
 } else if (current === val) {
 delete store[currentUserId];
 val = null;
@@ -417,17 +417,23 @@ document.getElementById('ucCaughtAction').style.display = hasRaced ? '' : 'none'
 if (hasRaced) {
 document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
 var caughtByEl = document.getElementById('ucCaughtBy');
+var hasExplicitChoice = myCaught[me.id] !== undefined;
 if (caughtVal === 'Yes') {
 var myPos = parseInt(me.lastStartPos);
 var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
 var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
 caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
 } else if (caughtVal === 'No') {
-caughtByEl.textContent = 'Not caught';
+var myPos = parseInt(me.lastStartPos);
+var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+var behind = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
+caughtByEl.textContent = behind ? behind.name + ' didn\'t catch you' : 'Not caught';
 } else if (caughtVal === 'PathFind') {
 caughtByEl.textContent = 'PathFind';
-} else {
+} else if (hasExplicitChoice && caughtVal !== me.lastCaught) {
 caughtByEl.textContent = 'Last to start';
+} else {
+caughtByEl.textContent = me.lastCaught === 'No' ? 'Not caught' : '';
 }
 }
 document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
