@@ -138,10 +138,9 @@ function computeRankings() {
 scullers.forEach(function(s) {
 computedRanks[s.id] = getComputedRank(s);
 });
-var nextPositions = computeNextPositions();
-var starters = scullers.filter(function(s) { return nextPositions[s.id] != null; });
+var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 if (starters.length === 0) return;
-starters.sort(function(a, b) { return nextPositions[a.id] - nextPositions[b.id]; });
+starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
 var minRank = Infinity;
 starters.forEach(function(s) {
 var r = s.rank ? parseInt(s.rank) : 0;
