@@ -12,49 +12,49 @@
       "name": "Aba C",
       "club": "PTRC",
       "rank": "85",
-      "startPos": "1",
-      "caught": "No",
-      "newRank": 85,
-      "newStartPos": 3
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 6
     },
     {
       "id": 2,
       "name": "Inkeri",
       "club": "QBC",
       "rank": "207",
-      "startPos": "2",
-      "caught": "No",
+      "startPos": "1",
+      "caught": "PathFind",
       "newRank": 171,
-      "newStartPos": 1
+      "newStartPos": 2
     },
     {
       "id": 3,
       "name": "Mary M",
       "club": "PTRC",
       "rank": "116",
-      "startPos": "3",
+      "startPos": "5",
       "caught": "No",
-      "newRank": 171,
-      "newStartPos": 2
+      "newRank": 48,
+      "newStartPos": 4
     },
     {
       "id": 4,
       "name": "Jacqui S",
       "club": "QBC & TTRC",
       "rank": "117",
-      "startPos": "4",
+      "startPos": "2",
       "caught": "No",
-      "newRank": 117,
-      "newStartPos": null
+      "newRank": 49,
+      "newStartPos": 3
     },
     {
       "id": 5,
       "name": "Lorna",
       "club": "QBC",
       "rank": "205",
-      "startPos": "5",
-      "caught": "No",
-      "newRank": 205,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -62,9 +62,9 @@
       "name": "Steve M",
       "club": "MAABC",
       "rank": "206",
-      "startPos": "6",
-      "caught": "Yes",
-      "newRank": 206,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -72,59 +72,59 @@
       "name": "Kirsty R-D",
       "club": "QBC",
       "rank": "49",
-      "startPos": "7",
-      "caught": "No",
-      "newRank": 49,
-      "newStartPos": null
+      "startPos": "3",
+      "caught": "Yes",
+      "newRank": 50,
+      "newStartPos": 13
     },
     {
       "id": 8,
       "name": "Ainslie",
       "club": "QBC",
       "rank": "50",
-      "startPos": "8",
+      "startPos": "4",
       "caught": "No",
-      "newRank": 50,
-      "newStartPos": null
+      "newRank": 47,
+      "newStartPos": 12
     },
     {
       "id": 9,
       "name": "Caroline B",
       "club": "MAA",
       "rank": "51",
-      "startPos": "9",
-      "caught": "No",
-      "newRank": 51,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 11
     },
     {
       "id": 10,
       "name": "Kathryn H",
       "club": "TSS",
       "rank": "52",
-      "startPos": "10",
-      "caught": "No",
-      "newRank": 52,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 10
     },
     {
       "id": 11,
       "name": "Jonathan F",
       "club": "QBC",
       "rank": "53",
-      "startPos": "11",
-      "caught": "Yes",
-      "newRank": 53,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 9
     },
     {
       "id": 12,
       "name": "David S",
       "club": "Sons",
       "rank": "48",
-      "startPos": "12",
-      "caught": "Yes",
-      "newRank": 48,
+      "startPos": "6",
+      "caught": "No",
+      "newRank": 49,
       "newStartPos": null
     },
     {
@@ -132,39 +132,39 @@
       "name": "Devlin L",
       "club": "QBC",
       "rank": "47",
-      "startPos": "13",
-      "caught": "Yes",
-      "newRank": 47,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 14
     },
     {
       "id": 14,
       "name": "Daisy W",
       "club": "MAA",
       "rank": "35",
-      "startPos": "14",
-      "caught": "No",
-      "newRank": 35,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 16
     },
     {
       "id": 15,
       "name": "Guy",
       "club": "CYGNET",
       "rank": "36",
-      "startPos": "15",
-      "caught": "No",
-      "newRank": 36,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 15
     },
     {
       "id": 16,
       "name": "Steph",
       "club": "TSS",
       "rank": "37",
-      "startPos": "16",
-      "caught": "Yes",
-      "newRank": 37,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -172,29 +172,29 @@
       "name": "Tom B",
       "club": "QBC",
       "rank": "27",
-      "startPos": "17",
-      "caught": "Yes",
-      "newRank": 27,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 18
     },
     {
       "id": 18,
       "name": "Mark O'B",
       "club": "QBC",
       "rank": "26",
-      "startPos": "18",
-      "caught": "Yes",
-      "newRank": 26,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 19
     },
     {
       "id": 19,
       "name": "Michael DP",
       "club": "FSC",
       "rank": "16",
-      "startPos": "19",
-      "caught": "No",
-      "newRank": 16,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -202,9 +202,9 @@
       "name": "Andrea M",
       "club": "FRBC",
       "rank": "17",
-      "startPos": "20",
-      "caught": "No",
-      "newRank": 17,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -212,29 +212,29 @@
       "name": "William P",
       "club": "CYG",
       "rank": "25",
-      "startPos": "21",
-      "caught": "Yes",
-      "newRank": 25,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 20
     },
     {
       "id": 22,
       "name": "Simon H",
       "club": "QBC",
       "rank": "12",
-      "startPos": "22",
-      "caught": "No",
-      "newRank": 12,
-      "newStartPos": null
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 21
     },
     {
       "id": 23,
       "name": "Richard R",
       "club": "TSS",
       "rank": "13",
-      "startPos": "23",
-      "caught": "No",
-      "newRank": 13,
+      "startPos": null,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -242,9 +242,9 @@
       "name": "Kit L",
       "club": "FSC",
       "rank": "14",
-      "startPos": "24",
+      "startPos": null,
       "caught": null,
-      "newRank": 14,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -254,7 +254,7 @@
       "rank": "1",
       "startPos": null,
       "caught": null,
-      "newRank": 1,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -264,7 +264,7 @@
       "rank": "2",
       "startPos": null,
       "caught": null,
-      "newRank": 2,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -274,7 +274,7 @@
       "rank": "3",
       "startPos": null,
       "caught": null,
-      "newRank": 3,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -284,7 +284,7 @@
       "rank": "4",
       "startPos": null,
       "caught": null,
-      "newRank": 4,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -294,7 +294,7 @@
       "rank": "5",
       "startPos": null,
       "caught": null,
-      "newRank": 5,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -304,8 +304,8 @@
       "rank": "6",
       "startPos": null,
       "caught": null,
-      "newRank": 6,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 24
     },
     {
       "id": 31,
@@ -314,7 +314,7 @@
       "rank": "7",
       "startPos": null,
       "caught": null,
-      "newRank": 7,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -324,7 +324,7 @@
       "rank": "8",
       "startPos": null,
       "caught": null,
-      "newRank": 8,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -334,8 +334,8 @@
       "rank": "9",
       "startPos": null,
       "caught": null,
-      "newRank": 9,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 23
     },
     {
       "id": 34,
@@ -344,7 +344,7 @@
       "rank": "10",
       "startPos": null,
       "caught": null,
-      "newRank": 10,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -354,8 +354,8 @@
       "rank": "11",
       "startPos": null,
       "caught": null,
-      "newRank": 11,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 22
     },
     {
       "id": 36,
@@ -364,7 +364,7 @@
       "rank": "15",
       "startPos": null,
       "caught": null,
-      "newRank": 15,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -374,7 +374,7 @@
       "rank": "18",
       "startPos": null,
       "caught": null,
-      "newRank": 18,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -384,7 +384,7 @@
       "rank": "19",
       "startPos": null,
       "caught": null,
-      "newRank": 19,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -394,7 +394,7 @@
       "rank": "20",
       "startPos": null,
       "caught": null,
-      "newRank": 20,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -404,7 +404,7 @@
       "rank": "21",
       "startPos": null,
       "caught": null,
-      "newRank": 21,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -414,7 +414,7 @@
       "rank": "22",
       "startPos": null,
       "caught": null,
-      "newRank": 22,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -424,7 +424,7 @@
       "rank": "23",
       "startPos": null,
       "caught": null,
-      "newRank": 23,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -434,7 +434,7 @@
       "rank": "24",
       "startPos": null,
       "caught": null,
-      "newRank": 24,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -444,7 +444,7 @@
       "rank": "28",
       "startPos": null,
       "caught": null,
-      "newRank": 28,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -454,8 +454,8 @@
       "rank": "29",
       "startPos": null,
       "caught": null,
-      "newRank": 29,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 17
     },
     {
       "id": 46,
@@ -464,7 +464,7 @@
       "rank": "30",
       "startPos": null,
       "caught": null,
-      "newRank": 30,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -474,7 +474,7 @@
       "rank": "31",
       "startPos": null,
       "caught": null,
-      "newRank": 31,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -484,7 +484,7 @@
       "rank": "32",
       "startPos": null,
       "caught": null,
-      "newRank": 32,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -494,7 +494,7 @@
       "rank": "33",
       "startPos": null,
       "caught": null,
-      "newRank": 33,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -504,7 +504,7 @@
       "rank": "34",
       "startPos": null,
       "caught": null,
-      "newRank": 34,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -514,7 +514,7 @@
       "rank": "38",
       "startPos": null,
       "caught": null,
-      "newRank": 38,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -524,7 +524,7 @@
       "rank": "39",
       "startPos": null,
       "caught": null,
-      "newRank": 39,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -534,7 +534,7 @@
       "rank": "40",
       "startPos": null,
       "caught": null,
-      "newRank": 40,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -544,7 +544,7 @@
       "rank": "41",
       "startPos": null,
       "caught": null,
-      "newRank": 41,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -554,7 +554,7 @@
       "rank": "42",
       "startPos": null,
       "caught": null,
-      "newRank": 42,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -564,7 +564,7 @@
       "rank": "43",
       "startPos": null,
       "caught": null,
-      "newRank": 43,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -574,7 +574,7 @@
       "rank": "44",
       "startPos": null,
       "caught": null,
-      "newRank": 44,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -584,7 +584,7 @@
       "rank": "45",
       "startPos": null,
       "caught": null,
-      "newRank": 45,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -594,7 +594,7 @@
       "rank": "46",
       "startPos": null,
       "caught": null,
-      "newRank": 46,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -603,9 +603,9 @@
       "club": "QBC",
       "rank": "54",
       "startPos": null,
-      "caught": "No",
-      "newRank": 54,
-      "newStartPos": null
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 1
     },
     {
       "id": 61,
@@ -614,8 +614,8 @@
       "rank": "55",
       "startPos": null,
       "caught": null,
-      "newRank": 55,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 8
     },
     {
       "id": 62,
@@ -624,7 +624,7 @@
       "rank": "56",
       "startPos": null,
       "caught": null,
-      "newRank": 56,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -634,7 +634,7 @@
       "rank": "57",
       "startPos": null,
       "caught": null,
-      "newRank": 57,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -644,7 +644,7 @@
       "rank": "58",
       "startPos": null,
       "caught": null,
-      "newRank": 58,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -654,7 +654,7 @@
       "rank": "59",
       "startPos": null,
       "caught": null,
-      "newRank": 59,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -664,7 +664,7 @@
       "rank": "60",
       "startPos": null,
       "caught": null,
-      "newRank": 60,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -674,7 +674,7 @@
       "rank": "61",
       "startPos": null,
       "caught": null,
-      "newRank": 61,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -684,7 +684,7 @@
       "rank": "62",
       "startPos": null,
       "caught": null,
-      "newRank": 62,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -694,7 +694,7 @@
       "rank": "63",
       "startPos": null,
       "caught": null,
-      "newRank": 63,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -704,7 +704,7 @@
       "rank": "64",
       "startPos": null,
       "caught": null,
-      "newRank": 64,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -714,7 +714,7 @@
       "rank": "65",
       "startPos": null,
       "caught": null,
-      "newRank": 65,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -724,7 +724,7 @@
       "rank": "66",
       "startPos": null,
       "caught": null,
-      "newRank": 66,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -734,7 +734,7 @@
       "rank": "67",
       "startPos": null,
       "caught": null,
-      "newRank": 67,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -744,7 +744,7 @@
       "rank": "68",
       "startPos": null,
       "caught": null,
-      "newRank": 68,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -754,7 +754,7 @@
       "rank": "69",
       "startPos": null,
       "caught": null,
-      "newRank": 69,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -764,7 +764,7 @@
       "rank": "70",
       "startPos": null,
       "caught": null,
-      "newRank": 70,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -773,8 +773,8 @@
       "club": "TSS",
       "rank": "71",
       "startPos": null,
-      "caught": "No",
-      "newRank": 71,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -784,7 +784,7 @@
       "rank": "72",
       "startPos": null,
       "caught": null,
-      "newRank": 72,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -794,7 +794,7 @@
       "rank": "73",
       "startPos": null,
       "caught": null,
-      "newRank": 73,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -804,7 +804,7 @@
       "rank": "74",
       "startPos": null,
       "caught": null,
-      "newRank": 74,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -814,7 +814,7 @@
       "rank": "75",
       "startPos": null,
       "caught": null,
-      "newRank": 75,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -824,7 +824,7 @@
       "rank": "76",
       "startPos": null,
       "caught": null,
-      "newRank": 76,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -834,7 +834,7 @@
       "rank": "77",
       "startPos": null,
       "caught": null,
-      "newRank": 77,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -843,7 +843,7 @@
       "club": "TSS",
       "rank": "78",
       "startPos": null,
-      "caught": "No",
+      "caught": null,
       "newRank": 78,
       "newStartPos": null
     },
@@ -854,7 +854,7 @@
       "rank": "79",
       "startPos": null,
       "caught": null,
-      "newRank": 79,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -864,7 +864,7 @@
       "rank": "80",
       "startPos": null,
       "caught": null,
-      "newRank": 80,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -873,9 +873,9 @@
       "club": "MAA",
       "rank": "81",
       "startPos": null,
-      "caught": "PathFind",
-      "newRank": 81,
-      "newStartPos": null
+      "caught": null,
+      "newRank": null,
+      "newStartPos": 7
     },
     {
       "id": 88,
@@ -884,7 +884,7 @@
       "rank": "82",
       "startPos": null,
       "caught": null,
-      "newRank": 82,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -894,7 +894,7 @@
       "rank": "83",
       "startPos": null,
       "caught": null,
-      "newRank": 83,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -904,7 +904,7 @@
       "rank": "84",
       "startPos": null,
       "caught": null,
-      "newRank": 84,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -914,7 +914,7 @@
       "rank": "86",
       "startPos": null,
       "caught": null,
-      "newRank": 86,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -924,7 +924,7 @@
       "rank": "87",
       "startPos": null,
       "caught": null,
-      "newRank": 87,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -934,7 +934,7 @@
       "rank": "88",
       "startPos": null,
       "caught": null,
-      "newRank": 88,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -944,7 +944,7 @@
       "rank": "89",
       "startPos": null,
       "caught": null,
-      "newRank": 89,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -954,7 +954,7 @@
       "rank": "90",
       "startPos": null,
       "caught": null,
-      "newRank": 90,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -964,7 +964,7 @@
       "rank": "91",
       "startPos": null,
       "caught": null,
-      "newRank": 91,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -974,7 +974,7 @@
       "rank": "92",
       "startPos": null,
       "caught": null,
-      "newRank": 92,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -984,7 +984,7 @@
       "rank": "93",
       "startPos": null,
       "caught": null,
-      "newRank": 93,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -994,8 +994,8 @@
       "rank": "94",
       "startPos": null,
       "caught": null,
-      "newRank": 94,
-      "newStartPos": null
+      "newRank": null,
+      "newStartPos": 5
     },
     {
       "id": 100,
@@ -1004,7 +1004,7 @@
       "rank": "95",
       "startPos": null,
       "caught": null,
-      "newRank": 95,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1014,7 +1014,7 @@
       "rank": "96",
       "startPos": null,
       "caught": null,
-      "newRank": 96,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1024,7 +1024,7 @@
       "rank": "97",
       "startPos": null,
       "caught": null,
-      "newRank": 97,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1034,7 +1034,7 @@
       "rank": "98",
       "startPos": null,
       "caught": null,
-      "newRank": 98,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1044,7 +1044,7 @@
       "rank": "99",
       "startPos": null,
       "caught": null,
-      "newRank": 99,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1054,7 +1054,7 @@
       "rank": "100",
       "startPos": null,
       "caught": null,
-      "newRank": 100,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1064,7 +1064,7 @@
       "rank": "101",
       "startPos": null,
       "caught": null,
-      "newRank": 101,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1074,7 +1074,7 @@
       "rank": "102",
       "startPos": null,
       "caught": null,
-      "newRank": 102,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1084,7 +1084,7 @@
       "rank": "103",
       "startPos": null,
       "caught": null,
-      "newRank": 103,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1094,7 +1094,7 @@
       "rank": "104",
       "startPos": null,
       "caught": null,
-      "newRank": 104,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1104,7 +1104,7 @@
       "rank": "105",
       "startPos": null,
       "caught": null,
-      "newRank": 105,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1114,7 +1114,7 @@
       "rank": "106",
       "startPos": null,
       "caught": null,
-      "newRank": 106,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1124,7 +1124,7 @@
       "rank": "107",
       "startPos": null,
       "caught": null,
-      "newRank": 107,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1134,7 +1134,7 @@
       "rank": "108",
       "startPos": null,
       "caught": null,
-      "newRank": 108,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1144,7 +1144,7 @@
       "rank": "109",
       "startPos": null,
       "caught": null,
-      "newRank": 109,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1154,7 +1154,7 @@
       "rank": "110",
       "startPos": null,
       "caught": null,
-      "newRank": 110,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1164,7 +1164,7 @@
       "rank": "111",
       "startPos": null,
       "caught": null,
-      "newRank": 111,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1174,7 +1174,7 @@
       "rank": "112",
       "startPos": null,
       "caught": null,
-      "newRank": 112,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1184,7 +1184,7 @@
       "rank": "113",
       "startPos": null,
       "caught": null,
-      "newRank": 113,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1194,7 +1194,7 @@
       "rank": "114",
       "startPos": null,
       "caught": null,
-      "newRank": 114,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1204,7 +1204,7 @@
       "rank": "115",
       "startPos": null,
       "caught": null,
-      "newRank": 115,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1214,7 +1214,7 @@
       "rank": "118",
       "startPos": null,
       "caught": null,
-      "newRank": 118,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1224,7 +1224,7 @@
       "rank": "119",
       "startPos": null,
       "caught": null,
-      "newRank": 119,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1234,7 +1234,7 @@
       "rank": "120",
       "startPos": null,
       "caught": null,
-      "newRank": 120,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1244,7 +1244,7 @@
       "rank": "121",
       "startPos": null,
       "caught": null,
-      "newRank": 121,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1254,7 +1254,7 @@
       "rank": "122",
       "startPos": null,
       "caught": null,
-      "newRank": 122,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1264,7 +1264,7 @@
       "rank": "123",
       "startPos": null,
       "caught": null,
-      "newRank": 123,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1274,7 +1274,7 @@
       "rank": "124",
       "startPos": null,
       "caught": null,
-      "newRank": 124,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1284,7 +1284,7 @@
       "rank": "125",
       "startPos": null,
       "caught": null,
-      "newRank": 125,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1294,7 +1294,7 @@
       "rank": "126",
       "startPos": null,
       "caught": null,
-      "newRank": 126,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1304,7 +1304,7 @@
       "rank": "127",
       "startPos": null,
       "caught": null,
-      "newRank": 127,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1314,7 +1314,7 @@
       "rank": "128",
       "startPos": null,
       "caught": null,
-      "newRank": 128,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1324,7 +1324,7 @@
       "rank": "129",
       "startPos": null,
       "caught": null,
-      "newRank": 129,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1334,7 +1334,7 @@
       "rank": "130",
       "startPos": null,
       "caught": null,
-      "newRank": 130,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1344,7 +1344,7 @@
       "rank": "131",
       "startPos": null,
       "caught": null,
-      "newRank": 131,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1354,7 +1354,7 @@
       "rank": "132",
       "startPos": null,
       "caught": null,
-      "newRank": 132,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1364,7 +1364,7 @@
       "rank": "133",
       "startPos": null,
       "caught": null,
-      "newRank": 133,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1374,7 +1374,7 @@
       "rank": "134",
       "startPos": null,
       "caught": null,
-      "newRank": 134,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1384,7 +1384,7 @@
       "rank": "135",
       "startPos": null,
       "caught": null,
-      "newRank": 135,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1394,7 +1394,7 @@
       "rank": "136",
       "startPos": null,
       "caught": null,
-      "newRank": 136,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1404,7 +1404,7 @@
       "rank": "137",
       "startPos": null,
       "caught": null,
-      "newRank": 137,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1414,7 +1414,7 @@
       "rank": "138",
       "startPos": null,
       "caught": null,
-      "newRank": 138,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1424,7 +1424,7 @@
       "rank": "139",
       "startPos": null,
       "caught": null,
-      "newRank": 139,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1434,7 +1434,7 @@
       "rank": "140",
       "startPos": null,
       "caught": null,
-      "newRank": 140,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1444,7 +1444,7 @@
       "rank": "141",
       "startPos": null,
       "caught": null,
-      "newRank": 141,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1454,7 +1454,7 @@
       "rank": "142",
       "startPos": null,
       "caught": null,
-      "newRank": 142,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1464,7 +1464,7 @@
       "rank": "143",
       "startPos": null,
       "caught": null,
-      "newRank": 143,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1474,7 +1474,7 @@
       "rank": "144",
       "startPos": null,
       "caught": null,
-      "newRank": 144,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1484,7 +1484,7 @@
       "rank": "145",
       "startPos": null,
       "caught": null,
-      "newRank": 145,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1494,7 +1494,7 @@
       "rank": "146",
       "startPos": null,
       "caught": null,
-      "newRank": 146,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1504,7 +1504,7 @@
       "rank": "147",
       "startPos": null,
       "caught": null,
-      "newRank": 147,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1514,7 +1514,7 @@
       "rank": "148",
       "startPos": null,
       "caught": null,
-      "newRank": 148,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1524,7 +1524,7 @@
       "rank": "149",
       "startPos": null,
       "caught": null,
-      "newRank": 149,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1534,7 +1534,7 @@
       "rank": "150",
       "startPos": null,
       "caught": null,
-      "newRank": 150,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1544,7 +1544,7 @@
       "rank": "151",
       "startPos": null,
       "caught": null,
-      "newRank": 151,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1554,7 +1554,7 @@
       "rank": "152",
       "startPos": null,
       "caught": null,
-      "newRank": 152,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1564,7 +1564,7 @@
       "rank": "153",
       "startPos": null,
       "caught": null,
-      "newRank": 153,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1574,7 +1574,7 @@
       "rank": "154",
       "startPos": null,
       "caught": null,
-      "newRank": 154,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1584,7 +1584,7 @@
       "rank": "155",
       "startPos": null,
       "caught": null,
-      "newRank": 155,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1594,7 +1594,7 @@
       "rank": "156",
       "startPos": null,
       "caught": null,
-      "newRank": 156,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1604,7 +1604,7 @@
       "rank": "157",
       "startPos": null,
       "caught": null,
-      "newRank": 157,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1614,7 +1614,7 @@
       "rank": "158",
       "startPos": null,
       "caught": null,
-      "newRank": 158,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1624,7 +1624,7 @@
       "rank": "159",
       "startPos": null,
       "caught": null,
-      "newRank": 159,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1634,7 +1634,7 @@
       "rank": "160",
       "startPos": null,
       "caught": null,
-      "newRank": 160,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1644,7 +1644,7 @@
       "rank": "161",
       "startPos": null,
       "caught": null,
-      "newRank": 161,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1654,7 +1654,7 @@
       "rank": "162",
       "startPos": null,
       "caught": null,
-      "newRank": 162,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1664,7 +1664,7 @@
       "rank": "163",
       "startPos": null,
       "caught": null,
-      "newRank": 163,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1674,7 +1674,7 @@
       "rank": "164",
       "startPos": null,
       "caught": null,
-      "newRank": 164,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1684,7 +1684,7 @@
       "rank": "165",
       "startPos": null,
       "caught": null,
-      "newRank": 165,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1694,7 +1694,7 @@
       "rank": "166",
       "startPos": null,
       "caught": null,
-      "newRank": 166,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1703,7 +1703,7 @@
       "club": "MAA",
       "rank": "167",
       "startPos": null,
-      "caught": "PathFind",
+      "caught": null,
       "newRank": 167,
       "newStartPos": null
     },
@@ -1714,7 +1714,7 @@
       "rank": "168",
       "startPos": null,
       "caught": null,
-      "newRank": 168,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1724,7 +1724,7 @@
       "rank": "169",
       "startPos": null,
       "caught": null,
-      "newRank": 169,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1733,8 +1733,8 @@
       "club": "QBC",
       "rank": "170",
       "startPos": null,
-      "caught": "No",
-      "newRank": 170,
+      "caught": null,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1744,7 +1744,7 @@
       "rank": "171",
       "startPos": null,
       "caught": null,
-      "newRank": 171,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1754,7 +1754,7 @@
       "rank": "172",
       "startPos": null,
       "caught": null,
-      "newRank": 172,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1764,7 +1764,7 @@
       "rank": "173",
       "startPos": null,
       "caught": null,
-      "newRank": 173,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1774,7 +1774,7 @@
       "rank": "174",
       "startPos": null,
       "caught": null,
-      "newRank": 174,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1784,7 +1784,7 @@
       "rank": "175",
       "startPos": null,
       "caught": null,
-      "newRank": 175,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1794,7 +1794,7 @@
       "rank": "176",
       "startPos": null,
       "caught": null,
-      "newRank": 176,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1804,7 +1804,7 @@
       "rank": "177",
       "startPos": null,
       "caught": null,
-      "newRank": 177,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1814,7 +1814,7 @@
       "rank": "178",
       "startPos": null,
       "caught": null,
-      "newRank": 178,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1824,7 +1824,7 @@
       "rank": "179",
       "startPos": null,
       "caught": null,
-      "newRank": 179,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1834,7 +1834,7 @@
       "rank": "180",
       "startPos": null,
       "caught": null,
-      "newRank": 180,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1844,7 +1844,7 @@
       "rank": "181",
       "startPos": null,
       "caught": null,
-      "newRank": 181,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1854,7 +1854,7 @@
       "rank": "182",
       "startPos": null,
       "caught": null,
-      "newRank": 182,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1864,7 +1864,7 @@
       "rank": "183",
       "startPos": null,
       "caught": null,
-      "newRank": 183,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1874,7 +1874,7 @@
       "rank": "184",
       "startPos": null,
       "caught": null,
-      "newRank": 184,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1884,7 +1884,7 @@
       "rank": "185",
       "startPos": null,
       "caught": null,
-      "newRank": 185,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1894,7 +1894,7 @@
       "rank": "186",
       "startPos": null,
       "caught": null,
-      "newRank": 186,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1904,7 +1904,7 @@
       "rank": "187",
       "startPos": null,
       "caught": null,
-      "newRank": 187,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1914,7 +1914,7 @@
       "rank": "188",
       "startPos": null,
       "caught": null,
-      "newRank": 188,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1924,7 +1924,7 @@
       "rank": "189",
       "startPos": null,
       "caught": null,
-      "newRank": 189,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1934,7 +1934,7 @@
       "rank": "190",
       "startPos": null,
       "caught": null,
-      "newRank": 190,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1944,7 +1944,7 @@
       "rank": "191",
       "startPos": null,
       "caught": null,
-      "newRank": 191,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1954,7 +1954,7 @@
       "rank": "192",
       "startPos": null,
       "caught": null,
-      "newRank": 192,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1964,7 +1964,7 @@
       "rank": "193",
       "startPos": null,
       "caught": null,
-      "newRank": 193,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1974,7 +1974,7 @@
       "rank": "194",
       "startPos": null,
       "caught": null,
-      "newRank": 194,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1984,7 +1984,7 @@
       "rank": "195",
       "startPos": null,
       "caught": null,
-      "newRank": 195,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -1994,7 +1994,7 @@
       "rank": "196",
       "startPos": null,
       "caught": null,
-      "newRank": 196,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2004,7 +2004,7 @@
       "rank": "197",
       "startPos": null,
       "caught": null,
-      "newRank": 197,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2014,7 +2014,7 @@
       "rank": "198",
       "startPos": null,
       "caught": null,
-      "newRank": 198,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2024,7 +2024,7 @@
       "rank": "199",
       "startPos": null,
       "caught": null,
-      "newRank": 199,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2034,7 +2034,7 @@
       "rank": "200",
       "startPos": null,
       "caught": null,
-      "newRank": 200,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2044,7 +2044,7 @@
       "rank": "201",
       "startPos": null,
       "caught": null,
-      "newRank": 201,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2054,7 +2054,7 @@
       "rank": "202",
       "startPos": null,
       "caught": null,
-      "newRank": 202,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2064,7 +2064,7 @@
       "rank": "203",
       "startPos": null,
       "caught": null,
-      "newRank": 203,
+      "newRank": null,
       "newStartPos": null
     },
     {
@@ -2074,7 +2074,7 @@
       "rank": "204",
       "startPos": null,
       "caught": null,
-      "newRank": 204,
+      "newRank": null,
       "newStartPos": null
     },
     {
