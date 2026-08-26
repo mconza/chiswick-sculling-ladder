@@ -26,10 +26,6 @@
 <span class="user-card-club" id="ucClub"></span>
 <span class="user-card-rank">#<span class="uc-value" id="ucRank"></span></span>
 </div>
-<div class="user-card-details">
-<div class="uc-box"><span class="uc-label" id="ucLastLabel">Last Start</span> <span class="uc-value" id="ucLastStart"></span></div>
-<div class="uc-box"><span class="uc-label" id="ucCaughtLabel">Caught</span> <span class="uc-value" id="ucCaught"></span></div>
-</div>
 <div class="user-card-actions">
 <div class="uc-action">
 <span class="uc-action-label" id="ucCaughtActionLabel">Caught?</span>
@@ -405,17 +401,6 @@ var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : me.lastCaught;
 document.getElementById('ucName').textContent = me.name;
 document.getElementById('ucClub').textContent = me.club;
 document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
-document.getElementById('ucLastStart').textContent = me.lastStartPos || '-';
-// Caught label
-var caughtBy = '';
-if (caughtVal === 'Yes' && me.lastStartPos) {
-var myPos = parseInt(me.lastStartPos);
-var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
-var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
-if (catcher) caughtBy = ' by ' + catcher.name;
-}
-document.getElementById('ucCaughtLabel').textContent = 'Caught (' + lastLadder.date + ')';
-document.getElementById('ucCaught').textContent = caughtVal === 'Yes' ? 'Yes' + caughtBy : (caughtVal === 'No' ? 'Not caught' : (caughtVal || '-'));
 // Action labels
 document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
 document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
