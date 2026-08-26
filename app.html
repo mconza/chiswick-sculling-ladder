@@ -522,26 +522,25 @@ return;
 }
 document.getElementById('tableHead').innerHTML =
 '<tr>' +
-'<th class="sortable col-name" data-sort="name">Name</th>' +
+'<th class="col-group-header" rowspan="2">Name</th>' +
+(isAdmin ? '<th class="col-group-header" colspan="3">Next Ladder</th>' : '<th class="col-group-header" colspan="1">Next Ladder</th>') +
+'<th class="col-group-header" colspan="2">Previous Ladder</th>' +
+'</tr>' +
+'<tr>' +
 (isAdmin ? '<th class="sortable col-next" data-sort="nextParticipating">' +
 '<span class="th-label">In?</span>' +
-'<span class="th-sub">Next Session</span>' +
 '</th>' : '') +
 '<th class="sortable col-next" data-sort="nextStartPos">' +
 '<span class="th-label">Start Pos</span>' +
-'<span class="th-sub">Next Session</span>' +
 '</th>' +
 (isAdmin ? '<th class="col-next">' +
 '<span class="th-label">Caught?</span>' +
-'<span class="th-sub">Next Session</span>' +
 '</th>' : '') +
 '<th class="sortable col-rank" data-sort="rank">' +
-'<span class="th-label">Starting Rank</span>' +
-'<span class="th-sub">Before race</span>' +
+'<span class="th-label">Rank</span>' +
 '</th>' +
 '<th class="sortable col-next" data-sort="newRank">' +
 '<span class="th-label">New Rank</span>' +
-'<span class="th-sub">After race</span>' +
 '</th>' +
 '</tr>';
 document.querySelectorAll('#tableHead .sortable').forEach(function(th) {

@@ -316,6 +316,18 @@ a:hover { text-decoration: underline; }
   margin-top: 0.1rem;
 }
 
+.col-group-header {
+  background: #1e293b !important;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  cursor: default;
+  border-bottom: 2px solid var(--accent);
+}
+
 .ladder-table th.col-last {
   background: #334155;
 }
