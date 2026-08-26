@@ -620,7 +620,8 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
 '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
 (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + caughtBtns + '</div></td>' : '') +
-'<td class="col-separator">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' +
+'<td class="col-separator"></td>' +
+'<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' +
 '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
 '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' +
 '</tr>';
