@@ -95,11 +95,11 @@
 <h3 style="margin:0 0 1.5rem;color:var(--text);">Edit Ladder Info</h3>
 <label style="display:block;margin-bottom:1rem;">
 <span style="font-size:0.8rem;color:var(--text-light);font-weight:600;">Date</span>
-<input type="text" id="modalDate" style="width:100%;margin-top:0.25rem;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);" placeholder="e.g. Sun 13-Sep-2026">
+<input type="date" id="modalDate" style="width:100%;margin-top:0.25rem;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);">
 </label>
 <label style="display:block;margin-bottom:1rem;">
 <span style="font-size:0.8rem;color:var(--text-light);font-weight:600;">Time</span>
-<input type="text" id="modalTime" style="width:100%;margin-top:0.25rem;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);" placeholder="e.g. 10:30">
+<input type="time" id="modalTime" style="width:100%;margin-top:0.25rem;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);">
 </label>
 <label style="display:block;margin-bottom:1rem;">
 <span style="font-size:0.8rem;color:var(--text-light);font-weight:600;">Start Location</span>
@@ -289,8 +289,22 @@ computeRankings();
 renderTable();
 updateUserCard();
 });
+function ladderDateToInput(dateStr) {
+var match = dateStr.match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
+if (!match) return '';
+var months = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+return match[3] + '-' + months[match[2]] + '-' + ('0' + match[1]).slice(-2);
+}
+function inputToLadderDate(dateStr) {
+var parts = dateStr.split('-');
+if (parts.length !== 3) return dateStr;
+var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+return days[d.getDay()] + ' ' + d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+}
 document.getElementById('editLadderBtn').addEventListener('click', function() {
-document.getElementById('modalDate').value = nextLadder.date;
+document.getElementById('modalDate').value = ladderDateToInput(nextLadder.date);
 document.getElementById('modalTime').value = nextLadder.time;
 document.getElementById('modalStart').value = nextLadder.start;
 document.getElementById('modalFinish').value = nextLadder.finish;
@@ -301,8 +315,8 @@ document.getElementById('ladderModal').style.display = 'none';
 });
 document.getElementById('modalSave').addEventListener('click', function() {
 lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
-nextLadder.date = document.getElementById('modalDate').value.trim();
-nextLadder.time = document.getElementById('modalTime').value.trim();
+nextLadder.date = inputToLadderDate(document.getElementById('modalDate').value);
+nextLadder.time = document.getElementById('modalTime').value;
 nextLadder.start = document.getElementById('modalStart').value.trim();
 nextLadder.finish = document.getElementById('modalFinish').value.trim();
 document.getElementById('nextLadderInfo').innerHTML =
