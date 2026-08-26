@@ -522,9 +522,9 @@ return;
 document.getElementById('tableHead').innerHTML =
 '<tr>' +
 '<th class="col-group-header" rowspan="2">Name</th>' +
-'<th class="col-group-header" colspan="' + (isAdmin ? 3 : 1) + '">Next Ladder</th>' +
+'<th class="col-group-header" colspan="2">Next Ladder</th>' +
 '<th class="col-separator" rowspan="2"></th>' +
-'<th class="col-group-header" colspan="3">Previous Ladder</th>' +
+'<th class="col-group-header" colspan="4">Previous Ladder</th>' +
 '</tr>' +
 '<tr>' +
 (isAdmin ? '<th class="sortable col-next" data-sort="nextParticipating">' +
@@ -533,7 +533,7 @@ document.getElementById('tableHead').innerHTML =
 '<th class="sortable col-next" data-sort="nextStartPos">' +
 '<span class="th-label">Start Pos</span>' +
 '</th>' +
-(isAdmin ? '<th class="col-next">' +
+(isAdmin ? '<th class="col-rank">' +
 '<span class="th-label">Caught?</span>' +
 '</th>' : '') +
 '<th class="sortable col-rank" data-sort="lastStartPos">' +
@@ -619,8 +619,8 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
 (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
 '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
-(isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + caughtBtns + '</div></td>' : '') +
 '<td class="col-separator"></td>' +
+(isAdmin ? '<td class="col-rank"><div class="btn-group btn-group-3">' + caughtBtns + '</div></td>' : '') +
 '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' +
 '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
 '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' +
