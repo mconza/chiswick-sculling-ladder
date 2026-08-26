@@ -27,12 +27,14 @@
 <span class="user-card-rank">#<span class="uc-value" id="ucRank"></span></span>
 </div>
 <div class="user-card-actions">
-<div class="uc-action">
+<div class="uc-action" id="ucCaughtAction" style="display:none;">
 <span class="uc-action-label" id="ucCaughtActionLabel">Caught?</span>
 <span class="uc-caught-by" id="ucCaughtBy"></span>
 <div class="btn-group">
 <button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
 <button class="btn-table" data-uc="caught" data-val="No">No</button>
+<button class="btn-table" data-uc="caught" data-val="PathFind">PF</button>
+<button class="btn-table" data-uc="caught" data-val="">-</button>
 </div>
 </div>
 <div class="uc-action">
@@ -360,8 +362,15 @@ body: JSON.stringify(payload)
 } else {
 var store = myCaught;
 var current = store[currentUserId];
-if (current === val) { delete store[currentUserId]; val = null; }
-else { store[currentUserId] = val; }
+if (val === '') {
+delete store[currentUserId];
+val = null;
+} else if (current === val) {
+delete store[currentUserId];
+val = null;
+} else {
+store[currentUserId] = val;
+}
 localStorage.setItem('csl_caught', JSON.stringify(store));
 var payload = { caught: {} };
 payload.caught[currentUserId] = val;
@@ -402,18 +411,24 @@ var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : me.lastCaught;
 document.getElementById('ucName').textContent = me.name;
 document.getElementById('ucClub').textContent = me.club;
 document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
-// Action labels
+// Show/hide caught section based on whether user raced
+var hasRaced = me.lastStartPos != null;
+document.getElementById('ucCaughtAction').style.display = hasRaced ? '' : 'none';
+if (hasRaced) {
 document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
 var caughtByEl = document.getElementById('ucCaughtBy');
-if (caughtVal === 'Yes' && me.lastStartPos) {
+if (caughtVal === 'Yes') {
 var myPos = parseInt(me.lastStartPos);
 var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
 var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
 caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
 } else if (caughtVal === 'No') {
 caughtByEl.textContent = 'Not caught';
+} else if (caughtVal === 'PathFind') {
+caughtByEl.textContent = 'PathFind';
 } else {
-caughtByEl.textContent = '';
+caughtByEl.textContent = 'Last to start';
+}
 }
 document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
 // Update card buttons
@@ -421,10 +436,11 @@ document.querySelectorAll('#userCard .btn-table[data-uc]').forEach(function(btn)
 var ucType = btn.dataset.uc;
 var val = btn.dataset.val;
 var current = ucType === 'caught' ? caughtVal : me.nextParticipating;
-var isActive = current === val;
+var isActive = current === val || (val === '' && (current === undefined || current === null));
 if (val === 'Yes') btn.className = 'btn-table ' + (isActive ? 'btn-yes' : 'btn-yes-dim');
 else if (val === 'No') btn.className = 'btn-table ' + (isActive ? 'btn-no' : 'btn-no-dim');
-else btn.className = 'btn-table ' + (isActive ? 'btn-path' : 'btn-yes-dim');
+else if (val === 'PathFind') btn.className = 'btn-table ' + (isActive ? 'btn-path' : 'btn-yes-dim');
+else btn.className = 'btn-table ' + (isActive ? 'btn-no' : 'btn-no-dim');
 });
 var ucSelect = document.querySelector('#userCard .inline-select[data-uc="confirmed"]');
 if (ucSelect) {
