@@ -29,6 +29,7 @@
 <div class="user-card-actions">
 <div class="uc-action">
 <span class="uc-action-label" id="ucCaughtActionLabel">Caught?</span>
+<span class="uc-caught-by" id="ucCaughtBy"></span>
 <div class="btn-group">
 <button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
 <button class="btn-table" data-uc="caught" data-val="No">No</button>
@@ -403,6 +404,17 @@ document.getElementById('ucClub').textContent = me.club;
 document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
 // Action labels
 document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
+var caughtByEl = document.getElementById('ucCaughtBy');
+if (caughtVal === 'Yes' && me.lastStartPos) {
+var myPos = parseInt(me.lastStartPos);
+var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
+caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
+} else if (caughtVal === 'No') {
+caughtByEl.textContent = 'Not caught';
+} else {
+caughtByEl.textContent = '';
+}
 document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
 // Update card buttons
 document.querySelectorAll('#userCard .btn-table[data-uc]').forEach(function(btn) {

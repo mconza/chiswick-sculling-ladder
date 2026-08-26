@@ -642,6 +642,12 @@ td.col-last + td.col-next {
   font-weight: 500;
   white-space: nowrap;
 }
+.uc-caught-by {
+  font-size: 0.6rem;
+  color: var(--text-light);
+  font-weight: 400;
+  font-style: italic;
+}
 .user-card-actions .btn-table {
   padding: 0.3rem 0.45rem;
   font-size: 0.72rem;
