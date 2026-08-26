@@ -459,6 +459,9 @@ return nextPositions[s.id] || 9999;
 return 0;
 }
 function computeNextPositions() {
+var pathfinders = scullers.filter(function(s) {
+return s.nextParticipating === 'PathFind';
+});
 var confirmed = scullers.filter(function(s) {
 return s.nextParticipating === 'Yes';
 });
@@ -476,9 +479,14 @@ if (rb === 0 && ra !== 0) return 1;
 return rb - ra;
 });
 var map = {};
-withManual.forEach(function(s) { map[s.id] = myManualStarts[s.id]; });
-var nextSlot = 1;
-for (var i = 1; i <= confirmed.length; i++) {
+pathfinders.forEach(function(s) { map[s.id] = 1; });
+withManual.forEach(function(s) {
+var manualPos = myManualStarts[s.id];
+if (manualPos === 1 && pathfinders.length > 0) manualPos = pathfinders.length + 1;
+map[s.id] = manualPos;
+});
+var nextSlot = pathfinders.length > 0 ? 2 : 1;
+for (var i = nextSlot; i <= confirmed.length + pathfinders.length; i++) {
 var occupied = false;
 for (var k in map) { if (map[k] === i) { occupied = true; break; } }
 if (!occupied) {
@@ -546,7 +554,7 @@ renderTable();
 });
 var q = document.getElementById('searchInput').value.toLowerCase().trim();
 var list = isAdmin ? scullers.slice() : scullers.filter(function(s) {
-return s.nextParticipating === 'Yes';
+return s.nextParticipating === 'Yes' || s.nextParticipating === 'PathFind';
 });
 if (q) {
 list = list.filter(function(s) {
