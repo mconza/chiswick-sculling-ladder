@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chiswick Sculling Ladder - My Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .user-login { max-width: 400px; margin: 3rem auto; text-align: center; }
+    .user-login h2 { margin-bottom: 1rem; color: var(--text); }
+    .user-login p { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.9rem; }
+    .code-input {
+      width: 100%; padding: 0.85rem 1rem; font-size: 1.2rem;
+      border: 2px solid var(--border); border-radius: var(--radius);
+      text-align: center; font-family: var(--font); font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+    .code-input:focus { border-color: var(--accent); outline: none; }
+    .enter-btn {
+      width: 100%; margin-top: 1rem; padding: 0.85rem; font-size: 1rem;
+      background: var(--primary); color: #fff; border: none;
+      border-radius: var(--radius); font-family: var(--font);
+      font-weight: 700; cursor: pointer;
+    }
+    .enter-btn:hover { background: var(--primary-dark); }
+
+    .user-card {
+      max-width: 500px; margin: 2rem auto;
+      background: var(--bg-card); border-radius: var(--radius);
+      padding: 1.5rem; box-shadow: var(--shadow);
+    }
+    .user-card .name { font-size: 1.3rem; font-weight: 800; }
+    .user-card .club { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem; }
+    .user-card .details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .user-card .detail-box { background: var(--bg-main); border-radius: 8px; padding: 0.75rem; }
+    .user-card .detail-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-light); font-weight: 600; letter-spacing: 0.05em; }
+    .user-card .detail-value { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-top: 0.2rem; }
+
+    .user-actions { display: flex; gap: 0; margin-top: 1rem; }
+    .user-actions .btn-table {
+      flex: 1; padding: 0.75rem; font-size: 1rem; min-width: 0;
+      border-radius: 0;
+    }
+    .user-actions .btn-table:first-child { border-radius: var(--radius) 0 0 var(--radius); border-right: 1px solid rgba(0,0,0,0.1); }
+    .user-actions .btn-table:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+
+    .user-position {
+      text-align: center; margin-top: 1.25rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .user-position .pos-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-light); font-weight: 600; }
+    .user-position .pos-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .user-position .pos-none { font-size: 0.9rem; color: var(--text-light); font-weight: 500; }
+
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+    .user-header { display: flex; justify-content: space-between; align-items: center; }
+    .user-header .back-btn {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.4rem 0.8rem; font-family: var(--font); font-size: 0.8rem;
+      color: var(--text-light); cursor: pointer;
+    }
+    .user-header .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <a href="./app.html" class="logo">&#9875; <span>Chiswick Sculling Ladder</span></a>
+    <div class="user-header">
+      <button class="back-btn" id="logoutBtn" style="display:none;">&#8592; Switch User</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Login screen -->
+    <div class="user-login" id="loginScreen">
+      <h2>My Session</h2>
+      <p>Enter your personal code to confirm or decline the next ladder session.</p>
+      <input type="text" class="code-input" id="codeInput" placeholder="Your code" inputmode="numeric" autofocus>
+      <button class="enter-btn" id="enterBtn">Enter</button>
+      <p class="error-msg" id="errorMsg">Code not found. Check with the organiser.</p>
+    </div>
+
+    <!-- User card (hidden initially) -->
+    <div id="userScreen" style="display:none;">
+      <div class="user-card">
+        <div class="name" id="uName"></div>
+        <div class="club" id="uClub"></div>
+        <div class="details">
+          <div class="detail-box">
+            <div class="detail-label">Rank</div>
+            <div class="detail-value" id="uRank"></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Last Session</div>
+            <div class="detail-value" id="uLast"></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Caught?</div>
+            <div class="detail-value" id="uCaught"></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Next Start</div>
+            <div class="detail-value" id="uNextPos"></div>
+          </div>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.5rem;">Are you participating in the next session?</p>
+        <div class="user-actions" id="userActions">
+          <button class="btn-table btn-yes-dim" data-val="Yes">&#10003; Yes</button>
+          <button class="btn-table btn-no-dim" data-val="No">&#10007; No</button>
+        </div>
+        <div class="user-position" id="userPosition"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+var scullers = [{"id":253,"name":"Inkeri","club":"QBC","rank":"207","lastStartPos":"2","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"1"},{"id":225,"name":"Roberta","club":"QBC","rank":"170","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"2"},{"id":80,"name":"Sanne C","club":"MAA","rank":"167","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"3"},{"id":228,"name":"Georgina H","club":"MAA","rank":"166","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"4"},{"id":221,"name":"Jacqui S","club":"QBC & TTRC","rank":"117","lastStartPos":"4","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"5"},{"id":121,"name":"Dimitri","club":"TSS","rank":"94","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"6"},{"id":190,"name":"Athene","club":"PTRC","rank":"88","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"7"},{"id":69,"name":"Colleen C","club":"MAA","rank":"81","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"8"},{"id":38,"name":"Zoe G","club":"TSS","rank":"78","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"9"},{"id":36,"name":"Fiona B","club":"TSS","rank":"71","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"10"},{"id":7,"name":"Caroline B","club":"MAA","rank":"51","lastStartPos":"9","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"11"},{"id":60,"name":"Kirsty R-D","club":"QBC","rank":"49","lastStartPos":"7","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"12"},{"id":218,"name":"Ainslie","club":"QBC","rank":"50","lastStartPos":"8","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"13"},{"id":217,"name":"Maurizio","club":"QBC","rank":"54","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"14"},{"id":252,"name":"Jonathan F","club":"QBC","rank":"53","lastStartPos":"11","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"15"},{"id":73,"name":"Kathryn H","club":"TSS","rank":"52","lastStartPos":"10","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"16"},{"id":112,"name":"Devlin L","club":"QBC","rank":"47","lastStartPos":"13","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"17"},{"id":48,"name":"Guy","club":"CYGNET","rank":"36","lastStartPos":"15","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"18"},{"id":140,"name":"Daisy W","club":"MAA","rank":"35","lastStartPos":"14","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"19"},{"id":233,"name":"Robert W","club":"TSS","rank":"29","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"20"},{"id":23,"name":"Tom B","club":"QBC","rank":"27","lastStartPos":"17","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"21"},{"id":13,"name":"Mark O'B","club":"QBC","rank":"26","lastStartPos":"18","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"22"},{"id":234,"name":"William P","club":"CYG","rank":"25","lastStartPos":"21","lastCaught":"Yes","nextParticipating":"Yes","nextStartPos":"23"},{"id":86,"name":"Simon H","club":"QBC","rank":"12","lastStartPos":"22","lastCaught":"No","nextParticipating":"Yes","nextStartPos":"24"},{"id":209,"name":"Steve B","club":"MAABC","rank":"11","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"25"},{"id":2,"name":"Rory","club":"TSS","rank":"9","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"26"},{"id":220,"name":"Heinrich V","club":"PTRC","rank":"6","lastStartPos":null,"lastCaught":null,"nextParticipating":"Yes","nextStartPos":"27"},{"id":89,"name":"Anthony Lowther","club":"TSS","rank":"1","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":120,"name":"Nick Palmer","club":"TSS","rank":"2","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":54,"name":"Kieran B","club":"TSS","rank":"3","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":91,"name":"Salvatore","club":"TSS","rank":"4","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":148,"name":"Ed W","club":"MAA","rank":"5","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":122,"name":"Stephen P","club":"TSS & CRB","rank":"7","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":40,"name":"Jack H","club":"QBC","rank":"8","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":32,"name":"Ali B","club":"AK & PTRC","rank":"10","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":4,"name":"Richard R","club":"TSS","rank":"13","lastStartPos":"23","lastCaught":"No","nextParticipating":"No","nextStartPos":""},{"id":207,"name":"Kit L","club":"FSC","rank":"14","lastStartPos":"24","lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":1,"name":"Dov QBC &TSS","club":"","rank":"15","lastStartPos":null,"lastCaught":null,"nextParticipating":"No","nextStartPos":""},{"id":102,"name":"Michael DP","club":"FSC","rank":"16","lastStartPos":"19","lastCaught":"No","nextParticipating":"???","nextStartPos":""},{"id":179,"name":"Andrea M","club":"FRBC","rank":"17","lastStartPos":"20","lastCaught":"No","nextParticipating":"No","nextStartPos":""},{"id":128,"name":"Chris H","club":"PTRC","rank":"18","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":5,"name":"Ken A","club":"QBC","rank":"19","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":188,"name":"Jen B","club":"MAABC","rank":"20","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":230,"name":"Frederick W","club":"KHS","rank":"21","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":143,"name":"Roberto","club":"TSS","rank":"22","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":239,"name":"Alex K","club":"MAA","rank":"23","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":39,"name":"Steve A","club":"TSS","rank":"24","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":178,"name":"Mark B","club":"PTRC","rank":"28","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":25,"name":"Lasse B","club":"TSS","rank":"30","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":14,"name":"Mark A","club":"TSS","rank":"31","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":6,"name":"Ben B","club":"TSS","rank":"32","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":226,"name":"Holger W","club":"TSS","rank":"33","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":192,"name":"Nicholas Y","club":"SONS","rank":"34","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":204,"name":"Steph","club":"TSS","rank":"37","lastStartPos":"16","lastCaught":"Yes","nextParticipating":"???","nextStartPos":""},{"id":224,"name":"David B","club":"TTRC","rank":"38","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":46,"name":"Simon S  TSS","club":"CYGNET","rank":"39","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":219,"name":"Daniel R","club":"MAA","rank":"40","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":205,"name":"Rob P","club":"PTRC","rank":"41","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":197,"name":"Hannah","club":"BBL","rank":"42","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":3,"name":"Nick Mc","club":"TSS","rank":"43","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":163,"name":"Rod S","club":"UTRC","rank":"44","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":111,"name":"Alessio","club":"TSS","rank":"45","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":213,"name":"Slavo R","club":"QBC","rank":"46","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":63,"name":"David S Sons","club":"","rank":"48","lastStartPos":"12","lastCaught":"Yes","nextParticipating":"No","nextStartPos":""},{"id":58,"name":"Ken C","club":"QBC","rank":"55","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":105,"name":"Anna R","club":"MAA","rank":"56","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":227,"name":"Jose C","club":"QBC","rank":"57","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":12,"name":"James S","club":"QBC","rank":"58","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":222,"name":"Dan","club":"PTRC","rank":"59","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":177,"name":"Alex M","club":"PTRC","rank":"60","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":158,"name":"Keith C","club":"TSS","rank":"61","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":237,"name":"Andrew","club":"TSS","rank":"62","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":84,"name":"Rebecca S","club":"BBL","rank":"63","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":95,"name":"Chris Williams","club":"TSS","rank":"64","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":43,"name":"Sarah P","club":"BBL","rank":"65","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":87,"name":"Chris G","club":"TSS","rank":"66","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":11,"name":"Geoff P","club":"QBC","rank":"67","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":78,"name":"Graham B","club":"QBC","rank":"68","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":200,"name":"Adam K","club":"PTRC","rank":"69","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":248,"name":"Giles C","club":"QBC","rank":"70","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":150,"name":"Barbara K","club":"TSS","rank":"72","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":184,"name":"Paul D","club":"PTRC & TSS","rank":"73","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":34,"name":"Jamie P","club":"TSS","rank":"74","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":44,"name":"Paul Mew","club":"THAMES","rank":"75","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":94,"name":"William C","club":"TSS","rank":"76","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":244,"name":"William M","club":"QBC","rank":"77","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":152,"name":"Deborah M","club":"QBC","rank":"79","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":231,"name":"Katy","club":"BBL","rank":"80","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":37,"name":"Dave N","club":"QBC","rank":"82","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":31,"name":"Kat R","club":"MAA","rank":"83","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":216,"name":"Andy C","club":"PTRC","rank":"84","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":162,"name":"Aba C","club":"PTRC","rank":"85","lastStartPos":"1","lastCaught":"PathFind","nextParticipating":"???","nextStartPos":""},{"id":45,"name":"Miranda","club":"MAA","rank":"86","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":53,"name":"Matthew D","club":"TTRC","rank":"87","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":79,"name":"Rafael C Sons","club":"","rank":"89","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":193,"name":"Tony A","club":"MAA","rank":"90","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":110,"name":"Matthias K","club":"BNT","rank":"91","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":156,"name":"Richard I","club":"FRBC & TYR","rank":"92","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":10,"name":"Gareth F","club":"CYGNET","rank":"93","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":142,"name":"John H","club":"PTRC","rank":"95","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":161,"name":"Harvey A","club":"TSS","rank":"96","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":131,"name":"Kai A","club":"TSS","rank":"97","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":100,"name":"George F","club":"TSS","rank":"98","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":81,"name":"Indy R","club":"TSS","rank":"99","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":97,"name":"Amaru C","club":"TSS","rank":"100","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":210,"name":"Noel","club":"AK","rank":"101","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":22,"name":"Tim E","club":"TSS","rank":"102","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":115,"name":"Ian B","club":"BNT","rank":"103","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":41,"name":"Charlie H","club":"QBC","rank":"104","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":83,"name":"Miro S","club":"TSS","rank":"105","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":24,"name":"Varsha D","club":"MAA","rank":"106","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":170,"name":"Thomas R","club":"TSS","rank":"107","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":214,"name":"Krishna S","club":"UCLBC","rank":"108","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":126,"name":"Hilary C","club":"MAA","rank":"109","lastStartPos":null,"lastCaught":null,"nextParticipating":"No","nextStartPos":""},{"id":67,"name":"Susan M","club":"PTRC","rank":"110","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":108,"name":"Kasia L","club":"TSS","rank":"111","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":202,"name":"Bea","club":"PTRC","rank":"112","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":243,"name":"Mash","club":"QBC","rank":"113","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":151,"name":"Nick G","club":"QBC","rank":"114","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":172,"name":"Kate PdF","club":"PTRC","rank":"115","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":160,"name":"Mary M","club":"PTRC","rank":"116","lastStartPos":"3","lastCaught":"No","nextParticipating":"???","nextStartPos":""},{"id":42,"name":"Roseanna","club":"TSS","rank":"118","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":51,"name":"Elaine F","club":"TSS","rank":"119","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":71,"name":"Joanna AJ","club":"TSS","rank":"120","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":21,"name":"Roger S","club":"TSS","rank":"121","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":62,"name":"Peter W","club":"TSS","rank":"122","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":155,"name":"Whit M","club":"CYGNET","rank":"123","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":106,"name":"Caroline R","club":"TSS","rank":"124","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":29,"name":"Mike H","club":"TSS","rank":"125","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":109,"name":"Eliot M","club":"TSS","rank":"126","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":107,"name":"Frank R","club":"AK","rank":"127","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":16,"name":"Paul M","club":"MAA","rank":"128","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":50,"name":"Nick H","club":"AK","rank":"129","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":96,"name":"William S","club":"TSS","rank":"130","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":98,"name":"Robert L Sons","club":"","rank":"131","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":57,"name":"Chris B","club":"MAA & TSS","rank":"132","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":88,"name":"Jade G","club":"MAA","rank":"133","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":157,"name":"Mia D","club":"TSS","rank":"134","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":195,"name":"Gavin E Cygnet","club":"","rank":"135","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":176,"name":"Paul A","club":"TTRC","rank":"136","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":208,"name":"Hady G","club":"PTRC","rank":"137","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":26,"name":"John A","club":"TSS","rank":"138","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":196,"name":"Sarah K","club":"BBL","rank":"139","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":181,"name":"Gabi L","club":"PTRC","rank":"140","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":175,"name":"Joy B","club":"PTRC","rank":"141","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":191,"name":"Matthew K","club":"BNT","rank":"142","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":194,"name":"Ksenia L","club":"MAA","rank":"143","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":189,"name":"Jemima","club":"MAABC","rank":"144","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":99,"name":"Jo E","club":"MAA","rank":"145","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":17,"name":"Pete M","club":"QBC","rank":"146","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":113,"name":"Henry B","club":"UCLBC","rank":"147","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":117,"name":"Cristobal","club":"CYGNET","rank":"148","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":101,"name":"Dean C","club":"FSC","rank":"149","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":9,"name":"Feargal S","club":"TSS","rank":"150","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":82,"name":"Judith S","club":"TSS","rank":"151","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":149,"name":"Richard B","club":"MAA","rank":"152","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":77,"name":"Cecile","club":"TSS","rank":"153","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":8,"name":"Nick R","club":"QBC","rank":"154","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":47,"name":"Zoe B","club":"MAA","rank":"155","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":75,"name":"Hon W Sons","club":"","rank":"156","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":49,"name":"Sophia S","club":"TSS","rank":"157","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":76,"name":"Ruth T Sons","club":"","rank":"158","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":141,"name":"Victoria","club":"MAA","rank":"159","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":61,"name":"Pieternel O","club":"BBL","rank":"160","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":74,"name":"Will M Sons","club":"","rank":"161","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":33,"name":"Tim R","club":"TSS","rank":"162","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":124,"name":"Gareth N","club":"TSS","rank":"163","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":199,"name":"Kat B","club":"MAA","rank":"164","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":185,"name":"Jim Mott","club":"TSS","rank":"165","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":104,"name":"Nicola D","club":"MAA","rank":"168","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":250,"name":"Kira V","club":"QBC","rank":"169","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":229,"name":"Rita P","club":"QBC","rank":"171","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":201,"name":"Sue H","club":"TTRC","rank":"172","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":203,"name":"Emily R","club":"TSS","rank":"173","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":183,"name":"Simon W","club":"QBC","rank":"174","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":92,"name":"CL French","club":"TSS","rank":"175","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":168,"name":"Johnny L","club":"QBC","rank":"176","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":167,"name":"Sara J","club":"TSS","rank":"177","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":164,"name":"Emma T","club":"PTRC","rank":"178","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":154,"name":"Hatty","club":"TSS","rank":"179","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":159,"name":"Chrissie G","club":"MAA","rank":"180","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":134,"name":"Antke","club":"BNT","rank":"181","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":70,"name":"Lisa K","club":"MAA","rank":"182","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":20,"name":"Robert H","club":"TSS","rank":"183","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":93,"name":"Raki","club":"TSS","rank":"184","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":116,"name":"Nikita R","club":"UCLBC","rank":"185","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":171,"name":"Emily F","club":"QBC","rank":"186","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":68,"name":"Pat C","club":"TSS","rank":"187","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":119,"name":"Ella W","club":"UCLBC","rank":"188","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":64,"name":"Lee B","club":"MAA","rank":"189","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":35,"name":"Chris N","club":"TSS","rank":"190","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":15,"name":"Mel G","club":"QBC","rank":"191","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":28,"name":"Sakti N","club":"QBC","rank":"192","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":114,"name":"Tara D","club":"UCLBC","rank":"193","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":52,"name":"Louise P","club":"MAA","rank":"194","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":90,"name":"Vicky S","club":"TSS","rank":"195","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":127,"name":"Shamae","club":"UCLBC","rank":"196","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":72,"name":"Cara X","club":"BBL","rank":"197","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":125,"name":"Bex T","club":"UCLBC","rank":"198","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":129,"name":"Suzanne D","club":"BNT","rank":"199","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":174,"name":"Sara W","club":"PTRC","rank":"200","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":165,"name":"Sharika F","club":"MAA","rank":"201","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":223,"name":"Liz B","club":"QBC","rank":"202","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":246,"name":"Steve C","club":"QBC","rank":"203","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":247,"name":"Chris S","club":"MAABC","rank":"204","lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":241,"name":"Lorna","club":"QBC","rank":"205","lastStartPos":"5","lastCaught":"No","nextParticipating":"???","nextStartPos":""},{"id":254,"name":"Steve M","club":"MAABC","rank":"206","lastStartPos":"6","lastCaught":"Yes","nextParticipating":"No","nextStartPos":""},{"id":59,"name":"Abi W","club":"MAA","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":27,"name":"Adrian B","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":186,"name":"Amelie GK","club":"BBLRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":30,"name":"Anthony Letterese","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":236,"name":"Blyda","club":"MAABC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":166,"name":"Dom","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":211,"name":"Dwain","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":206,"name":"Dylan M","club":"PTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":173,"name":"Ele C Putney","club":"","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":130,"name":"Ellie R","club":"MAA","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":132,"name":"Hamish M","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":136,"name":"Harry Long","club":"UCL","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":139,"name":"Henry H","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":66,"name":"Huw J","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":240,"name":"Ingrid","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":146,"name":"Jake B","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":153,"name":"Jane M Sons","club":"","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":135,"name":"Joe B","club":"UCL","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":251,"name":"John P","club":"PTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":145,"name":"Jonny C","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":55,"name":"Julian K","club":"TTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":147,"name":"Katie R","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":85,"name":"Kim W","club":"TTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":133,"name":"Malachi R","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":242,"name":"Marc F","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":137,"name":"Michael R","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":245,"name":"Mickey","club":"CYG","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":235,"name":"Millie E","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":144,"name":"Min S","club":"AK","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":138,"name":"Naomi C","club":"WEY","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":123,"name":"Nicholas H","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":56,"name":"Nicki McM","club":"PTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":169,"name":"Nicola T","club":"MAA","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":18,"name":"Pippa F","club":"MAA","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":19,"name":"Rob F","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":180,"name":"Roger E Sons","club":"","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":215,"name":"Ronald R","club":"FSC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":187,"name":"Sophie I","club":"MAABC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":103,"name":"Stan L","club":"MAA","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":232,"name":"Stephen L","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":212,"name":"Stephen R","club":"PTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":238,"name":"Steve S","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":182,"name":"Tim S","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":249,"name":"Tim W Sons","club":"","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":198,"name":"Tom J","club":"TTRC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":118,"name":"Walter C","club":"TSS","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""},{"id":65,"name":"Yan T","club":"QBC","rank":null,"lastStartPos":null,"lastCaught":null,"nextParticipating":"???","nextStartPos":""}];
+
+var myConfirmed = {};
+var myId = null;
+var currentSculler = null;
+
+// Load from localStorage first, then fetch API
+function loadVotes(cb) {
+  myConfirmed = JSON.parse(localStorage.getItem('csl_confirmed') || '{}');
+  fetch('/api/votes')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.confirmed) {
+        for (var k in data.confirmed) { myConfirmed[k] = data.confirmed[k]; }
+      }
+      cb();
+    })
+    .catch(function() { cb(); });
+}
+
+function saveVote(id, val) {
+  myConfirmed[id] = val;
+  localStorage.setItem('csl_confirmed', JSON.stringify(myConfirmed));
+  var payload = { confirmed: {} };
+  payload.confirmed[id] = val;
+  fetch('/api/votes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(function() {});
+}
+
+function computeNextPositions() {
+  var confirmed = scullers.filter(function(s) {
+    var p = myConfirmed[s.id] !== undefined ? myConfirmed[s.id] : s.nextParticipating;
+    return p === 'Yes';
+  }).sort(function(a, b) {
+    var ra = a.rank ? parseInt(a.rank) : 9999;
+    var rb = b.rank ? parseInt(b.rank) : 9999;
+    return rb - ra;
+  });
+  var map = {};
+  confirmed.forEach(function(s, i) { map[s.id] = i + 1; });
+  return map;
+}
+
+function showUser() {
+  var caughtVal = myConfirmed[currentSculler.id] !== undefined
+    ? myConfirmed[currentSculler.id]
+    : currentSculler.nextParticipating;
+
+  document.getElementById('uName').textContent = currentSculler.name;
+  document.getElementById('uClub').textContent = currentSculler.club;
+  document.getElementById('uRank').textContent = currentSculler.rank || 'n/a';
+  document.getElementById('uLast').textContent = currentSculler.lastStartPos || '-';
+  document.getElementById('uCaught').textContent = currentSculler.lastCaught || '-';
+  var pos = computeNextPositions();
+  document.getElementById('uNextPos').textContent = pos[currentSculler.id] || '-';
+  document.getElementById('logoutBtn').style.display = '';
+
+  var btns = document.querySelectorAll('#userActions .btn-table');
+  btns.forEach(function(b) {
+    var v = b.dataset.val;
+    b.className = 'btn-table ' + (caughtVal === v ? (v === 'Yes' ? 'btn-yes' : 'btn-no') : (v === 'Yes' ? 'btn-yes-dim' : 'btn-no-dim'));
+  });
+
+  var posDiv = document.getElementById('userPosition');
+  if (pos[currentSculler.id]) {
+    posDiv.innerHTML = '<div class="pos-label">Your Start Position</div><div class="pos-value">#' + pos[currentSculler.id] + '</div>';
+  } else {
+    posDiv.innerHTML = '<div class="pos-label">Next Session</div><div class="pos-none">Not participating</div>';
+  }
+}
+
+// Login
+document.getElementById('enterBtn').addEventListener('click', doLogin);
+document.getElementById('codeInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogin() {
+  var code = document.getElementById('codeInput').value.trim();
+  if (!code) return;
+  var found = scullers.find(function(s) { return s.id === parseInt(code); });
+  if (!found) {
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  document.getElementById('errorMsg').style.display = 'none';
+  currentSculler = found;
+  myId = found.id;
+  loadVotes(function() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('userScreen').style.display = '';
+    showUser();
+  });
+}
+
+// Vote buttons
+document.querySelectorAll('#userActions .btn-table').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var val = this.dataset.val;
+    var current = myConfirmed[myId];
+    var newVal = (current === val) ? undefined : val;
+    if (newVal === undefined) {
+      delete myConfirmed[myId];
+      saveVote(myId, null);
+    } else {
+      myConfirmed[myId] = newVal;
+      saveVote(myId, newVal);
+    }
+    showUser();
+  });
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  localStorage.removeItem('csl_user');
+  currentSculler = null;
+  myId = null;
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('userScreen').style.display = 'none';
+  document.getElementById('codeInput').value = '';
+  document.getElementById('codeInput').focus();
+});
+  </script>
+</body>
+</html>
