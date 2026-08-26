@@ -251,7 +251,18 @@ lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.s
 var newDate = new Date(ladderDate);
 newDate.setDate(newDate.getDate() + 14);
 nextLadder.date = formatDate(newDate);
+var nextPos = computeNextPositions();
 scullers.forEach(function(s) {
+if (s.nextParticipating === 'Yes') {
+s.lastStartPos = nextPos[s.id] ? String(nextPos[s.id]) : null;
+s.lastCaught = myCaught[s.id] !== undefined ? myCaught[s.id] : null;
+} else if (s.nextParticipating === 'PathFind') {
+s.lastStartPos = '1';
+s.lastCaught = 'PathFind';
+} else {
+s.lastStartPos = null;
+s.lastCaught = null;
+}
 s.nextParticipating = null;
 s.nextStartPos = null;
 });
