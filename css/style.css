@@ -305,7 +305,7 @@ a:hover { text-decoration: underline; }
 }
 
 .ladder-table th .th-label {
-  display: block;
+  display: inline;
 }
 
 .ladder-table th .th-sub {
@@ -404,7 +404,7 @@ a:hover { text-decoration: underline; }
 }
 
 .ladder-table .col-rank { width: 50px; font-weight: 700; color: var(--primary); }
-.ladder-table .col-name { text-align: left; white-space: normal; min-width: 160px; }
+.ladder-table th.col-name, .ladder-table td.col-name { text-align: left; white-space: normal; min-width: 160px; }
 .ladder-table .col-last, .ladder-table .col-next { width: 95px; font-weight: 600; }
 
 .ladder-table .col-last {
