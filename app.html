@@ -435,8 +435,7 @@ if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
 if (key === 'rank') { var r = getComputedRank(s); return r || 9999; }
 if (key === 'newRank') { var r = computedRanks[s.id]; return r || 9999; }
 if (key === 'lastStartPos') {
-var lp = computeLastPositions();
-return lp[s.id] || 9999;
+return s.lastStartPos ? parseInt(s.lastStartPos) : 9999;
 }
 if (key === 'lastCaught') {
 var c = myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
@@ -523,8 +522,9 @@ return;
 document.getElementById('tableHead').innerHTML =
 '<tr>' +
 '<th class="col-group-header" rowspan="2">Name</th>' +
-(isAdmin ? '<th class="col-group-header" colspan="3">Next Ladder</th>' : '<th class="col-group-header" colspan="1">Next Ladder</th>') +
-'<th class="col-group-header" colspan="2">Previous Ladder</th>' +
+'<th class="col-group-header" colspan="' + (isAdmin ? 3 : 1) + '">Next Ladder</th>' +
+'<th class="col-separator" rowspan="2"></th>' +
+'<th class="col-group-header" colspan="3">Previous Ladder</th>' +
 '</tr>' +
 '<tr>' +
 (isAdmin ? '<th class="sortable col-next" data-sort="nextParticipating">' +
@@ -536,6 +536,9 @@ document.getElementById('tableHead').innerHTML =
 (isAdmin ? '<th class="col-next">' +
 '<span class="th-label">Caught?</span>' +
 '</th>' : '') +
+'<th class="sortable col-rank" data-sort="lastStartPos">' +
+'<span class="th-label">Start</span>' +
+'</th>' +
 '<th class="sortable col-rank" data-sort="rank">' +
 '<span class="th-label">Rank</span>' +
 '</th>' +
@@ -617,11 +620,12 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
 '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
 (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + caughtBtns + '</div></td>' : '') +
+'<td class="col-separator">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' +
 '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
 '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' +
 '</tr>';
 }).join('');
-document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 5 : 3) + '" class="empty-state">No scullers found</td></tr>';
+document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 6) + '" class="empty-state">No scullers found</td></tr>';
 document.querySelectorAll('.btn-table[data-type]').forEach(function(btn) {
 btn.addEventListener('click', function(e) {
 e.stopPropagation();

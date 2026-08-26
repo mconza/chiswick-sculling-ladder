@@ -328,6 +328,15 @@ a:hover { text-decoration: underline; }
   border-bottom: 2px solid var(--accent);
 }
 
+.col-separator {
+  width: 4px;
+  min-width: 4px;
+  max-width: 4px;
+  background: var(--accent) !important;
+  padding: 0 !important;
+  border: none;
+}
+
 .ladder-table th.col-last {
   background: #334155;
 }
