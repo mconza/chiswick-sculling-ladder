@@ -247,9 +247,19 @@ var ladderDateTime = new Date(ladderDate);
 var parts = nextLadder.time.split(':');
 ladderDateTime.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
 if (now > ladderDateTime) {
+lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
 var newDate = new Date(ladderDate);
 newDate.setDate(newDate.getDate() + 14);
 nextLadder.date = formatDate(newDate);
+scullers.forEach(function(s) {
+s.lastStartPos = null;
+s.lastCaught = null;
+s.nextParticipating = null;
+s.nextStartPos = null;
+});
+myCaught = {};
+computeRankings();
+renderTable();
 document.getElementById('nextLadderInfo').innerHTML =
 '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
 ' — ' + nextLadder.start + ' to ' + nextLadder.finish;
@@ -264,12 +274,15 @@ checkAndAdvanceLadder();
 fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
 if (data.nextLadder) {
 nextLadder = data.nextLadder;
+}
 document.getElementById('nextLadderInfo').innerHTML =
 '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
 ' — ' + nextLadder.start + ' to ' + nextLadder.finish;
 checkAndAdvanceLadder();
-}
-}).catch(function() {});
+updateUserCard();
+}).catch(function() {
+checkAndAdvanceLadder();
+});
 document.getElementById('editLadderBtn').addEventListener('click', function() {
 document.getElementById('modalDate').value = nextLadder.date;
 document.getElementById('modalTime').value = nextLadder.time;

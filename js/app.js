@@ -10,11 +10,43 @@ var lastLadder = {"date": "Sun 16-Aug-2026", "time": "10:30", "start": "Richmond
 var myVotes = JSON.parse(localStorage.getItem('csl_votes') || '{}');
 var currentSculler = null;
 
-document.getElementById('nextLadderInfo').innerHTML =
-  '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
-  ' \u2014 ' + nextLadder.start + ' to ' + nextLadder.finish;
-document.getElementById('nextLadderDate').textContent =
-  nextLadder.date + ' at ' + nextLadder.time + ', ' + nextLadder.start;
+function parseLadderDate(dateStr) {
+  var match = dateStr.match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
+  if (!match) return null;
+  var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  return new Date(parseInt(match[3]), months[match[2]], parseInt(match[1]));
+}
+function formatLadderDate(d) {
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()] + ' ' + d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+}
+function updateLadderDates() {
+  document.getElementById('nextLadderInfo').innerHTML =
+    '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
+    ' \u2014 ' + nextLadder.start + ' to ' + nextLadder.finish;
+  document.getElementById('nextLadderDate').textContent =
+    nextLadder.date + ' at ' + nextLadder.time + ', ' + nextLadder.start;
+}
+updateLadderDates();
+fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
+  if (data.nextLadder) nextLadder = data.nextLadder;
+  updateLadderDates();
+  var ladderDate = parseLadderDate(nextLadder.date);
+  if (ladderDate) {
+    var now = new Date();
+    var dt = new Date(ladderDate);
+    var parts = nextLadder.time.split(':');
+    dt.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+    if (now > dt) {
+      var nd = new Date(ladderDate);
+      nd.setDate(nd.getDate() + 14);
+      nextLadder.date = formatLadderDate(nd);
+      updateLadderDates();
+      fetch('/api/config', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({nextLadder:nextLadder}) }).catch(function(){});
+    }
+  }
+}).catch(function() {});
 renderList(scullers);
 
 document.getElementById('searchInput').addEventListener('input', function() {
