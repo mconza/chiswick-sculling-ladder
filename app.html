@@ -200,12 +200,19 @@ myCaught = data.caught || {};
 var participation = data.participation || {};
 myManualRanks = data.manualRanks || {};
 myManualStarts = data.manualStarts || {};
+var lastSession = data.lastSession || {};
 scullers.forEach(function(s) {
 s.nextParticipating = null;
 s.nextStartPos = null;
 });
 scullers.forEach(function(s) {
 if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
+});
+scullers.forEach(function(s) {
+if (lastSession[s.id]) {
+s.lastStartPos = lastSession[s.id].lastStartPos;
+s.lastCaught = lastSession[s.id].lastCaught;
+}
 });
 return fetch('/api/config');
 })
@@ -283,6 +290,10 @@ s.nextParticipating = null;
 s.nextStartPos = null;
 });
 myCaught = {};
+var lastSessionData = {};
+scullers.forEach(function(s) {
+lastSessionData[s.id] = { lastStartPos: s.lastStartPos, lastCaught: s.lastCaught };
+});
 computeRankings();
 renderTable();
 updateUserCard();
@@ -297,7 +308,7 @@ body: JSON.stringify({ nextLadder: nextLadder, lastLadder: lastLadder })
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {} })
+body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {}, lastSession: lastSessionData })
 }).catch(function() {});
 }
 }
