@@ -208,6 +208,7 @@ if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id]
 });
 computeRankings();
 renderTable();
+updateUserCard();
 })
 .catch(function() {
 myCaught = JSON.parse(localStorage.getItem('csl_caught') || '{}');
@@ -215,6 +216,7 @@ myManualRanks = JSON.parse(localStorage.getItem('csl_manualRanks') || '{}');
 myManualStarts = JSON.parse(localStorage.getItem('csl_manualStarts') || '{}');
 computeRankings();
 renderTable();
+updateUserCard();
 });
 document.getElementById('searchInput').addEventListener('input', function() {
 renderTable();
