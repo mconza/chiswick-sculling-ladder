@@ -15,7 +15,7 @@
       "startPos": null,
       "caught": null,
       "newRank": null,
-      "newStartPos": 6
+      "newStartPos": 5
     },
     {
       "id": 2,
@@ -25,7 +25,7 @@
       "startPos": "1",
       "caught": "PathFind",
       "newRank": 171,
-      "newStartPos": 2
+      "newStartPos": 1
     },
     {
       "id": 3,
@@ -35,7 +35,7 @@
       "startPos": "5",
       "caught": "No",
       "newRank": 48,
-      "newStartPos": 4
+      "newStartPos": 3
     },
     {
       "id": 4,
@@ -45,7 +45,7 @@
       "startPos": "2",
       "caught": "No",
       "newRank": 49,
-      "newStartPos": 3
+      "newStartPos": 2
     },
     {
       "id": 5,
@@ -603,9 +603,9 @@
       "club": "QBC",
       "rank": "54",
       "startPos": null,
-      "caught": null,
+      "caught": "Yes",
       "newRank": null,
-      "newStartPos": 1
+      "newStartPos": 8
     },
     {
       "id": 61,
@@ -615,7 +615,7 @@
       "startPos": null,
       "caught": null,
       "newRank": null,
-      "newStartPos": 8
+      "newStartPos": 7
     },
     {
       "id": 62,
@@ -875,7 +875,7 @@
       "startPos": null,
       "caught": null,
       "newRank": null,
-      "newStartPos": 7
+      "newStartPos": 6
     },
     {
       "id": 88,
@@ -995,7 +995,7 @@
       "startPos": null,
       "caught": null,
       "newRank": null,
-      "newStartPos": 5
+      "newStartPos": 4
     },
     {
       "id": 100,
