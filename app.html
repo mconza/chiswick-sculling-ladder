@@ -452,7 +452,7 @@ return 2;
 }
 if (key === 'nextStartPos') {
 var p = s.nextParticipating;
-if (p !== 'Yes') return 9999;
+if (p !== 'Yes' && p !== 'PathFind') return 9999;
 var nextPositions = computeNextPositions();
 return nextPositions[s.id] || 9999;
 }
