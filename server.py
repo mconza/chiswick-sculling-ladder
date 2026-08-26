@@ -15,6 +15,7 @@ PORT = 8080
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 VOTES_FILE = DATA_DIR / "votes.json"
+CONFIG_FILE = DATA_DIR / "config.json"
 HISTORY_DIR = DATA_DIR / "history"
 
 DATA_DIR.mkdir(exist_ok=True)
@@ -30,6 +31,16 @@ def save_votes(votes):
     with open(VOTES_FILE, "w") as f:
         json.dump(votes, f, indent=2)
 
+def load_config():
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_config(config):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(config, f, indent=2)
+
 class CSLHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(BASE_DIR), **kwargs)
@@ -43,6 +54,13 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             votes = load_votes()
             self.wfile.write(json.dumps(votes).encode())
+        elif parsed.path == "/api/config":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            config = load_config()
+            self.wfile.write(json.dumps(config).encode())
         elif parsed.path == "/api/history":
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -80,12 +98,31 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 if "caught" in new_votes:
                     current["caught"].update(new_votes["caught"])
                 if "participation" in new_votes:
-                    current.setdefault("participation", {}).update(new_votes["participation"])
+                    clean_participation = {k: v for k, v in new_votes["participation"].items() if v is not None}
+                    current.setdefault("participation", {}).update(clean_participation)
                 if "manualRanks" in new_votes:
                     current.setdefault("manualRanks", {}).update(new_votes["manualRanks"])
                 if "manualStarts" in new_votes:
                     current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
                 save_votes(current)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"ok": True}).encode())
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+        elif parsed.path == "/api/config":
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            try:
+                new_config = json.loads(body)
+                current = load_config()
+                current.update(new_config)
+                save_config(current)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
