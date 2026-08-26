@@ -96,14 +96,26 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 new_votes = json.loads(body)
                 current = load_votes()
                 if "caught" in new_votes:
-                    current["caught"].update(new_votes["caught"])
+                    if new_votes.get("clearParticipation"):
+                        current["caught"] = {}
+                    else:
+                        current["caught"].update(new_votes["caught"])
                 if "participation" in new_votes:
-                    clean_participation = {k: v for k, v in new_votes["participation"].items() if v is not None}
-                    current.setdefault("participation", {}).update(clean_participation)
+                    if new_votes.get("clearParticipation"):
+                        current["participation"] = {}
+                    else:
+                        clean_participation = {k: v for k, v in new_votes["participation"].items() if v is not None}
+                        current.setdefault("participation", {}).update(clean_participation)
                 if "manualRanks" in new_votes:
-                    current.setdefault("manualRanks", {}).update(new_votes["manualRanks"])
+                    if new_votes.get("clearParticipation"):
+                        current["manualRanks"] = {}
+                    else:
+                        current.setdefault("manualRanks", {}).update(new_votes["manualRanks"])
                 if "manualStarts" in new_votes:
-                    current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
+                    if new_votes.get("clearParticipation"):
+                        current["manualStarts"] = {}
+                    else:
+                        current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
                 save_votes(current)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

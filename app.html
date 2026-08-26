@@ -278,6 +278,11 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ nextLadder: nextLadder, lastLadder: lastLadder })
 }).catch(function() {});
+fetch('/api/votes', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {} })
+}).catch(function() {});
 }
 }
 fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
