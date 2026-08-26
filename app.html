@@ -300,6 +300,7 @@ document.getElementById('modalCancel').addEventListener('click', function() {
 document.getElementById('ladderModal').style.display = 'none';
 });
 document.getElementById('modalSave').addEventListener('click', function() {
+lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
 nextLadder.date = document.getElementById('modalDate').value.trim();
 nextLadder.time = document.getElementById('modalTime').value.trim();
 nextLadder.start = document.getElementById('modalStart').value.trim();
@@ -312,6 +313,9 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ nextLadder: nextLadder, lastLadder: lastLadder })
 }).catch(function() {});
+computeRankings();
+renderTable();
+updateUserCard();
 document.getElementById('ladderModal').style.display = 'none';
 });
 document.getElementById('ladderModal').addEventListener('click', function(e) {
