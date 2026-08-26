@@ -519,12 +519,14 @@ if (activeTab === 'history') {
 renderHistoryTable();
 return;
 }
+var lastLadderLabel = 'Last Session<br>' + lastLadder.date + '<br><small>(' + lastLadder.time + ', ' + lastLadder.start + ')</small>';
+var nextLadderLabel = 'Next Session<br>' + nextLadder.date + '<br><small>(' + nextLadder.time + ', ' + nextLadder.start + ')</small>';
 document.getElementById('tableHead').innerHTML =
 '<tr>' +
 '<th class="col-group-header" rowspan="2">Name</th>' +
-'<th class="col-group-header" colspan="2">Next Ladder</th>' +
+'<th class="col-group-header col-next-header" colspan="2">' + nextLadderLabel + '</th>' +
 '<th class="col-separator" rowspan="2"></th>' +
-'<th class="col-group-header" colspan="4">Previous Ladder</th>' +
+'<th class="col-group-header col-prev-header" colspan="4">' + lastLadderLabel + '</th>' +
 '</tr>' +
 '<tr>' +
 (isAdmin ? '<th class="sortable col-next" data-sort="nextParticipating">' +

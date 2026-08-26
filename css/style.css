@@ -326,6 +326,24 @@ a:hover { text-decoration: underline; }
   color: var(--accent-light);
   cursor: default;
   border-bottom: 2px solid var(--accent);
+  line-height: 1.4;
+  padding: 0.5rem 0.75rem;
+}
+
+.col-group-header small {
+  font-weight: 400;
+  font-size: 0.62rem;
+  opacity: 0.8;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.col-next-header {
+  background: #1a3a2a !important;
+}
+
+.col-prev-header {
+  background: #2a1a3a !important;
 }
 
 .col-separator {
