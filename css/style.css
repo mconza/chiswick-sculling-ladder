@@ -302,6 +302,7 @@ a:hover { text-decoration: underline; }
   cursor: pointer;
   user-select: none;
   position: relative;
+  background: #1e293b;
 }
 
 .ladder-table th .th-label {
