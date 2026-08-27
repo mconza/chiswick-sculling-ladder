@@ -142,6 +142,7 @@ var currentSort = 'rank';
 var ranked = [];
 var unranked = [];
 var computedRanks = {};
+var myCaught = {};
 
 function getComputedRank(s) {
   if (computedRanks[s.id] !== undefined) return computedRanks[s.id];
@@ -171,11 +172,11 @@ function computeRankings() {
   });
   var i = 0;
   while (i < starters.length) {
-    var caught = starters[i].lastCaught;
+    var caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
     if (caught !== 'No') { i++; continue; }
     var chainStart = i;
     while (i < starters.length) {
-      caught = starters[i].lastCaught;
+      caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
       if (caught !== 'No') break;
       i++;
     }
@@ -282,6 +283,7 @@ fetch('/api/votes')
   .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
   .then(function(data) {
     var lastSession = data.lastSession || {};
+    myCaught = data.caught || {};
     scullers.forEach(function(s) {
       if (lastSession[s.id]) {
         s.lastStartPos = lastSession[s.id].lastStartPos;
