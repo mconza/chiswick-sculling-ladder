@@ -1,0 +1,165 @@
+{
+  "caught": {
+    "5": "Yes",
+    "3": "Yes",
+    "4": "Yes",
+    "7": "Yes",
+    "8": "Yes",
+    "9": "Yes",
+    "10": "Yes",
+    "14": "Yes",
+    "15": "Yes",
+    "19": "Yes",
+    "20": "Yes",
+    "22": "Yes",
+    "23": "Yes",
+    "30": null,
+    "2": "Yes"
+  },
+  "participation": {
+    "84": "PathFind",
+    "2": "Yes",
+    "173": "Yes",
+    "170": "Yes",
+    "169": "Yes",
+    "4": "Yes",
+    "93": "Yes",
+    "77": "Yes",
+    "9": "Yes",
+    "7": "Yes",
+    "8": "Yes",
+    "60": "Yes",
+    "11": "Yes",
+    "10": "Yes",
+    "42": "No",
+    "13": "Yes",
+    "54": "Yes",
+    "15": "Yes",
+    "14": "Yes",
+    "45": "Yes",
+    "18": "Yes",
+    "21": "Yes",
+    "22": "Yes",
+    "35": "Yes",
+    "33": "Yes",
+    "30": "Yes",
+    "17": "Yes",
+    "44": "Yes",
+    "231": "Yes",
+    "61": "Yes",
+    "66": "Yes",
+    "3": "No",
+    "5": "Yes"
+  },
+  "manualRanks": {
+    "5": 205,
+    "4": 117
+  },
+  "manualStarts": {
+    "9": 9,
+    "60": 12,
+    "11": 13,
+    "7": 10,
+    "10": 14,
+    "42": 15,
+    "17": 22,
+    "231": 23,
+    "61": 24,
+    "66": 15,
+    "5": 5
+  },
+  "lastSession": {
+    "1": {
+      "lastStartPos": "1",
+      "lastCaught": "PathFind"
+    },
+    "2": {
+      "lastStartPos": "2",
+      "lastCaught": "Yes"
+    },
+    "3": {
+      "lastStartPos": "3",
+      "lastCaught": "No"
+    },
+    "4": {
+      "lastStartPos": "4",
+      "lastCaught": "No"
+    },
+    "5": {
+      "lastStartPos": "5",
+      "lastCaught": "No"
+    },
+    "6": {
+      "lastStartPos": "6",
+      "lastCaught": "Yes"
+    },
+    "7": {
+      "lastStartPos": "7",
+      "lastCaught": "No"
+    },
+    "8": {
+      "lastStartPos": "8",
+      "lastCaught": "No"
+    },
+    "9": {
+      "lastStartPos": "9",
+      "lastCaught": "No"
+    },
+    "10": {
+      "lastStartPos": "10",
+      "lastCaught": "No"
+    },
+    "11": {
+      "lastStartPos": "11",
+      "lastCaught": "Yes"
+    },
+    "12": {
+      "lastStartPos": "12",
+      "lastCaught": "Yes"
+    },
+    "13": {
+      "lastStartPos": "13",
+      "lastCaught": "Yes"
+    },
+    "14": {
+      "lastStartPos": "14",
+      "lastCaught": "No"
+    },
+    "15": {
+      "lastStartPos": "15",
+      "lastCaught": "No"
+    },
+    "17": {
+      "lastStartPos": "17",
+      "lastCaught": "Yes"
+    },
+    "18": {
+      "lastStartPos": "18",
+      "lastCaught": "Yes"
+    },
+    "19": {
+      "lastStartPos": "19",
+      "lastCaught": "No"
+    },
+    "20": {
+      "lastStartPos": "20",
+      "lastCaught": "No"
+    },
+    "21": {
+      "lastStartPos": "21",
+      "lastCaught": "Yes"
+    },
+    "22": {
+      "lastStartPos": "22",
+      "lastCaught": "No"
+    },
+    "23": {
+      "lastStartPos": "23",
+      "lastCaught": "No"
+    },
+    "24": {
+      "lastStartPos": "24",
+      "lastCaught": null
+    }
+  }
+}
