@@ -2,8 +2,8 @@
   --primary: #3b82f6;
   --primary-dark: #2563eb;
   --primary-light: #60a5fa;
-  --accent: #f59e0b;
-  --accent-light: #fbbf24;
+  --accent: #0ea5e9;
+  --accent-light: #38bdf8;
   --bg: #f8fafc;
   --bg-card: #ffffff;
   --text: #334155;
@@ -13,7 +13,7 @@
   --success-bg: #d1fae5;
   --danger: #ef4444;
   --danger-bg: #fee2e2;
-  --warning: #f59e0b;
+  --warning: #f97316;
   --warning-bg: #fef3c7;
   --purple: #8b5cf6;
   --purple-bg: #ede9fe;
@@ -270,7 +270,7 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
-.btn-accent:hover { background: #d97706; }
+.btn-accent:hover { background: #0284c7; }
 
 .btn-sm {
   padding: 0.3rem 0.6rem;
