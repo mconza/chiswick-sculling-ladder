@@ -64,12 +64,18 @@
 
       <form id="loginForm">
         <div class="form-group">
-          <label for="codeInput">Password or your personal code</label>
-          <input type="text" id="codeInput" placeholder="Enter code" autofocus required>
+          <label for="codeInput">Password</label>
+          <input type="text" id="codeInput" placeholder="Enter password" autofocus required>
         </div>
         <div class="error-msg" id="errorMsg">Code not recognised. Try again.</div>
         <button type="submit" class="btn btn-primary">Enter &#8594;</button>
       </form>
+
+      <div id="scullerSelect" style="display:none;margin-top:1.5rem;">
+        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:0.75rem;">Select yourself from the list:</p>
+        <input type="text" id="scullerSearch" placeholder="Search your name..." style="width:100%;padding:0.6rem 0.8rem;border:2px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:0.95rem;margin-bottom:0.5rem;">
+        <div id="scullerList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);"></div>
+      </div>
     </div>
   </div>
 
@@ -97,8 +103,11 @@ document.querySelector('.next-banner p').innerHTML =
 }
 updateHomeDate();
 if (isLoggedIn) {
-  document.getElementById('headerBtn').innerHTML = '<a href="./app.html" class="login-btn">Go to Ladder</a>';
-  document.getElementById('bottomBtn').innerHTML = '<a href="./app.html" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">Go to Ladder &#8594;</a>';
+  var role = localStorage.getItem('csl_role');
+  var target = role === 'admin' ? './app.html' : './user.html';
+  var label = role === 'admin' ? 'Go to Ladder' : 'My Session';
+  document.getElementById('headerBtn').innerHTML = '<a href="' + target + '" class="login-btn">' + label + '</a>';
+  document.getElementById('bottomBtn').innerHTML = '<a href="' + target + '" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">' + label + ' &#8594;</a>';
 } else {
   document.getElementById('headerBtn').innerHTML = '<a href="#login" class="login-btn" onclick="showLogin()">Log In</a>';
   document.getElementById('bottomBtn').innerHTML = '<a href="#login" onclick="showLogin()" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">Log In to participate &#8594;</a>';
@@ -144,18 +153,40 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     window.location.href = './app.html';
     return;
   }
-  var found = scullers.find(function(s) { return s.name.toLowerCase() === code.toLowerCase(); });
-  if (found) {
-    localStorage.setItem('csl_role', 'user');
-    localStorage.setItem('csl_user_id', found.id);
-    localStorage.setItem('csl_auth', 'true');
-    window.location.href = './app.html';
-  } else {
-    document.getElementById('errorMsg').classList.add('show');
-    document.getElementById('codeInput').value = '';
-    document.getElementById('codeInput').focus();
+  if (code === 'ladder') {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('scullerSelect').style.display = '';
+    renderScullerList();
+    document.getElementById('scullerSearch').focus();
+    return;
   }
+  document.getElementById('errorMsg').classList.add('show');
+  document.getElementById('codeInput').value = '';
+  document.getElementById('codeInput').focus();
 });
+
+function renderScullerList(filter) {
+  var list = document.getElementById('scullerList');
+  var q = (filter || '').toLowerCase();
+  var sorted = scullers.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
+  var html = '';
+  sorted.forEach(function(s) {
+    if (q && s.name.toLowerCase().indexOf(q) === -1) return;
+    html += '<div class="sculler-option" onclick="selectSculler(' + s.id + ')" style="padding:0.6rem 0.8rem;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.9rem;">' + s.name + ' <span style="color:var(--text-light);font-size:0.8rem;">(' + s.club + ')</span></div>';
+  });
+  list.innerHTML = html || '<div style="padding:0.8rem;color:var(--text-light);font-size:0.85rem;">No scullers found</div>';
+}
+
+document.getElementById('scullerSearch').addEventListener('input', function() {
+  renderScullerList(this.value);
+});
+
+function selectSculler(id) {
+  localStorage.setItem('csl_role', 'user');
+  localStorage.setItem('csl_user_id', id);
+  localStorage.setItem('csl_auth', 'true');
+  window.location.href = './user.html';
+}
   </script>
 </body>
 </html>
