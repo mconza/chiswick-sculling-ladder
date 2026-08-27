@@ -276,6 +276,10 @@ a:hover { text-decoration: underline; }
   padding: 0.3rem 0.6rem;
   font-size: 0.68rem;
 }
+.btn-xs {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.6rem;
+}
 
 /* ── TABLE ── */
 .table-wrap {

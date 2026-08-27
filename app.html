@@ -59,7 +59,6 @@
 <span class="th-title" id="nextLadderInfo"><strong>Sun 30-Aug-2026</strong> at 10:30 — Richmond Lock to Chiswick Bridge</span>
 </div>
 <div class="table-topbar-right">
-<button class="btn btn-sm btn-accent" id="saveSessionBtn" style="display:none;">End Ladder</button>
 <button class="btn btn-sm btn-outline" id="editLadderBtn" style="display:none;">Edit Ladder Info</button>
 <select id="historyDate" class="history-select" style="display:none;">
 <option value="">-- seleziona data --</option>
@@ -614,7 +613,7 @@ isAdmin ?
 '<th class="col-group-header sortable" data-sort="name" rowspan="2">Sculler</th>' +
 '<th class="col-group-header col-next-header" colspan="2">' + nextLadderLabel + '</th>' +
 '<th class="col-separator" rowspan="2"></th>' +
-'<th class="col-group-header col-prev-header" colspan="4">' + lastLadderLabel + '</th>' +
+'<th class="col-group-header col-prev-header" colspan="4">' + lastLadderLabel + ' <button class="btn btn-xs btn-accent" id="saveSessionBtn" style="display:none;margin-left:0.5rem;vertical-align:middle;" title="Save current Last Session results to history">Save Results</button></th>' +
 '</tr>' +
 '<tr>' +
 '<th class="sortable col-next" data-sort="nextParticipating">' +
