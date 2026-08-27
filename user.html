@@ -146,7 +146,7 @@ function loadVotes(cb) {
 }
 
 function getDisplayRank(s) {
-  if (myManualRanks[s.id] !== undefined) return myManualRanks[s.id];
+  if (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) return myManualRanks[s.id];
   return s.rank;
 }
 

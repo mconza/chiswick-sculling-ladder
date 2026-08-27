@@ -185,7 +185,7 @@ computedRanks[s.id] = result[s.id];
 });
 }
 function getComputedRank(s) {
-if (myManualRanks[s.id] !== undefined) return myManualRanks[s.id];
+if (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) return myManualRanks[s.id];
 if (computedRanks[s.id] !== undefined) return computedRanks[s.id];
 return 0;
 }
@@ -713,7 +713,7 @@ caughtBtns = '<select class="' + caughtSelectClass + '" data-type="caught" data-
 '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
 '</select>';
 }
-var startingRank = (myManualRanks[s.id] !== undefined) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
+var startingRank = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
 var newRank = computedRanks[s.id] || null;
 var diff = '';
 if (startingRank && newRank) {
