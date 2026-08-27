@@ -277,8 +277,8 @@ a:hover { text-decoration: underline; }
   font-size: 0.68rem;
 }
 .btn-xs {
-  padding: 0.2rem 0.45rem;
-  font-size: 0.6rem;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.55rem;
 }
 
 /* ── TABLE ── */
