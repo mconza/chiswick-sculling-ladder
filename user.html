@@ -79,9 +79,10 @@
     <!-- Login screen -->
     <div class="user-login" id="loginScreen">
       <h2>My Session</h2>
-      <p>Select yourself from the list to confirm or decline the next ladder session.</p>
-      <input type="text" class="code-input" id="scullerSearch" placeholder="Search your name..." style="letter-spacing:0;text-align:left;font-weight:400;" autofocus>
-      <div id="scullerList" style="max-height:350px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);margin-top:0.75rem;"></div>
+      <p>Enter your personal code to confirm or decline the next ladder session.</p>
+      <input type="text" class="code-input" id="codeInput" placeholder="Your code" inputmode="numeric" autofocus>
+      <button class="enter-btn" id="enterBtn">Enter</button>
+      <p class="error-msg" id="errorMsg">Code not found. Check with the organiser.</p>
     </div>
 
     <!-- User card (hidden initially) -->
@@ -193,26 +194,21 @@ function showUser() {
   }
 }
 
-// Sculler selector
-function renderScullerList(filter) {
-  var list = document.getElementById('scullerList');
-  var q = (filter || '').toLowerCase();
-  var sorted = scullers.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
-  var html = '';
-  sorted.forEach(function(s) {
-    if (q && s.name.toLowerCase().indexOf(q) === -1) return;
-    html += '<div class="sculler-option" onclick="selectSculler(' + s.id + ')" style="padding:0.65rem 0.8rem;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.95rem;">' + s.name + ' <span style="color:var(--text-light);font-size:0.8rem;">(' + s.club + ')</span></div>';
-  });
-  list.innerHTML = html || '<div style="padding:0.8rem;color:var(--text-light);font-size:0.85rem;">No scullers found</div>';
-}
-
-document.getElementById('scullerSearch').addEventListener('input', function() {
-  renderScullerList(this.value);
+// Login
+document.getElementById('enterBtn').addEventListener('click', doLogin);
+document.getElementById('codeInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
 });
 
-function selectSculler(id) {
-  var found = scullers.find(function(s) { return s.id === id; });
-  if (!found) return;
+function doLogin() {
+  var code = document.getElementById('codeInput').value.trim();
+  if (!code) return;
+  var found = scullers.find(function(s) { return s.id === parseInt(code); });
+  if (!found) {
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  document.getElementById('errorMsg').style.display = 'none';
   currentSculler = found;
   myId = found.id;
   loadVotes(function() {
@@ -220,25 +216,6 @@ function selectSculler(id) {
     document.getElementById('userScreen').style.display = '';
     showUser();
   });
-}
-
-// Auto-select if coming from index.html with csl_user_id set
-var savedUserId = localStorage.getItem('csl_user_id');
-if (savedUserId) {
-  var found = scullers.find(function(s) { return s.id === parseInt(savedUserId); });
-  if (found) {
-    currentSculler = found;
-    myId = found.id;
-    loadVotes(function() {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('userScreen').style.display = '';
-      showUser();
-    });
-  } else {
-    renderScullerList();
-  }
-} else {
-  renderScullerList();
 }
 
 // Vote buttons
@@ -261,12 +238,12 @@ document.querySelectorAll('#userActions .btn-table').forEach(function(btn) {
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', function() {
   localStorage.removeItem('csl_user');
-  localStorage.removeItem('csl_user_id');
-  localStorage.removeItem('csl_auth');
-  localStorage.removeItem('csl_role');
   currentSculler = null;
   myId = null;
-  window.location.href = './index.html';
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('userScreen').style.display = 'none';
+  document.getElementById('codeInput').value = '';
+  document.getElementById('codeInput').focus();
 });
   </script>
 </body>

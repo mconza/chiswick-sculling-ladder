@@ -103,11 +103,8 @@ document.querySelector('.next-banner p').innerHTML =
 }
 updateHomeDate();
 if (isLoggedIn) {
-  var role = localStorage.getItem('csl_role');
-  var target = role === 'admin' ? './app.html' : './user.html';
-  var label = role === 'admin' ? 'Go to Ladder' : 'My Session';
-  document.getElementById('headerBtn').innerHTML = '<a href="' + target + '" class="login-btn">' + label + '</a>';
-  document.getElementById('bottomBtn').innerHTML = '<a href="' + target + '" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">' + label + ' &#8594;</a>';
+  document.getElementById('headerBtn').innerHTML = '<a href="./app.html" class="login-btn">Go to Ladder</a>';
+  document.getElementById('bottomBtn').innerHTML = '<a href="./app.html" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">Go to Ladder &#8594;</a>';
 } else {
   document.getElementById('headerBtn').innerHTML = '<a href="#login" class="login-btn" onclick="showLogin()">Log In</a>';
   document.getElementById('bottomBtn').innerHTML = '<a href="#login" onclick="showLogin()" style="display:block;text-align:center;color:var(--primary);font-weight:700;font-size:1rem;text-decoration:none;">Log In to participate &#8594;</a>';
@@ -185,7 +182,7 @@ function selectSculler(id) {
   localStorage.setItem('csl_role', 'user');
   localStorage.setItem('csl_user_id', id);
   localStorage.setItem('csl_auth', 'true');
-  window.location.href = './user.html';
+  window.location.href = './app.html';
 }
   </script>
 </body>
