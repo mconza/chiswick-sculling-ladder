@@ -99,13 +99,20 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                     if new_votes.get("clearParticipation"):
                         current["caught"] = {}
                     else:
-                        current["caught"].update(new_votes["caught"])
+                        for k, v in new_votes["caught"].items():
+                            if v is None:
+                                current.setdefault("caught", {}).pop(k, None)
+                            else:
+                                current.setdefault("caught", {})[k] = v
                 if "participation" in new_votes:
                     if new_votes.get("clearParticipation"):
                         current["participation"] = {}
                     else:
-                        clean_participation = {k: v for k, v in new_votes["participation"].items() if v is not None}
-                        current.setdefault("participation", {}).update(clean_participation)
+                        for k, v in new_votes["participation"].items():
+                            if v is None:
+                                current.setdefault("participation", {}).pop(k, None)
+                            else:
+                                current.setdefault("participation", {})[k] = v
                 if "manualRanks" in new_votes:
                     if new_votes.get("clearParticipation"):
                         current["manualRanks"] = {}
