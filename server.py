@@ -11,7 +11,7 @@ import os
 import urllib.parse
 from pathlib import Path
 
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 VOTES_FILE = DATA_DIR / "votes.json"
