@@ -65,7 +65,7 @@
       <form id="loginForm">
         <div class="form-group">
           <label for="codeInput">Password</label>
-          <input type="text" id="codeInput" placeholder="Enter password" autofocus required>
+          <input type="text" id="codeInput" placeholder="Enter password" autocomplete="off" autofocus required>
         </div>
         <div class="error-msg" id="errorMsg">Code not recognised. Try again.</div>
         <button type="submit" class="btn btn-primary">Enter &#8594;</button>
@@ -73,7 +73,7 @@
 
       <div id="scullerSelect" style="display:none;margin-top:1.5rem;">
         <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:0.75rem;">Select yourself from the list:</p>
-        <input type="text" id="scullerSearch" placeholder="Search your name..." style="width:100%;padding:0.6rem 0.8rem;border:2px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:0.95rem;margin-bottom:0.5rem;">
+        <input type="text" id="scullerSearch" placeholder="Search your name..." autocomplete="off" style="width:100%;padding:0.6rem 0.8rem;border:2px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:0.95rem;margin-bottom:0.5rem;">
         <div id="scullerList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);"></div>
       </div>
     </div>
