@@ -143,7 +143,7 @@ function showLanding() {
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  var code = document.getElementById('codeInput').value.trim();
+  var code = document.getElementById('codeInput').value.trim().toLowerCase();
   if (code === 'admin') {
     localStorage.setItem('csl_role', 'admin');
     localStorage.setItem('csl_auth', 'true');
