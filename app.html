@@ -878,6 +878,8 @@ if (ev.key === 'Escape') { renderTable(); }
 input.addEventListener('blur', function() { save(); });
 });
 });
+var btn = document.getElementById('saveSessionBtn');
+if (btn) btn.style.display = (isAdmin && activeTab === 'next') ? '' : 'none';
 }
 }
 function renderHistoryTable() {
@@ -1021,7 +1023,6 @@ document.getElementById('historyDate').style.display = 'none';
 currentSort = 'nextStartPos';
 currentDir = 1;
 renderTable();
-document.getElementById('saveSessionBtn').style.display = isAdmin ? '' : 'none';
 } else {
 document.getElementById('userCard').style.display = 'none';
 document.getElementById('nextLadderInfo').textContent = 'Ladder Precedente';
