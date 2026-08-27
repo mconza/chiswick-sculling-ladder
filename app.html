@@ -713,7 +713,7 @@ caughtBtns = '<select class="' + caughtSelectClass + '" data-type="caught" data-
 '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
 '</select>';
 }
-var startingRank = s.rank ? parseInt(s.rank) : null;
+var startingRank = (myManualRanks[s.id] !== undefined) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
 var newRank = computedRanks[s.id] || null;
 var diff = '';
 if (startingRank && newRank) {
