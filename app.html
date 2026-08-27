@@ -247,7 +247,6 @@ localStorage.removeItem('csl_user_id');
 window.location.href = './index.html';
 });
 if (isAdmin) {
-document.getElementById('saveSessionBtn').style.display = '';
 document.getElementById('editLadderBtn').style.display = '';
 }
 function parseLadderDate(dateStr) {
@@ -357,8 +356,9 @@ document.getElementById('ladderModal').style.display = 'none';
 document.getElementById('ladderModal').addEventListener('click', function(e) {
 if (e.target === this) this.style.display = 'none';
 });
-document.getElementById('saveSessionBtn').addEventListener('click', function() {
-var dateStr = getLadderDate();
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'saveSessionBtn' || e.target.closest('#saveSessionBtn')) {
+    var dateStr = getLadderDate();
 var snapshot = {
 date: dateStr,
 ladderInfo: nextLadder,
@@ -387,6 +387,7 @@ body: JSON.stringify(snapshot)
 if (data.ok) alert('Sessione salvata: ' + dateStr);
 else alert('Errore: ' + (data.error || 'unknown'));
 }).catch(function() { alert('Errore di rete'); });
+  }
 });
 // Show user badge and card
 var me = null;
@@ -1016,16 +1017,15 @@ if (tab === 'next') {
 document.getElementById('userCard').style.display = isAdmin ? 'none' : '';
 document.getElementById('nextLadderInfo').textContent = nextLadder.date + ' at ' + nextLadder.time;
 document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\u23F3';
-document.getElementById('saveSessionBtn').style.display = isAdmin ? '' : 'none';
 document.getElementById('historyDate').style.display = 'none';
 currentSort = 'nextStartPos';
 currentDir = 1;
 renderTable();
+document.getElementById('saveSessionBtn').style.display = isAdmin ? '' : 'none';
 } else {
 document.getElementById('userCard').style.display = 'none';
 document.getElementById('nextLadderInfo').textContent = 'Ladder Precedente';
 document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\uD83D\uDCC4';
-document.getElementById('saveSessionBtn').style.display = 'none';
 document.getElementById('historyDate').style.display = '';
 currentSort = 'startPos';
 currentDir = 1;
