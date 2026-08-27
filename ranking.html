@@ -141,8 +141,63 @@ var scullers = [{"id":1,"name":"Aba C","club":"PTRC","rank":"85","lastStartPos":
 var currentSort = 'rank';
 var ranked = [];
 var unranked = [];
+var computedRanks = {};
 
-function getComputedRank(s) { return s.rank ? parseInt(s.rank) : 0; }
+function getComputedRank(s) {
+  if (computedRanks[s.id] !== undefined) return computedRanks[s.id];
+  return s.rank ? parseInt(s.rank) : 0;
+}
+
+function computeRankings() {
+  scullers.forEach(function(s) {
+    computedRanks[s.id] = s.rank ? parseInt(s.rank) : 0;
+  });
+  var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
+  if (starters.length === 0) return;
+  starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
+  var minRank = Infinity;
+  starters.forEach(function(s) {
+    var r = s.rank ? parseInt(s.rank) : 0;
+    if (r > 0 && r < minRank) minRank = r;
+  });
+  if (minRank === Infinity) return;
+  var originalRank = {};
+  starters.forEach(function(s) {
+    originalRank[s.id] = s.rank ? parseInt(s.rank) : 0;
+  });
+  var result = {};
+  starters.forEach(function(s) {
+    result[s.id] = originalRank[s.id];
+  });
+  var i = 0;
+  while (i < starters.length) {
+    var caught = starters[i].lastCaught;
+    if (caught !== 'No') { i++; continue; }
+    var chainStart = i;
+    while (i < starters.length) {
+      caught = starters[i].lastCaught;
+      if (caught !== 'No') break;
+      i++;
+    }
+    var chainEnd = i - 1;
+    var chainLen = chainEnd - chainStart + 1;
+    var boundaryRank;
+    if (i < starters.length) {
+      boundaryRank = originalRank[starters[i].id];
+    } else {
+      boundaryRank = minRank - 1;
+    }
+    for (var j = 0; j < chainLen; j++) {
+      result[starters[chainStart + j].id] = boundaryRank + j;
+    }
+    if (i < starters.length) {
+      result[starters[i].id] = boundaryRank + chainLen;
+    }
+  }
+  starters.forEach(function(s) {
+    computedRanks[s.id] = result[s.id];
+  });
+}
 
 function escHtml(str) {
   var div = document.createElement('div');
@@ -151,6 +206,7 @@ function escHtml(str) {
 }
 
 function init() {
+  computeRankings();
   ranked = scullers.filter(function(s) { return s.rank; });
   unranked = scullers.filter(function(s) { return !s.rank; }).sort(function(a, b) { return a.name.localeCompare(b.name); });
 
@@ -222,7 +278,19 @@ document.getElementById('rankSearch').addEventListener('input', function() {
   renderUnranked();
 });
 
-init();
+fetch('/api/votes')
+  .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(data) {
+    var lastSession = data.lastSession || {};
+    scullers.forEach(function(s) {
+      if (lastSession[s.id]) {
+        s.lastStartPos = lastSession[s.id].lastStartPos;
+        s.lastCaught = lastSession[s.id].lastCaught;
+      }
+    });
+    init();
+  })
+  .catch(function() { init(); });
   </script>
 </body>
 </html>
