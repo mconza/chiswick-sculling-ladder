@@ -140,13 +140,13 @@ if (starters.length === 0) return;
 starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
 var minRank = Infinity;
 starters.forEach(function(s) {
-var r = s.rank ? parseInt(s.rank) : 0;
+var r = getComputedRank(s);
 if (r > 0 && r < minRank) minRank = r;
 });
 if (minRank === Infinity) return;
 var originalRank = {};
 starters.forEach(function(s) {
-originalRank[s.id] = s.rank ? parseInt(s.rank) : 0;
+originalRank[s.id] = getComputedRank(s);
 });
 var result = {};
 starters.forEach(function(s) {
