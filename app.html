@@ -552,8 +552,10 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
-updateUserCard();
 computeRankings();
+var nextPos = computeNextPositions();
+me.nextStartPos = nextPos[me.id] || null;
+updateUserCard();
 renderTable();
 checkAutoSave();
 });
@@ -564,7 +566,7 @@ if (!me) return;
 var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : me.lastCaught;
 document.getElementById('ucName').textContent = me.name;
 document.getElementById('ucClub').textContent = me.club;
-document.getElementById('ucRank').textContent = getComputedRank(me) || 'n/a';
+document.getElementById('ucRank').textContent = me.nextParticipating === 'Yes' && me.nextStartPos ? '#' + me.nextStartPos : (getComputedRank(me) || 'n/a');
 // Show/hide caught section based on whether user raced
 var hasRaced = me.lastStartPos != null;
 document.getElementById('ucCaughtAction').style.display = hasRaced ? '' : 'none';
