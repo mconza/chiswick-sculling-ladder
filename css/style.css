@@ -586,6 +586,11 @@ td.col-last + td.col-next {
   color: #5b21b6;
   border: 2px dashed #5b21b6;
 }
+.btn-request {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
 
 .my-row { background: rgba(99, 102, 241, 0.06) !important; }
 .my-row:hover { background: rgba(99, 102, 241, 0.12) !important; }

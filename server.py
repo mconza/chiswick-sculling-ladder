@@ -24,8 +24,10 @@ HISTORY_DIR.mkdir(exist_ok=True)
 def load_votes():
     if VOTES_FILE.exists():
         with open(VOTES_FILE, "r") as f:
-            return json.load(f)
-    return {"caught": {}, "participation": {}, "manualRanks": {}, "manualStarts": {}, "lastSession": {}}
+            data = json.load(f)
+            data.setdefault("requests", [])
+            return data
+    return {"caught": {}, "participation": {}, "manualRanks": {}, "manualStarts": {}, "lastSession": {}, "requests": []}
 
 def save_votes(votes):
     with open(VOTES_FILE, "w") as f:
@@ -89,7 +91,29 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == "/api/votes":
+        if parsed.path == "/api/requests":
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            try:
+                new_req = json.loads(body)
+                current = load_votes()
+                requests = current.setdefault("requests", [])
+                new_id = max([r.get("id", 0) for r in requests], default=0) + 1
+                new_req["id"] = new_id
+                new_req["status"] = "pending"
+                requests.append(new_req)
+                save_votes(current)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"ok": True, "id": new_id}).encode())
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+        elif parsed.path == "/api/votes":
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
             try:
@@ -185,7 +209,18 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_DELETE(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.startswith("/api/history/"):
+        if parsed.path.startswith("/api/requests/"):
+            req_id = int(parsed.path.split("/api/requests/")[1])
+            current = load_votes()
+            requests = current.get("requests", [])
+            current["requests"] = [r for r in requests if r.get("id") != req_id]
+            save_votes(current)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({"ok": True}).encode())
+        elif parsed.path.startswith("/api/history/"):
             date_str = parsed.path.split("/api/history/")[1]
             history_file = HISTORY_DIR / f"{date_str}.json"
             if history_file.exists():

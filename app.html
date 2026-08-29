@@ -46,7 +46,18 @@
 <option value="PathFind">PathFind</option>
 </select>
 </div>
+<div class="uc-action" id="ucRequestAction">
+<button class="btn-table btn-request" id="requestPosBtn" style="font-size:0.75rem;padding:0.3rem 0.6rem;">Request Position</button>
+<div id="requestPosForm" style="display:none;margin-top:0.4rem;">
+<input type="number" id="requestPosInput" min="1" placeholder="Pos" style="width:60px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:4px;">
+<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.3rem;">Send</button>
+<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.2rem;">X</button>
 </div>
+</div>
+</div>
+<div class="admin-requests" id="adminRequests" style="display:none;margin-bottom:0.75rem;background:var(--bg-card);border-radius:var(--radius);padding:0.75rem 1rem;box-shadow:var(--shadow);">
+<div style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">Position Requests</div>
+<div id="adminRequestsList"></div>
 </div>
 <div class="table-card">
 <div class="tab-bar" id="tabBar">
@@ -230,12 +241,14 @@ checkAndAdvanceLadder();
 computeRankings();
 renderTable();
 updateUserCard();
+if (isAdmin) loadRequests();
 })
 .catch(function() {
 checkAndAdvanceLadder();
 computeRankings();
 renderTable();
 updateUserCard();
+if (isAdmin) loadRequests();
 });
 document.getElementById('searchInput').addEventListener('input', function() {
 renderTable();
@@ -248,6 +261,57 @@ window.location.href = './index.html';
 });
 if (isAdmin) {
 document.getElementById('editLadderBtn').style.display = '';
+}
+var myRequests = [];
+function loadRequests() {
+fetch('/api/votes').then(function(r) { return r.json(); }).then(function(data) {
+myRequests = (data.requests || []).filter(function(r) { return r.status === 'pending'; });
+renderRequests();
+}).catch(function() {});
+}
+function renderRequests() {
+if (!isAdmin) return;
+var container = document.getElementById('adminRequests');
+var list = document.getElementById('adminRequestsList');
+if (myRequests.length === 0) {
+container.style.display = 'none';
+return;
+}
+container.style.display = '';
+list.innerHTML = myRequests.map(function(r) {
+return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.85rem;">' +
+'<span style="font-weight:600;">' + escHtml(r.scullerName) + '</span>' +
+'<span style="color:var(--text-light);">(' + escHtml(r.scullerClub) + ')</span>' +
+'<span>→ pos <strong>#' + r.requestedPos + '</strong></span>' +
+'<span style="flex:1;"></span>' +
+'<button class="btn-table btn-yes" data-req-action="apply" data-req-id="' + r.id + '" data-req-pos="' + r.requestedPos + '" data-req-sid="' + r.scullerId + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">Apply</button>' +
+'<button class="btn-table btn-no-dim" data-req-action="dismiss" data-req-id="' + r.id + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">X</button>' +
+'</div>';
+}).join('');
+list.querySelectorAll('[data-req-action]').forEach(function(btn) {
+btn.addEventListener('click', function() {
+var action = this.dataset.reqAction;
+var reqId = parseInt(this.dataset.reqId);
+if (action === 'apply') {
+var pos = parseInt(this.dataset.reqPos);
+var sid = parseInt(this.dataset.reqSid);
+myManualStarts[sid] = pos;
+localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+var payload = { manualStarts: {} };
+payload.manualStarts[sid] = pos;
+fetch('/api/votes', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+}).catch(function() {});
+}
+fetch('/api/requests/' + reqId, { method: 'DELETE' }).catch(function() {});
+myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
+renderRequests();
+computeRankings();
+renderTable();
+});
+});
 }
 function parseLadderDate(dateStr) {
 var match = dateStr.match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
@@ -516,6 +580,38 @@ if (me.nextParticipating === 'Yes') ucSelect.classList.add('val-yes');
 else if (me.nextParticipating === 'No') ucSelect.classList.add('val-no');
 else if (me.nextParticipating === 'PathFind') ucSelect.classList.add('val-pf');
 }
+}
+if (!isAdmin) {
+document.getElementById('requestPosBtn').addEventListener('click', function() {
+document.getElementById('requestPosForm').style.display = '';
+document.getElementById('requestPosInput').focus();
+});
+document.getElementById('requestPosCancel').addEventListener('click', function() {
+document.getElementById('requestPosForm').style.display = 'none';
+document.getElementById('requestPosInput').value = '';
+});
+document.getElementById('requestPosSubmit').addEventListener('click', function() {
+var pos = parseInt(document.getElementById('requestPosInput').value);
+if (isNaN(pos) || pos < 1) return;
+var payload = {
+scullerId: currentUserId,
+scullerName: me.name,
+scullerClub: me.club,
+requestedPos: pos,
+timestamp: new Date().toISOString()
+};
+fetch('/api/requests', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+}).then(function(r) { return r.json(); }).then(function(data) {
+if (data.ok) {
+document.getElementById('requestPosForm').style.display = 'none';
+document.getElementById('requestPosInput').value = '';
+alert('Request sent!');
+}
+}).catch(function() {});
+});
 }
 function getVal(s, key) {
 if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
