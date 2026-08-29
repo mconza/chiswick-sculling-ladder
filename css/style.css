@@ -600,9 +600,10 @@ td.col-last + td.col-next {
   background: var(--bg-card);
   border-left: 3px solid var(--accent);
   border-radius: var(--radius);
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
+  width: 100%;
 }
 .uc-top {
   display: flex;
