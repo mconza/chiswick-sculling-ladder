@@ -49,14 +49,18 @@
 <div class="uc-action" id="ucRequestAction">
 <button class="btn-table btn-request" id="requestPosBtn" style="font-size:0.75rem;padding:0.3rem 0.6rem;">Request Position</button>
 <div id="requestPosForm" style="display:none;margin-top:0.4rem;">
-<div class="toggle-group" id="requestDirToggle" style="display:inline-flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
+<div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+<div class="toggle-group" id="requestDirToggle" style="display:inline-flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
 <button class="toggle-btn active" data-dir="before" style="padding:0.25rem 0.6rem;font-size:0.75rem;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;">Before</button>
 <button class="toggle-btn" data-dir="after" style="padding:0.25rem 0.6rem;font-size:0.75rem;border:none;background:var(--bg-card);color:var(--text);cursor:pointer;font-weight:600;">After</button>
 </div>
-<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off" style="width:140px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:6px;margin-left:0.3rem;">
-<div id="requestPosResults" style="display:none;max-height:120px;overflow-y:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;margin-top:0.2rem;font-size:0.8rem;"></div>
-<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-top:0.3rem;">Send</button>
-<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.2rem;margin-top:0.3rem;">X</button>
+<div style="position:relative;">
+<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off" style="width:140px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:6px;">
+<div id="requestPosResults" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:120px;overflow-y:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;margin-top:2px;font-size:0.8rem;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.12);"></div>
+</div>
+<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;">Send</button>
+<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;">X</button>
+</div>
 </div>
 </div>
 </div>
