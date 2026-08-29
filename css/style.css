@@ -944,3 +944,26 @@ td.col-last + td.col-next {
   .landing-hero h1 { font-size: 1.3rem; }
   .landing-content { padding: 1rem; }
 }
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+.toast-show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.toast-success { background: var(--success); }
+.toast-error { background: #dc2626; }
