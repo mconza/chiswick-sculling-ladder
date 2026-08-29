@@ -986,7 +986,8 @@ function checkAutoSave() {
 if (activeTab !== 'next') return;
 var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 if (starters.length === 0) return;
-var allVoted = starters.every(function(s) {
+var participants = starters.slice(0, -1);
+var allVoted = participants.every(function(s) {
 var cv = myCaught[s.id];
 return cv === 'Yes' || cv === 'No' || cv === 'PathFind';
 });
