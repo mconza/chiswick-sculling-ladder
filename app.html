@@ -844,10 +844,24 @@ function save() {
 var val = parseInt(input.value);
 if (isNaN(val) || val < 0) { renderTable(); return; }
 if (field === 'rank') {
+var oldRank = getComputedRank(s);
+if (oldRank !== val) {
+var shift = val < oldRank ? 1 : -1;
+var lo = Math.min(oldRank, val);
+var hi = Math.max(oldRank, val);
+scullers.forEach(function(sc) {
+if (sc.id === id) return;
+var r = getComputedRank(sc);
+if (r >= lo && r <= hi) {
+var newR = r + shift;
+myManualRanks[sc.id] = newR;
+}
+});
+}
 myManualRanks[id] = val;
 localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
 var payload = { manualRanks: {} };
-payload.manualRanks[id] = val;
+for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
