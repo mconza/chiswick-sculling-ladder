@@ -598,7 +598,7 @@ td.col-last + td.col-next {
 /* ── USER CARD ── */
 .user-card {
   background: var(--bg-card);
-  border: 2px solid var(--accent);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 0.75rem;
   box-shadow: var(--shadow);
