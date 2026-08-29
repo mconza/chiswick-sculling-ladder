@@ -610,8 +610,10 @@ if (data.ok) {
 document.getElementById('requestPosForm').style.display = 'none';
 document.getElementById('requestPosInput').value = '';
 alert('Request sent!');
+} else {
+alert('Error: ' + (data.error || 'unknown'));
 }
-}).catch(function() {});
+}).catch(function(e) { alert('Network error: ' + e.message); });
 });
 }
 function getVal(s, key) {
