@@ -21,14 +21,13 @@
 </header>
 <div class="container">
 <div class="user-card" id="userCard" style="display:none;">
-<div class="user-card-top">
-<span class="user-card-name" id="ucName"></span>
-<span class="user-card-club" id="ucClub"></span>
-<span class="user-card-rank">#<span class="uc-value" id="ucRank"></span></span>
+<div class="uc-top">
+<span class="uc-name" id="ucName"></span>
+<span class="uc-club" id="ucClub"></span>
+<span class="uc-rank">#<span class="uc-rank-val" id="ucRank"></span></span>
 </div>
-<div class="user-card-actions">
-<div class="uc-row" id="ucCaughtAction" style="display:none;">
-<span class="uc-action-label" id="ucCaughtActionLabel">Caught?</span>
+<div class="uc-section" id="ucCaughtAction" style="display:none;">
+<span class="uc-label" id="ucCaughtActionLabel">Caught?</span>
 <span class="uc-caught-by" id="ucCaughtBy"></span>
 <div class="btn-group">
 <button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
@@ -37,31 +36,31 @@
 <button class="btn-table" data-uc="caught" data-val="">-</button>
 </div>
 </div>
+<div class="uc-section">
 <div class="uc-row">
-<div class="uc-action">
-<span class="uc-action-label" id="ucNextActionLabel">Next?</span>
+<span class="uc-label" id="ucNextActionLabel">Next?</span>
 <select class="inline-select" data-uc="confirmed">
 <option value="">-</option>
 <option value="Yes">Yes</option>
 <option value="No">No</option>
 <option value="PathFind">PathFind</option>
 </select>
+<div id="ucRequestAction" style="margin-left:auto;">
+<button class="btn-sm-accent" id="requestPosBtn">Request Position</button>
 </div>
-<div class="uc-action" id="ucRequestAction">
-<button class="btn-table btn-request" id="requestPosBtn" style="font-size:0.75rem;padding:0.3rem 0.6rem;">Request Position</button>
-<div id="requestPosForm" style="display:none;">
-<div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-<div class="toggle-group" id="requestDirToggle" style="display:inline-flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-<button class="toggle-btn active" data-dir="before" style="padding:0.25rem 0.6rem;font-size:0.75rem;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;">Before</button>
-<button class="toggle-btn" data-dir="after" style="padding:0.25rem 0.6rem;font-size:0.75rem;border:none;background:var(--bg-card);color:var(--text);cursor:pointer;font-weight:600;">After</button>
 </div>
-<div style="position:relative;">
-<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off" style="width:140px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:6px;">
-<div id="requestPosResults" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:120px;overflow-y:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;margin-top:2px;font-size:0.8rem;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.12);"></div>
+<div id="requestPosForm" style="display:none;" class="uc-request-form">
+<div class="uc-request-row">
+<div class="toggle-group" id="requestDirToggle">
+<button class="toggle-btn active" data-dir="before">Before</button>
+<button class="toggle-btn" data-dir="after">After</button>
 </div>
-<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;">Send</button>
-<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;">X</button>
+<div class="uc-search-wrap">
+<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off">
+<div id="requestPosResults"></div>
 </div>
+<button class="btn-sm-accent" id="requestPosSubmit">Send</button>
+<button class="btn-sm-dim" id="requestPosCancel">X</button>
 </div>
 </div>
 </div>
