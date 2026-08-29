@@ -967,3 +967,4 @@ td.col-last + td.col-next {
 }
 .toast-success { background: var(--success); }
 .toast-error { background: #dc2626; }
+.request-result:hover { background: var(--bg-muted); }
