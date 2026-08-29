@@ -641,8 +641,15 @@ td.col-last + td.col-next {
 .uc-accent { color: var(--accent); }
 .user-card-actions {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.4rem;
   margin-left: auto;
+}
+.uc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 .uc-action {
   display: flex;
@@ -677,7 +684,8 @@ td.col-last + td.col-next {
 
 @media (max-width: 640px) {
   .user-card { flex-direction: column; align-items: flex-start; }
-  .user-card-actions { margin-left: 0; flex-wrap: wrap; }
+  .user-card-actions { margin-left: 0; width: 100%; }
+  .uc-row { width: 100%; }
 }
 
 /* ── RULES ── */
