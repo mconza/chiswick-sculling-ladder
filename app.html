@@ -49,9 +49,14 @@
 <div class="uc-action" id="ucRequestAction">
 <button class="btn-table btn-request" id="requestPosBtn" style="font-size:0.75rem;padding:0.3rem 0.6rem;">Request Position</button>
 <div id="requestPosForm" style="display:none;margin-top:0.4rem;">
-<input type="number" id="requestPosInput" min="1" placeholder="Pos" style="width:60px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:4px;">
-<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.3rem;">Send</button>
-<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.2rem;">X</button>
+<select id="requestPosDir" style="padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:4px;">
+<option value="before">before</option>
+<option value="after">after</option>
+</select>
+<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off" style="width:140px;padding:0.3rem;font-size:0.8rem;border:1px solid var(--border);border-radius:4px;margin-left:0.3rem;">
+<div id="requestPosResults" style="display:none;max-height:120px;overflow-y:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;margin-top:0.2rem;font-size:0.8rem;"></div>
+<button class="btn-table btn-yes" id="requestPosSubmit" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-top:0.3rem;">Send</button>
+<button class="btn-table btn-no-dim" id="requestPosCancel" style="font-size:0.75rem;padding:0.3rem 0.5rem;margin-left:0.2rem;margin-top:0.3rem;">X</button>
 </div>
 </div>
 </div>
@@ -280,12 +285,13 @@ return;
 }
 container.style.display = '';
 list.innerHTML = myRequests.map(function(r) {
+var dirLabel = r.position === 'before' ? 'before' : 'after';
 return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.85rem;">' +
 '<span style="font-weight:600;">' + escHtml(r.scullerName) + '</span>' +
 '<span style="color:var(--text-light);">(' + escHtml(r.scullerClub) + ')</span>' +
-'<span>→ pos <strong>#' + r.requestedPos + '</strong></span>' +
+'<span>' + dirLabel + ' <strong>' + escHtml(r.refScullerName) + '</strong></span>' +
 '<span style="flex:1;"></span>' +
-'<button class="btn-table btn-yes" data-req-action="apply" data-req-id="' + r.id + '" data-req-pos="' + r.requestedPos + '" data-req-sid="' + r.scullerId + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">Apply</button>' +
+'<button class="btn-table btn-yes" data-req-action="apply" data-req-id="' + r.id + '" data-req-rid="' + r.refScullerId + '" data-req-dir="' + r.position + '" data-req-sid="' + r.scullerId + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">Apply</button>' +
 '<button class="btn-table btn-no-dim" data-req-action="dismiss" data-req-id="' + r.id + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">X</button>' +
 '</div>';
 }).join('');
@@ -294,17 +300,25 @@ btn.addEventListener('click', function() {
 var action = this.dataset.reqAction;
 var reqId = parseInt(this.dataset.reqId);
 if (action === 'apply') {
-var pos = parseInt(this.dataset.reqPos);
+var refSid = parseInt(this.dataset.reqRid);
+var dir = this.dataset.reqDir;
 var sid = parseInt(this.dataset.reqSid);
-myManualStarts[sid] = pos;
+var refSc = scullers.find(function(s) { return s.id === refSid; });
+if (refSc) {
+var refPos = myManualStarts[refSid] || (refSc.nextStartPos ? parseInt(refSc.nextStartPos) : null);
+if (refPos != null) {
+var newPos = dir === 'before' ? refPos : refPos + 1;
+myManualStarts[sid] = newPos;
 localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
 var payload = { manualStarts: {} };
-payload.manualStarts[sid] = pos;
+payload.manualStarts[sid] = newPos;
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
+}
+}
 }
 fetch('/api/requests/' + reqId, { method: 'DELETE' }).catch(function() {});
 myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
@@ -583,22 +597,48 @@ else if (me.nextParticipating === 'PathFind') ucSelect.classList.add('val-pf');
 }
 }
 if (!isAdmin) {
+var selectedRefSculler = null;
 document.getElementById('requestPosBtn').addEventListener('click', function() {
 document.getElementById('requestPosForm').style.display = '';
-document.getElementById('requestPosInput').focus();
+document.getElementById('requestPosSearch').focus();
 });
 document.getElementById('requestPosCancel').addEventListener('click', function() {
 document.getElementById('requestPosForm').style.display = 'none';
-document.getElementById('requestPosInput').value = '';
+document.getElementById('requestPosSearch').value = '';
+document.getElementById('requestPosResults').style.display = 'none';
+selectedRefSculler = null;
+});
+document.getElementById('requestPosSearch').addEventListener('input', function() {
+var q = this.value.toLowerCase().trim();
+var results = document.getElementById('requestPosResults');
+if (q.length < 1) { results.style.display = 'none'; return; }
+var matches = scullers.filter(function(s) {
+return s.id !== currentUserId && (s.name.toLowerCase().indexOf(q) >= 0 || s.club.toLowerCase().indexOf(q) >= 0);
+}).slice(0, 8);
+if (matches.length === 0) { results.style.display = 'none'; return; }
+results.style.display = '';
+results.innerHTML = matches.map(function(s) {
+return '<div class="request-result" data-rid="' + s.id + '" style="padding:0.3rem 0.5rem;cursor:pointer;border-bottom:1px solid var(--border);">' + escHtml(s.name) + ' <span style="color:var(--text-light);font-size:0.75rem;">' + escHtml(s.club) + '</span></div>';
+}).join('');
+results.querySelectorAll('.request-result').forEach(function(el) {
+el.addEventListener('click', function() {
+var sid = parseInt(this.dataset.rid);
+selectedRefSculler = scullers.find(function(s) { return s.id === sid; });
+document.getElementById('requestPosSearch').value = selectedRefSculler.name;
+results.style.display = 'none';
+});
+});
 });
 document.getElementById('requestPosSubmit').addEventListener('click', function() {
-var pos = parseInt(document.getElementById('requestPosInput').value);
-if (isNaN(pos) || pos < 1) return;
+if (!selectedRefSculler) return;
+var dir = document.getElementById('requestPosDir').value;
 var payload = {
 scullerId: currentUserId,
 scullerName: me.name,
 scullerClub: me.club,
-requestedPos: pos,
+refScullerId: selectedRefSculler.id,
+refScullerName: selectedRefSculler.name,
+position: dir,
 timestamp: new Date().toISOString()
 };
 fetch('/api/requests', {
@@ -608,7 +648,9 @@ body: JSON.stringify(payload)
 }).then(function(r) { return r.json(); }).then(function(data) {
 if (data.ok) {
 document.getElementById('requestPosForm').style.display = 'none';
-document.getElementById('requestPosInput').value = '';
+document.getElementById('requestPosSearch').value = '';
+document.getElementById('requestPosResults').style.display = 'none';
+selectedRefSculler = null;
 alert('Request sent!');
 } else {
 alert('Error: ' + (data.error || 'unknown'));
