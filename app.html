@@ -944,7 +944,6 @@ row.style.transition = 'background 0.4s';
 row.style.background = 'rgba(99, 102, 241, 0.15)';
 setTimeout(function() { row.style.background = ''; }, 400);
 }
-computeRankings();
 renderTable();
 checkAutoSave();
 });
@@ -989,7 +988,6 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
-computeRankings();
 renderTable();
 checkAutoSave();
 });
