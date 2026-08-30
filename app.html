@@ -165,6 +165,10 @@ var currentDir = 1;
 var skipSort = false;
 var computedRanks = {};
 var manualNewRanks = {};
+function getRankForCascade(s) {
+if (manualNewRanks[s.id] !== undefined && manualNewRanks[s.id] !== null) return manualNewRanks[s.id];
+return getComputedRank(s);
+}
 function computeRankings() {
 scullers.forEach(function(s) {
 computedRanks[s.id] = getComputedRank(s);
@@ -174,20 +178,25 @@ if (starters.length === 0) return;
 starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
 var minRank = Infinity;
 starters.forEach(function(s) {
-var r = getComputedRank(s);
+var r = getRankForCascade(s);
 if (r > 0 && r < minRank) minRank = r;
 });
 if (minRank === Infinity) return;
 var originalRank = {};
 starters.forEach(function(s) {
-originalRank[s.id] = getComputedRank(s);
+originalRank[s.id] = getRankForCascade(s);
 });
 var result = {};
 starters.forEach(function(s) {
 result[s.id] = originalRank[s.id];
 });
+var locked = {};
+for (var k in manualNewRanks) {
+locked[k] = true;
+}
 var i = 0;
 while (i < starters.length) {
+if (locked[starters[i].id]) { i++; continue; }
 var caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
 if (caught !== 'No') {
 i++;
@@ -195,38 +204,41 @@ continue;
 }
 var chainStart = i;
 while (i < starters.length) {
+if (locked[starters[i].id]) break;
 caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
 if (caught !== 'No') break;
 i++;
 }
 var chainEnd = i - 1;
 var chainLen = chainEnd - chainStart + 1;
+if (chainLen <= 0) { i++; continue; }
 var boundaryRank;
 if (i < starters.length) {
 boundaryRank = originalRank[starters[i].id];
 } else {
 boundaryRank = minRank - 1;
 }
-for (var j = 0; j < chainLen; j++) {
-result[starters[chainStart + j].id] = boundaryRank + j;
+var usedByLocked = {};
+for (var li = 0; li < starters.length; li++) {
+if (locked[starters[li].id]) usedByLocked[result[starters[li].id]] = true;
 }
-if (i < starters.length) {
-result[starters[i].id] = boundaryRank + chainLen;
+var base = boundaryRank;
+while (usedByLocked[base]) base++;
+for (var j = 0; j < chainLen; j++) {
+while (usedByLocked[base + j]) base++;
+result[starters[chainStart + j].id] = base + j;
+}
+if (i < starters.length && !locked[starters[i].id]) {
+var nextVal = base + chainLen;
+while (usedByLocked[nextVal]) nextVal++;
+result[starters[i].id] = nextVal;
 }
 }
 starters.forEach(function(s) {
 computedRanks[s.id] = result[s.id];
 });
-var usedRanks = {};
-for (var sid in computedRanks) {
-if (computedRanks[sid] !== undefined) usedRanks[computedRanks[sid]] = true;
-}
-for (var k in manualNewRanks) {
-var r = manualNewRanks[k];
-while (usedRanks[r] !== undefined) r++;
-manualNewRanks[k] = r;
-usedRanks[r] = true;
-computedRanks[k] = r;
+for (var mk in manualNewRanks) {
+computedRanks[mk] = manualNewRanks[mk];
 }
 }
 var originalRanks = {};
@@ -1078,12 +1090,10 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 } else if (field === 'newRank') {
-delete myManualRanks[id];
-manualNewRanks[id] = val;
+if (isNaN(val) || val < 0) { delete manualNewRanks[id]; }
+else { manualNewRanks[id] = val; }
 localStorage.setItem('csl_manualNewRanks', JSON.stringify(manualNewRanks));
-localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
-var payload = { manualRanks: {}, manualNewRanks: manualNewRanks };
-for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
+var payload = { manualNewRanks: manualNewRanks };
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
