@@ -1,13 +1,14 @@
 {
   "nextLadder": {
-    "date": "Sun 30-Aug-2026",
-    "time": "10:30",
+    "date": "Sun 13-Sep-2026",
+    "time": "16:49",
     "start": "Richmond Lock",
     "finish": "Chiswick Bridge"
   },
   "lastLadder": {
-    "date": "Sun 16-Aug-2026",
-    "time": "10:30",
-    "start": "Richmond Lock"
+    "date": "Sun 30-Aug-2026",
+    "time": "16:49",
+    "start": "Richmond Lock",
+    "finish": "Chiswick Bridge"
   }
 }
