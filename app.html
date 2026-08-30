@@ -1048,15 +1048,16 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 } else {
-var oldStart = myManualStarts[id] !== undefined ? myManualStarts[id] : (s.lastStartPos ? parseInt(s.lastStartPos) : null);
+var curPositions = computeNextPositions();
+var oldStart = curPositions[id] || null;
 if (oldStart !== null && oldStart !== val) {
 var shift2 = val < oldStart ? 1 : -1;
 var lo2 = Math.min(oldStart, val);
 var hi2 = Math.max(oldStart, val);
 scullers.forEach(function(sc) {
 if (sc.id === id) return;
-var cur = myManualStarts[sc.id] !== undefined ? myManualStarts[sc.id] : (sc.lastStartPos ? parseInt(sc.lastStartPos) : null);
-if (cur !== null && cur >= lo2 && cur <= hi2) {
+var cur = curPositions[sc.id];
+if (cur != null && cur >= lo2 && cur <= hi2) {
 var newCur = cur + shift2;
 myManualStarts[sc.id] = newCur;
 }
