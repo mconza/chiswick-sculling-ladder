@@ -167,7 +167,7 @@ function computeRankings() {
 scullers.forEach(function(s) {
 computedRanks[s.id] = getComputedRank(s);
 });
-var starters = scullers.filter(function(s) { return s.lastStartPos != null && !isNaN(parseInt(s.lastStartPos)); });
+var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 if (starters.length === 0) return;
 starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
 var minRank = Infinity;
@@ -245,10 +245,6 @@ if (lastSession[s.id]) {
 s.lastStartPos = lastSession[s.id].lastStartPos;
 s.lastCaught = lastSession[s.id].lastCaught;
 }
-});
-var serverLastStartPos = data.lastStartPos || {};
-scullers.forEach(function(s) {
-if (serverLastStartPos[s.id] !== undefined) s.lastStartPos = serverLastStartPos[s.id];
 });
 return fetch('/api/config');
 })
@@ -583,12 +579,12 @@ var caughtByEl = document.getElementById('ucCaughtBy');
 var hasExplicitChoice = myCaught[me.id] !== undefined;
 if (caughtVal === 'Yes') {
 var myPos = parseInt(me.lastStartPos);
-var participants = scullers.filter(function(s) { return s.lastStartPos != null && !isNaN(parseInt(s.lastStartPos)); });
+var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
 var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
 caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
 } else if (caughtVal === 'No') {
 var myPos = parseInt(me.lastStartPos);
-var participants = scullers.filter(function(s) { return s.lastStartPos != null && !isNaN(parseInt(s.lastStartPos)); });
+var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
 var behind = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
 caughtByEl.textContent = behind ? behind.name + ' didn\'t catch you' : 'Not caught';
 } else if (caughtVal === 'PathFind') {
@@ -774,7 +770,7 @@ map[s.id] = maxPos + 1;
 return map;
 }
 function computeLastPositions() {
-var starters = scullers.filter(function(s) { return s.lastStartPos != null && !isNaN(parseInt(s.lastStartPos)); });
+var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 starters.sort(function(a, b) { return getComputedRank(b) - getComputedRank(a); });
 var map = {};
 starters.forEach(function(s, i) { map[s.id] = i + 1; });
@@ -907,7 +903,7 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
 (isAdmin ? '<td class="col-separator"></td>' : '') +
 (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
-(isAdmin ? '<td class="col-rank">' + (isAdmin ? '<span class="editable-cell" data-field="lastStartPos" data-id="' + s.id + '">' + (s.lastStartPos || '<span class="muted">-</span>') + '</span>' : (s.lastStartPos || '<span class="muted">-</span>')) + '</td>' : '') +
+(isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
 '<td class="col-rank">' + (isAdmin ? '<span class="editable-cell" data-field="rank" data-id="' + s.id + '">' : '') + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + (isAdmin ? '</span>' : '') + '</td>' +
 '<td class="col-next">' + (isAdmin ? '<span class="editable-cell" data-field="newRank" data-id="' + s.id + '">' : '') + (newRank || '<span class="muted">-</span>') + (isAdmin ? '</span>' : '') + '</td>' +
 '</tr>';
@@ -948,6 +944,7 @@ row.style.transition = 'background 0.4s';
 row.style.background = 'rgba(99, 102, 241, 0.15)';
 setTimeout(function() { row.style.background = ''; }, 400);
 }
+computeRankings();
 renderTable();
 checkAutoSave();
 });
@@ -992,6 +989,7 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
+computeRankings();
 renderTable();
 checkAutoSave();
 });
@@ -1006,37 +1004,19 @@ var s = scullers.find(function(s) { return s.id === id; });
 var currentVal = '';
 if (field === 'rank') currentVal = getComputedRank(s);
 else if (field === 'newRank') currentVal = computedRanks[s.id] || '';
-else if (field === 'lastStartPos') currentVal = s.lastStartPos || '';
 else currentVal = myManualStarts[id] || '';
 var orig = this;
 var input = document.createElement('input');
-if (field === 'lastStartPos') { input.type = 'text'; input.style.width = '50px'; }
-else { input.type = 'number'; input.min = '0'; input.style.width = '50px'; }
+input.type = 'number';
+input.min = '0';
 input.value = currentVal || '';
 input.className = 'inline-edit-input';
+input.style.width = '50px';
 orig.textContent = '';
 orig.appendChild(input);
 input.focus();
 input.select();
 function save() {
-if (field === 'lastStartPos') {
-var val = input.value.trim();
-if (val === '' || val === '-') { val = null; }
-else if (val.toUpperCase() === 'DNS' || val.toUpperCase() === 'dns') { val = 'DNS'; }
-else if (isNaN(parseInt(val))) { renderTable(); return; }
-s.lastStartPos = val;
-var payload = { lastStartPos: {} };
-payload.lastStartPos[id] = val;
-fetch('/api/votes', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-}).catch(function() {});
-computeRankings();
-renderTable();
-updateUserCard();
-return;
-}
 var val = parseInt(input.value);
 if (isNaN(val) || val < 0) { renderTable(); return; }
 if (field === 'rank') {
@@ -1054,6 +1034,17 @@ myManualRanks[sc.id] = newR;
 }
 });
 }
+myManualRanks[id] = val;
+localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
+var payload = { manualRanks: {} };
+for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
+fetch('/api/votes', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+}).catch(function() {});
+} else if (field === 'newRank') {
+computedRanks[id] = val;
 myManualRanks[id] = val;
 localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
 var payload = { manualRanks: {} };
@@ -1193,7 +1184,7 @@ return parts[3] + '-' + m[parts[2]] + '-' + ('0' + parts[1]).slice(-2);
 }
 function checkAutoSave() {
 if (activeTab !== 'next') return;
-var starters = scullers.filter(function(s) { return s.lastStartPos != null && !isNaN(parseInt(s.lastStartPos)); });
+var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 if (starters.length === 0) return;
 var participants = starters.slice(0, -1);
 var allVoted = participants.every(function(s) {

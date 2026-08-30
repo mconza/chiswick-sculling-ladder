@@ -27,7 +27,7 @@ def load_votes():
             data = json.load(f)
             data.setdefault("requests", [])
             return data
-    return {"caught": {}, "participation": {}, "manualRanks": {}, "manualStarts": {}, "lastSession": {}, "lastStartPos": {}, "lastCaught": {}, "requests": []}
+    return {"caught": {}, "participation": {}, "manualRanks": {}, "manualStarts": {}, "lastSession": {}, "requests": []}
 
 def save_votes(votes):
     with open(VOTES_FILE, "w") as f:
@@ -149,18 +149,6 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                         current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
                 if "lastSession" in new_votes:
                     current["lastSession"] = new_votes["lastSession"]
-                if "lastStartPos" in new_votes:
-                    for k, v in new_votes["lastStartPos"].items():
-                        if v is None:
-                            current.setdefault("lastStartPos", {}).pop(k, None)
-                        else:
-                            current.setdefault("lastStartPos", {})[k] = v
-                if "lastCaught" in new_votes:
-                    for k, v in new_votes["lastCaught"].items():
-                        if v is None:
-                            current.setdefault("lastCaught", {}).pop(k, None)
-                        else:
-                            current.setdefault("lastCaught", {})[k] = v
                 save_votes(current)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
