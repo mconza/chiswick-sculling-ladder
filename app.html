@@ -850,7 +850,7 @@ document.getElementById('searchCount').textContent =
 list.length + ' of ' + (isAdmin ? list.length : scullers.length) + ' scullers';
 var rows = list.map(function(s) {
 var participatingVal = s.nextParticipating;
-var caughtVal = myCaught[s.id] !== undefined ? myCaught[s.id] : null;
+var caughtVal = myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
 var startPos = nextPositions[s.id] || null;
 var btnYesCls = participatingVal === 'Yes' ? 'btn-yes' : 'btn-yes-dim';
 var btnNoCls = participatingVal === 'No' ? 'btn-no' : 'btn-no-dim';
