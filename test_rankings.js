@@ -87,10 +87,16 @@ function createEngine(scullers, myCaught, myManualRanks) {
         i++;
       }
       var chainEnd = i - 1;
+      if (chainEnd === starters.length - 1 && chainEnd > chainStart) {
+        chainEnd--;
+      }
       var chainLen = chainEnd - chainStart + 1;
+      if (chainLen <= 0) continue;
       var boundaryRank;
       if (i < starters.length) {
         boundaryRank = originalRank[starters[i].id];
+      } else if (chainEnd < starters.length - 1) {
+        boundaryRank = originalRank[starters[chainEnd + 1].id];
       } else {
         boundaryRank = minRank - 1;
       }
@@ -99,6 +105,8 @@ function createEngine(scullers, myCaught, myManualRanks) {
       }
       if (i < starters.length) {
         result[starters[i].id] = boundaryRank + chainLen;
+      } else if (chainEnd < starters.length - 1) {
+        result[starters[chainEnd + 1].id] = boundaryRank + chainLen;
       }
     }
     starters.forEach(function(s) {
@@ -126,10 +134,10 @@ console.log('\n=== Known Scenarios (3 people) ===\n');
 
 // Scenario 1: All No (except last)
 // ABA(12) pos1 last, Simon(13) pos2 No, Inkeri(171) pos3 No
-// Chain: Simon,Inkeri (both No) → boundaryRank = minRank-1 = 11
-// result[Simon]=11, result[Inkeri]=12
-// ABA stays at originalRank=12
-console.log('Test 1: All No — chain fills from bottom');
+// Inkeri is last with 'No' → excluded from chain (meaningless)
+// Chain: Simon only → boundaryRank = originalRank[Inkeri] = 171
+// result[Simon]=171, Inkeri bumped to 172
+console.log('Test 1: All No — last person excluded, only Simon improves');
 (function() {
   var eng = createEngine(
     [sc(1,12,1,null), sc(2,13,2,'No'), sc(3,171,3,'No')],
@@ -137,8 +145,8 @@ console.log('Test 1: All No — chain fills from bottom');
   );
   eng.computeRankings();
   assertEqual(eng.computedRanks[1], 12, 'ABA stays 12');
-  assertEqual(eng.computedRanks[2], 11, 'Simon → 11');
-  assertEqual(eng.computedRanks[3], 12, 'Inkeri → 12');
+  assertEqual(eng.computedRanks[2], 171, 'Simon → 171');
+  assertEqual(eng.computedRanks[3], 172, 'Inkeri bumped to 172');
 })();
 
 // Scenario 2: Inkeri Yes
@@ -180,8 +188,8 @@ console.log('\n=== Chain Rule Tests ===\n');
 // Chain stops at first Yes
 // 5 people: A(10)pos1 last, B(11)pos2 No, C(12)pos3 Yes, D(13)pos4 No, E(14)pos5 No
 // Chain 1: B → boundaryRank=originalRank[C]=12 → result[B]=12, result[C]=13
-// Chain 2: D,E → boundaryRank=minRank-1=9 → result[D]=9, result[E]=10
-// A stays 10
+// E is last with No → excluded. Chain 2: D only → boundaryRank=originalRank[E]=14
+// result[D]=14, E bumped to 15
 console.log('Test 4: Chain stops at Yes, then new chain');
 (function() {
   var eng = createEngine(
@@ -193,8 +201,8 @@ console.log('Test 4: Chain stops at Yes, then new chain');
   assertEqual(eng.computedRanks[1], 10, 'A stays 10');
   assertEqual(eng.computedRanks[2], 12, 'B → 12');
   assertEqual(eng.computedRanks[3], 13, 'C → 13');
-  assertEqual(eng.computedRanks[4], 9, 'D → 9');
-  assertEqual(eng.computedRanks[5], 10, 'E → 10');
+  assertEqual(eng.computedRanks[4], 14, 'D → 14');
+  assertEqual(eng.computedRanks[5], 15, 'E bumped to 15');
 })();
 
 // All Yes — nobody improves
@@ -212,9 +220,9 @@ console.log('Test 5: All Yes — ranks unchanged');
 
 // All No (except last)
 // A(10)pos1 last, B(11)pos2 No, C(12)pos3 No
-// Chain: B,C → boundaryRank=minRank-1=9 → result[B]=9, result[C]=10
-// A stays 10
-console.log('Test 6: All No — full chain fills from bottom');
+// C is last with No → excluded. Chain: B only
+// boundaryRank = originalRank[C] = 12 → result[B]=12, C bumped to 13
+console.log('Test 6: All No — last excluded, only B improves');
 (function() {
   var eng = createEngine(
     [sc(1,10,1,null), sc(2,11,2,'No'), sc(3,12,3,'No')],
@@ -222,8 +230,8 @@ console.log('Test 6: All No — full chain fills from bottom');
   );
   eng.computeRankings();
   assertEqual(eng.computedRanks[1], 10, 'A stays 10');
-  assertEqual(eng.computedRanks[2], 9, 'B → 9');
-  assertEqual(eng.computedRanks[3], 10, 'C → 10');
+  assertEqual(eng.computedRanks[2], 12, 'B → 12');
+  assertEqual(eng.computedRanks[3], 13, 'C bumped to 13');
 })();
 
 // myCaught overrides lastCaught
@@ -284,8 +292,8 @@ console.log('Test 10: PathFinder skipped in chain');
 
 // Two separate chains separated by Yes
 // A(10)pos1 last, B(11)pos2 No, C(12)pos3 Yes, D(13)pos4 No, E(14)pos5 No
-// Chain 1: B → boundaryRank=originalRank[C]=12 → result[B]=12, result[C]=13
-// Chain 2: D,E → boundaryRank=minRank-1=9 → result[D]=9, result[E]=10
+// E is last with No → excluded. Chain 1: B → boundaryRank=C=12 → result[B]=12, C=13
+// Chain 2: D only → boundaryRank=originalRank[E]=14 → result[D]=14, E bumped to 15
 console.log('Test 11: Two separate chains');
 (function() {
   var eng = createEngine(
@@ -297,13 +305,14 @@ console.log('Test 11: Two separate chains');
   assertEqual(eng.computedRanks[1], 10, 'A stays 10');
   assertEqual(eng.computedRanks[2], 12, 'B → 12');
   assertEqual(eng.computedRanks[3], 13, 'C → 13');
-  assertEqual(eng.computedRanks[4], 9, 'D → 9');
-  assertEqual(eng.computedRanks[5], 10, 'E → 10');
+  assertEqual(eng.computedRanks[4], 14, 'D → 14');
+  assertEqual(eng.computedRanks[5], 15, 'E bumped to 15');
 })();
 
 // myManualRanks overrides rank
-// Note: myManualRanks feeds into getComputedRank which is used as
-// originalRank in the cascade, so it affects the input but the cascade can override.
+// C has manual rank 20. C is last with No → excluded.
+// Chain: B only → boundaryRank = originalRank[C] = 20
+// result[B] = 20, C bumped to 21
 console.log('Test 12: myManualRanks feeds into cascade');
 (function() {
   var eng = createEngine(
@@ -311,21 +320,17 @@ console.log('Test 12: myManualRanks feeds into cascade');
     {}, { 3: 20 }
   );
   eng.computeRankings();
-  // getComputedRank(C)=20, so originalRank[C]=20
-  // Chain: B,C → boundaryRank=minRank-1=9
-  // result[B]=9, result[C]=10
-  // A stays 10
   assertEqual(eng.computedRanks[1], 10, 'A stays 10');
-  assertEqual(eng.computedRanks[2], 9, 'B → 9');
-  assertEqual(eng.computedRanks[3], 10, 'C → 10 (cascade overrides manual)');
+  assertEqual(eng.computedRanks[2], 20, 'B → 20');
+  assertEqual(eng.computedRanks[3], 21, 'C → 21');
 })();
 
 console.log('\n=== Multi-Person Chains ===\n');
 
 // 4 people: A(5)pos1 last, B(6)pos2 No, C(7)pos3 No, D(8)pos4 No
-// Chain: B,C,D → boundaryRank=minRank-1=4 → result[B]=4, result[C]=5, result[D]=6
-// A stays 5
-console.log('Test 13: Chain of 3');
+// D is last with No → excluded. Chain: B,C
+// boundaryRank = originalRank[D] = 8 → result[B]=8, result[C]=9, D bumped to 10
+console.log('Test 13: Chain of 3 — last excluded');
 (function() {
   var eng = createEngine(
     [sc(1,5,1,null), sc(2,6,2,'No'), sc(3,7,3,'No'), sc(4,8,4,'No')],
@@ -333,9 +338,9 @@ console.log('Test 13: Chain of 3');
   );
   eng.computeRankings();
   assertEqual(eng.computedRanks[1], 5, 'A stays 5');
-  assertEqual(eng.computedRanks[2], 4, 'B → 4');
-  assertEqual(eng.computedRanks[3], 5, 'C → 5');
-  assertEqual(eng.computedRanks[4], 6, 'D → 6');
+  assertEqual(eng.computedRanks[2], 8, 'B → 8');
+  assertEqual(eng.computedRanks[3], 9, 'C → 9');
+  assertEqual(eng.computedRanks[4], 10, 'D bumped to 10');
 })();
 
 // Boundary person gets bumped by chain
@@ -415,6 +420,10 @@ console.log('Test 16: Real 16-Aug ladder results');
   //   boundaryRank = minRank-1 = 34
   //   result[Guy]=34, result[Daisy]=35
 
+  // Guy,Daisy chain — Daisy is last with No → excluded
+  // Chain: Guy only → boundaryRank = originalRank[Daisy] = 35
+  // result[Guy]=35, Daisy bumped to 36
+
   assertEqual(eng.computedRanks[1], 53, 'Inkeri → 53');
   assertEqual(eng.computedRanks[2], 54, 'Jacqui → 54');
   assertEqual(eng.computedRanks[3], 55, 'Caroline → 55');
@@ -423,8 +432,46 @@ console.log('Test 16: Real 16-Aug ladder results');
   assertEqual(eng.computedRanks[6], 58, 'Jonathan → 58');
   assertEqual(eng.computedRanks[7], 47, 'Kathryn → 47');
   assertEqual(eng.computedRanks[8], 48, 'Devlin → 48');
-  assertEqual(eng.computedRanks[9], 34, 'Guy → 34');
-  assertEqual(eng.computedRanks[10], 35, 'Daisy → 35');
+  assertEqual(eng.computedRanks[9], 35, 'Guy → 35');
+  assertEqual(eng.computedRanks[10], 36, 'Daisy → 36');
+})();
+
+// ═══════════════════════════════════════
+// USER'S BUG SCENARIO
+// ═══════════════════════════════════════
+
+console.log('\n=== User Bug Scenario: 4 participants ===\n');
+
+// PathFinder, Rank207(Yes), Rank167(No), Rank160(No, last)
+// Rank160 is last → No is meaningless → excluded
+// Chain: Rank167 only → boundaryRank = originalRank[Rank160] = 160
+// result[167]=160, Rank160 bumped to 161
+console.log('Test 17: User bug — 4 participants, last says No');
+(function() {
+  var eng = createEngine(
+    [sc(1,207,1,'PathFind'), sc(2,207,2,'Yes'),
+     sc(3,167,3,'No'), sc(4,160,4,'No')],
+    {}, {}
+  );
+  eng.computeRankings();
+  assertEqual(eng.computedRanks[1], 207, 'PathFinder stays 207');
+  assertEqual(eng.computedRanks[2], 207, 'Rank207 stays 207');
+  assertEqual(eng.computedRanks[3], 160, 'Rank167 → 160');
+  assertEqual(eng.computedRanks[4], 161, 'Rank160 → 161');
+})();
+
+console.log('Test 18: Same but last person not saying No');
+(function() {
+  var eng = createEngine(
+    [sc(1,207,1,'PathFind'), sc(2,207,2,'Yes'),
+     sc(3,167,3,'No'), sc(4,160,4,null)],
+    {}, {}
+  );
+  eng.computeRankings();
+  assertEqual(eng.computedRanks[1], 207, 'PathFinder stays 207');
+  assertEqual(eng.computedRanks[2], 207, 'Rank207 stays 207');
+  assertEqual(eng.computedRanks[3], 160, 'Rank167 → 160');
+  assertEqual(eng.computedRanks[4], 161, 'Rank160 → 161');
 })();
 
 // ═══════════════════════════════════════

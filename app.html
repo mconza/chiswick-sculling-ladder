@@ -198,10 +198,16 @@ if (caught !== 'No') break;
 i++;
 }
 var chainEnd = i - 1;
+if (chainEnd === starters.length - 1 && chainEnd > chainStart) {
+chainEnd--;
+}
 var chainLen = chainEnd - chainStart + 1;
+if (chainLen <= 0) continue;
 var boundaryRank;
 if (i < starters.length) {
 boundaryRank = originalRank[starters[i].id];
+} else if (chainEnd < starters.length - 1) {
+boundaryRank = originalRank[starters[chainEnd + 1].id];
 } else {
 boundaryRank = minRank - 1;
 }
@@ -210,6 +216,8 @@ result[starters[chainStart + j].id] = boundaryRank + j;
 }
 if (i < starters.length) {
 result[starters[i].id] = boundaryRank + chainLen;
+} else if (chainEnd < starters.length - 1) {
+result[starters[chainEnd + 1].id] = boundaryRank + chainLen;
 }
 }
 starters.forEach(function(s) {
