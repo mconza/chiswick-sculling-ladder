@@ -216,7 +216,6 @@ starters.forEach(function(s) {
 computedRanks[s.id] = result[s.id];
 });
 }
-var originalRanks = {};
 function getComputedRank(s) {
 if (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) return myManualRanks[s.id];
 if (computedRanks[s.id] !== undefined) return computedRanks[s.id];
@@ -260,7 +259,6 @@ document.getElementById('nextLadderInfo').innerHTML =
 '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
 ' — ' + nextLadder.start + ' to ' + nextLadder.finish;
 checkAndAdvanceLadder();
-scullers.forEach(function(s) { originalRanks[s.id] = s.rank ? parseInt(s.rank) : null; });
 computeRankings();
 renderTable();
 updateUserCard();
@@ -268,7 +266,6 @@ if (isAdmin) loadRequests();
 })
 .catch(function() {
 checkAndAdvanceLadder();
-scullers.forEach(function(s) { originalRanks[s.id] = s.rank ? parseInt(s.rank) : null; });
 computeRankings();
 renderTable();
 updateUserCard();
@@ -365,7 +362,7 @@ var ladderDateTime = new Date(ladderDate);
 var parts = nextLadder.time.split(':');
 ladderDateTime.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
 if (now > ladderDateTime) {
-lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start, finish: nextLadder.finish };
+lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
 var newDate = new Date(ladderDate);
 newDate.setDate(newDate.getDate() + 14);
 nextLadder.date = formatDate(newDate);
@@ -432,7 +429,7 @@ document.getElementById('modalCancel').addEventListener('click', function() {
 document.getElementById('ladderModal').style.display = 'none';
 });
 document.getElementById('modalSave').addEventListener('click', function() {
-lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start, finish: nextLadder.finish };
+lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
 nextLadder.date = inputToLadderDate(document.getElementById('modalDate').value);
 nextLadder.time = document.getElementById('modalTime').value;
 nextLadder.start = document.getElementById('modalStart').value.trim();
@@ -733,8 +730,8 @@ if (myManualStarts[s.id] !== undefined) withManual.push(s);
 else withoutManual.push(s);
 });
 withoutManual.sort(function(a, b) {
-var ra = getComputedRank(a);
-var rb = getComputedRank(b);
+var ra = a.rank ? parseInt(a.rank) : 0;
+var rb = b.rank ? parseInt(b.rank) : 0;
 if (ra === 0 && rb !== 0) return -1;
 if (rb === 0 && ra !== 0) return 1;
 return rb - ra;
@@ -853,7 +850,7 @@ document.getElementById('searchCount').textContent =
 list.length + ' of ' + (isAdmin ? list.length : scullers.length) + ' scullers';
 var rows = list.map(function(s) {
 var participatingVal = s.nextParticipating;
-var caughtVal = myCaught[s.id] !== undefined ? myCaught[s.id] : null;
+var caughtVal = myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
 var startPos = nextPositions[s.id] || null;
 var btnYesCls = participatingVal === 'Yes' ? 'btn-yes' : 'btn-yes-dim';
 var btnNoCls = participatingVal === 'No' ? 'btn-no' : 'btn-no-dim';
@@ -888,7 +885,7 @@ caughtBtns = '<select class="' + caughtSelectClass + '" data-type="caught" data-
 '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
 '</select>';
 }
-var startingRank = originalRanks[s.id] !== undefined && originalRanks[s.id] !== null ? originalRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
+var startingRank = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
 var newRank = computedRanks[s.id] || null;
 var diff = '';
 if (startingRank && newRank) {
@@ -905,7 +902,7 @@ return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
 (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
 (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
 '<td class="col-rank">' + (isAdmin ? '<span class="editable-cell" data-field="rank" data-id="' + s.id + '">' : '') + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + (isAdmin ? '</span>' : '') + '</td>' +
-'<td class="col-next">' + (isAdmin ? '<span class="editable-cell" data-field="newRank" data-id="' + s.id + '">' : '') + (newRank || '<span class="muted">-</span>') + (isAdmin ? '</span>' : '') + '</td>' +
+(isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
 '</tr>';
 }).join('');
 document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 3) + '" class="empty-state">No scullers found</td></tr>';
@@ -1003,7 +1000,6 @@ var id = parseInt(this.dataset.id);
 var s = scullers.find(function(s) { return s.id === id; });
 var currentVal = '';
 if (field === 'rank') currentVal = getComputedRank(s);
-else if (field === 'newRank') currentVal = computedRanks[s.id] || '';
 else currentVal = myManualStarts[id] || '';
 var orig = this;
 var input = document.createElement('input');
@@ -1043,28 +1039,6 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
-} else if (field === 'newRank') {
-computedRanks[id] = val;
-myManualRanks[id] = val;
-localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
-var payload = { manualRanks: {} };
-for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
-fetch('/api/votes', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-}).catch(function() {});
-} else if (field === 'newRank') {
-computedRanks[id] = val;
-myManualRanks[id] = val;
-localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
-var payload = { manualRanks: {} };
-for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
-fetch('/api/votes', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-}).catch(function() {});
 } else {
 myManualStarts[id] = val;
 localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
@@ -1076,9 +1050,7 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 }
-if (field !== 'newRank') {
 computeRankings();
-}
 if (field === 'startPos') {
 currentSort = 'nextStartPos';
 currentDir = 1;
