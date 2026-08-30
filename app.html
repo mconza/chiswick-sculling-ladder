@@ -165,7 +165,7 @@ var skipSort = false;
 var computedRanks = {};
 function computeRankings() {
 scullers.forEach(function(s) {
-computedRanks[s.id] = getComputedRank(s);
+computedRanks[s.id] = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : 0);
 });
 var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
 if (starters.length === 0) return;
