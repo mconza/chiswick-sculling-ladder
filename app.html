@@ -218,15 +218,15 @@ starters.forEach(function(s) {
 computedRanks[s.id] = result[s.id];
 });
 var usedRanks = {};
+for (var sid in computedRanks) {
+if (computedRanks[sid] !== undefined) usedRanks[computedRanks[sid]] = true;
+}
 for (var k in manualNewRanks) {
 var r = manualNewRanks[k];
-if (usedRanks[r] !== undefined) {
-r = r + 1;
 while (usedRanks[r] !== undefined) r++;
 manualNewRanks[k] = r;
-}
 usedRanks[r] = true;
-computedRanks[k] = manualNewRanks[k];
+computedRanks[k] = r;
 }
 }
 var originalRanks = {};
