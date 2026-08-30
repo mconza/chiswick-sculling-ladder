@@ -1064,6 +1064,19 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 } else if (field === 'newRank') {
+var oldRank = computedRanks[id] || 0;
+if (oldRank !== val) {
+var shift = val < oldRank ? 1 : -1;
+var lo = Math.min(oldRank, val);
+var hi = Math.max(oldRank, val);
+scullers.forEach(function(sc) {
+if (sc.id === id) return;
+var r = getComputedRank(sc);
+if (r >= lo && r <= hi) {
+myManualRanks[sc.id] = r + shift;
+}
+});
+}
 myManualRanks[id] = val;
 localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
 var payload = { manualRanks: {} };
