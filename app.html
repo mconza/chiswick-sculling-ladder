@@ -1064,7 +1064,6 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 } else if (field === 'newRank') {
-computedRanks[id] = val;
 myManualRanks[id] = val;
 localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
 var payload = { manualRanks: {} };
@@ -1074,6 +1073,8 @@ method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
+computeRankings();
+renderTable();
 } else {
 myManualStarts[id] = val;
 localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
