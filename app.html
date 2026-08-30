@@ -159,16 +159,10 @@ var myCaught = {};
 // myConfirmed removed - using nextParticipating directly
 var myManualRanks = {};
 var myManualStarts = {};
-manualNewRanks = JSON.parse(localStorage.getItem('csl_manualNewRanks') || '{}');
 var currentSort = 'nextStartPos';
 var currentDir = 1;
 var skipSort = false;
 var computedRanks = {};
-var manualNewRanks = {};
-function getRankForCascade(s) {
-if (manualNewRanks[s.id] !== undefined && manualNewRanks[s.id] !== null) return manualNewRanks[s.id];
-return getComputedRank(s);
-}
 function computeRankings() {
 scullers.forEach(function(s) {
 computedRanks[s.id] = getComputedRank(s);
@@ -178,25 +172,20 @@ if (starters.length === 0) return;
 starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
 var minRank = Infinity;
 starters.forEach(function(s) {
-var r = getRankForCascade(s);
+var r = getComputedRank(s);
 if (r > 0 && r < minRank) minRank = r;
 });
 if (minRank === Infinity) return;
 var originalRank = {};
 starters.forEach(function(s) {
-originalRank[s.id] = getRankForCascade(s);
+originalRank[s.id] = getComputedRank(s);
 });
 var result = {};
 starters.forEach(function(s) {
 result[s.id] = originalRank[s.id];
 });
-var locked = {};
-for (var k in manualNewRanks) {
-locked[k] = true;
-}
 var i = 0;
 while (i < starters.length) {
-if (locked[starters[i].id]) { i++; continue; }
 var caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
 if (caught !== 'No') {
 i++;
@@ -204,42 +193,28 @@ continue;
 }
 var chainStart = i;
 while (i < starters.length) {
-if (locked[starters[i].id]) break;
 caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
 if (caught !== 'No') break;
 i++;
 }
 var chainEnd = i - 1;
 var chainLen = chainEnd - chainStart + 1;
-if (chainLen <= 0) { i++; continue; }
 var boundaryRank;
 if (i < starters.length) {
 boundaryRank = originalRank[starters[i].id];
 } else {
 boundaryRank = minRank - 1;
 }
-var usedByLocked = {};
-for (var li = 0; li < starters.length; li++) {
-if (locked[starters[li].id]) usedByLocked[result[starters[li].id]] = true;
-}
-var base = boundaryRank;
-while (usedByLocked[base]) base++;
 for (var j = 0; j < chainLen; j++) {
-while (usedByLocked[base + j]) base++;
-result[starters[chainStart + j].id] = base + j;
+result[starters[chainStart + j].id] = boundaryRank + j;
 }
-if (i < starters.length && !locked[starters[i].id]) {
-var nextVal = base + chainLen;
-while (usedByLocked[nextVal]) nextVal++;
-result[starters[i].id] = nextVal;
+if (i < starters.length) {
+result[starters[i].id] = boundaryRank + chainLen;
 }
 }
 starters.forEach(function(s) {
 computedRanks[s.id] = result[s.id];
 });
-for (var mk in manualNewRanks) {
-computedRanks[mk] = manualNewRanks[mk];
-}
 }
 var originalRanks = {};
 function getComputedRank(s) {
@@ -256,7 +231,6 @@ fetch('/api/votes')
 myCaught = data.caught || {};
 var participation = data.participation || {};
 myManualRanks = data.manualRanks || {};
-manualNewRanks = data.manualNewRanks || {};
 myManualStarts = data.manualStarts || {};
 var lastSession = data.lastSession || {};
 scullers.forEach(function(s) {
@@ -433,7 +407,7 @@ body: JSON.stringify({ nextLadder: nextLadder, lastLadder: lastLadder })
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {}, manualNewRanks: {}, lastSession: lastSessionData })
+body: JSON.stringify({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {}, lastSession: lastSessionData })
 }).catch(function() {});
 }
 }
@@ -1031,7 +1005,7 @@ var id = parseInt(this.dataset.id);
 var s = scullers.find(function(s) { return s.id === id; });
 var currentVal = '';
 if (field === 'rank') currentVal = getComputedRank(s);
-else if (field === 'newRank') currentVal = manualNewRanks[s.id] !== undefined ? manualNewRanks[s.id] : (computedRanks[s.id] || '');
+else if (field === 'newRank') currentVal = computedRanks[s.id] || '';
 else if (field === 'lastStartPos') currentVal = s.lastStartPos || '';
 else currentVal = myManualStarts[id] || '';
 var orig = this;
@@ -1090,17 +1064,16 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
 } else if (field === 'newRank') {
-if (isNaN(val) || val < 0) { delete manualNewRanks[id]; }
-else { manualNewRanks[id] = val; }
-localStorage.setItem('csl_manualNewRanks', JSON.stringify(manualNewRanks));
-var payload = { manualNewRanks: manualNewRanks };
+computedRanks[id] = val;
+myManualRanks[id] = val;
+localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
+var payload = { manualRanks: {} };
+for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
 fetch('/api/votes', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(payload)
 }).catch(function() {});
-computeRankings();
-renderTable();
 } else {
 myManualStarts[id] = val;
 localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
