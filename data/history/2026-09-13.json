@@ -1633,7 +1633,7 @@
       "club": "BBL",
       "rank": "160",
       "startPos": "4",
-      "caught": "Yes",
+      "caught": "PathFind",
       "newRank": 160,
       "newStartPos": 6
     },

@@ -16,14 +16,14 @@ function init() {
 
   ranked = scullers.filter(function(s) {
     var r = getComputedRank(s, {}, computedRanks);
-    return r > 0 && s.lastStartPos != null;
+    return r > 0;
   }).sort(function(a, b) {
     return getComputedRank(a, {}, computedRanks) - getComputedRank(b, {}, computedRanks);
   });
 
   unranked = scullers.filter(function(s) {
     var r = getComputedRank(s, {}, computedRanks);
-    return r <= 0 || s.lastStartPos == null;
+    return r <= 0;
   });
 
   document.getElementById('rankInfo').textContent =
@@ -47,9 +47,9 @@ function renderPodium() {
       '<div class="pod-name">' + escHtml(s.name) + '</div>' +
       '<div class="pod-club">' + escHtml(s.club) + '</div>' +
       '<div class="pod-rank">#' + rank + '</div>' +
+      '<div class="pod-base"></div>' +
       '</div>';
   });
-  html += '<div class="pod-base"></div>';
   podium.innerHTML = html;
 }
 
