@@ -881,7 +881,6 @@ function initEventListeners() {
 // Init
 function initApp() {
   updateLadderInfo(nextLadder);
-  initEventListeners();
 
   me = isAdmin ? null : getMe(scullers);
   if (me) {
@@ -891,6 +890,8 @@ function initApp() {
     var inCol = document.querySelector('th[data-sort="nextParticipating"]');
     if (inCol) inCol.style.display = 'none';
   }
+
+  initEventListeners();
 
   computeRankingsLocal();
   renderTable();
