@@ -324,7 +324,7 @@ function renderTable() {
     (isAdmin ? '<td class="col-separator"></td>' : '') +
     (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
     (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
-    '<td class="col-rank">' + (isAdmin ? '<span class="editable-cell" data-field="rank" data-id="' + s.id + '">' : '') + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + (isAdmin ? '</span>' : '') + '</td>' +
+    '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
     (isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
     '</tr>';
   }).join('');
@@ -415,10 +415,7 @@ function renderTable() {
         e.stopPropagation();
         var field = this.dataset.field;
         var id = parseInt(this.dataset.id);
-        var s = scullers.find(function(s) { return s.id === id; });
-        var currentVal = '';
-        if (field === 'rank') currentVal = getComputedRankLocal(s);
-        else currentVal = myManualStarts[id] || '';
+        var currentVal = myManualStarts[id] || '';
         var orig = this;
         var input = document.createElement('input');
         input.type = 'number';
@@ -433,45 +430,26 @@ function renderTable() {
         function save() {
           var val = parseInt(input.value);
           if (isNaN(val) || val < 0) { renderTable(); return; }
-          if (field === 'rank') {
-            var oldRank = getComputedRankLocal(s);
-            if (oldRank !== val) {
-              var shift = val < oldRank ? 1 : -1;
-              var lo = Math.min(oldRank, val);
-              var hi = Math.max(oldRank, val);
-              scullers.forEach(function(sc) {
-                if (sc.id === id) return;
-                var r = getComputedRankLocal(sc);
-                if (r >= lo && r <= hi) {
-                  var newR = r + shift;
-                  sc.rank = String(newR);
-                }
-              });
-            }
-            s.rank = String(val);
-            saveScullers(scullers);
-          } else {
-            var curPositions = computeNextPositions(scullers, myManualStarts);
-            var oldStart = curPositions[id] || null;
-            if (oldStart !== null && oldStart !== val) {
-              var shift2 = val < oldStart ? 1 : -1;
-              var lo2 = Math.min(oldStart, val);
-              var hi2 = Math.max(oldStart, val);
-              scullers.forEach(function(sc) {
-                if (sc.id === id) return;
-                var cur = curPositions[sc.id];
-                if (cur != null && cur >= lo2 && cur <= hi2) {
-                  var newCur = cur + shift2;
-                  myManualStarts[sc.id] = newCur;
-                }
-              });
-            }
-            myManualStarts[id] = val;
-            localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
-            var payload = { manualStarts: {} };
-            for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
-            postVotes(payload);
+          var curPositions = computeNextPositions(scullers, myManualStarts);
+          var oldStart = curPositions[id] || null;
+          if (oldStart !== null && oldStart !== val) {
+            var shift2 = val < oldStart ? 1 : -1;
+            var lo2 = Math.min(oldStart, val);
+            var hi2 = Math.max(oldStart, val);
+            scullers.forEach(function(sc) {
+              if (sc.id === id) return;
+              var cur = curPositions[sc.id];
+              if (cur != null && cur >= lo2 && cur <= hi2) {
+                var newCur = cur + shift2;
+                myManualStarts[sc.id] = newCur;
+              }
+            });
           }
+          myManualStarts[id] = val;
+          localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+          var payload = { manualStarts: {} };
+          for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
+          postVotes(payload);
           computeRankingsLocal();
           if (field === 'startPos') {
             currentSort = 'nextStartPos';
