@@ -11,131 +11,160 @@
   <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-<header class="app-header">
-<a href="./index.html" class="logo">🚣 <span>Chiswick Sculling Ladder</span></a>
-<div class="right-group">
-<a href="./app.html" class="header-link">Ladder</a>
-<a href="./ranking.html" class="header-link">Rankings</a>
-<span id="userBadge" class="user-badge"></span>
-<button class="logout-btn" id="logoutBtn">Log Out</button>
-</div>
-</header>
-<div class="container">
-<div class="user-card" id="userCard">
-<div class="uc-top">
-<span class="uc-name" id="ucName"></span>
-<span class="uc-club" id="ucClub"></span>
-<span class="uc-rank">#<span class="uc-rank-val" id="ucRank"></span></span>
-</div>
-<div class="uc-section" id="ucCaughtAction">
-<span class="uc-label" id="ucCaughtActionLabel">Caught?</span>
-<span class="uc-caught-by" id="ucCaughtBy"></span>
-<div class="btn-group">
-<button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
-<button class="btn-table" data-uc="caught" data-val="No">No</button>
-<button class="btn-table" data-uc="caught" data-val="PathFind">PF</button>
-<button class="btn-table" data-uc="caught" data-val="">-</button>
-</div>
-</div>
-<div class="uc-section">
-<div class="uc-row">
-<span class="uc-label" id="ucNextActionLabel">Next?</span>
-<select class="inline-select" data-uc="confirmed">
-<option value="">-</option>
-<option value="Yes">Yes</option>
-<option value="No">No</option>
-<option value="PathFind">PathFind</option>
-</select>
-<div id="ucRequestAction">
-<button class="btn-sm-accent" id="requestPosBtn">Request Position</button>
-</div>
-</div>
-<div id="requestPosForm" class="uc-request-form">
-<div class="uc-request-row">
-<div class="toggle-group" id="requestDirToggle">
-<button class="toggle-btn active" data-dir="before">Before</button>
-<button class="toggle-btn" data-dir="after">After</button>
-</div>
-<div class="uc-search-wrap">
-<input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off">
-<div id="requestPosResults"></div>
-</div>
-<button class="btn-sm-accent" id="requestPosSubmit">Send</button>
-<button class="btn-sm-dim" id="requestPosCancel">X</button>
-</div>
- </div>
-</div>
-</div>
-<div class="admin-requests" id="adminRequests">
-<div class="admin-requests-title">Position Requests</div>
-<div id="adminRequestsList"></div>
-</div>
-<div class="table-card">
-<div class="tab-bar" id="tabBar">
-<button class="tab-btn active" data-tab="next">Next Ladder</button>
-<button class="tab-btn" data-tab="history">History</button>
-</div>
-<div class="table-topbar">
-<div class="table-topbar-left" id="topbarLeft">
-<span class="th-icon">🕑</span>
-<span class="th-title" id="nextLadderInfo"></span>
-</div>
-<div class="table-topbar-right">
-<button class="btn btn-sm btn-outline" id="editLadderBtn">Edit Ladder Info</button>
-<select id="historyDate" class="history-select">
-<option value="">-- seleziona data --</option>
-</select>
-<div class="search-inline">
-<input type="text" id="searchInput" placeholder="Search...">
-<span class="search-count" id="searchCount">0 scullers</span>
-</div>
-</div>
-</div>
-<div class="table-wrap">
-<table class="ladder-table" id="ladderTable">
-<thead id="tableHead"></thead>
-<tbody id="tableBody"></tbody>
-</table>
-</div>
-</div>
-<div class="rules-summary">
-<h3>Rules Recap</h3>
-<ul>
-<li>Slowest first, fastest last — not a race. Safety first.</li>
-<li>Comply with the <a href="https://server1.pla.co.uk/assets/tidewaycodedigital.pdf" target="_blank">Tideway Code</a>.</li>
-<li>No more than 2 boats abreast, especially near bridges and Oliver's Ait.</li>
-<li>Capsize: following scullers stop and check the sculler is safe.</li>
-<li>Don't stop under Chiswick Bridge. Use standard crossing points.</li>
-<li>Join the WhatsApp group for updates and cancellations.</li>
-</ul>
-<p class="rules-link">Full rules on the <a href="./index.html">home page</a>.</p>
-</div>
-</div>
-<div id="ladderModal" class="modal-overlay">
-<div class="modal-card">
-<h3 class="modal-title">Edit Ladder Info</h3>
-<label class="modal-field">
-<span class="modal-label">Date</span>
-<input type="date" id="modalDate" class="modal-input">
-</label>
-<label class="modal-field">
-<span class="modal-label">Time</span>
-<input type="time" id="modalTime" class="modal-input">
-</label>
-<label class="modal-field">
-<span class="modal-label">Start Location</span>
-<input type="text" id="modalStart" class="modal-input" placeholder="e.g. Richmond Lock">
-</label>
-<label class="modal-field modal-field-last">
-<span class="modal-label">Finish Location</span>
-<input type="text" id="modalFinish" class="modal-input" placeholder="e.g. Chiswick Bridge">
-</label>
-<div class="modal-actions">
-<button class="btn btn-sm btn-outline" id="modalCancel">Cancel</button>
-<button class="btn btn-sm btn-accent" id="modalSave">Save</button>
-</div>
-</div>
-</div>
-<script type="module" src="./js/app.js"></script>
+
+  <!-- Header -->
+  <header class="app-header">
+    <a href="./index.html" class="logo">🚣 <span>Chiswick Sculling Ladder</span></a>
+    <div class="right-group">
+      <a href="./app.html" class="header-link">Ladder</a>
+      <a href="./ranking.html" class="header-link">Rankings</a>
+      <span id="userBadge" class="user-badge"></span>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- User Card -->
+    <div class="user-card" id="userCard" style="display:none;">
+      <div class="uc-top">
+        <span class="uc-name" id="ucName"></span>
+        <span class="uc-club" id="ucClub"></span>
+        <span class="uc-rank">#<span class="uc-rank-val" id="ucRank"></span></span>
+      </div>
+
+      <div class="uc-section" id="ucCaughtAction">
+        <span class="uc-label" id="ucCaughtActionLabel">Caught?</span>
+        <span class="uc-caught-by" id="ucCaughtBy"></span>
+        <div class="btn-group">
+          <button class="btn-table" data-uc="caught" data-val="Yes">Yes</button>
+          <button class="btn-table" data-uc="caught" data-val="No">No</button>
+          <button class="btn-table" data-uc="caught" data-val="PathFind">PF</button>
+          <button class="btn-table" data-uc="caught" data-val="">-</button>
+        </div>
+      </div>
+
+      <div class="uc-section">
+        <div class="uc-row">
+          <span class="uc-label" id="ucNextActionLabel">Next?</span>
+          <select class="inline-select" data-uc="confirmed">
+            <option value="">-</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="PathFind">PathFind</option>
+          </select>
+          <div id="ucRequestAction">
+            <button class="btn-sm-accent" id="requestPosBtn">Request Position</button>
+          </div>
+        </div>
+
+        <div id="requestPosForm" class="uc-request-form">
+          <div class="uc-request-row">
+            <div class="toggle-group" id="requestDirToggle">
+              <button class="toggle-btn active" data-dir="before">Before</button>
+              <button class="toggle-btn" data-dir="after">After</button>
+            </div>
+            <div class="uc-search-wrap">
+              <input type="text" id="requestPosSearch" placeholder="Search sculler..." autocomplete="off">
+              <div id="requestPosResults"></div>
+            </div>
+            <button class="btn-sm-accent" id="requestPosSubmit">Send</button>
+            <button class="btn-sm-dim" id="requestPosCancel">X</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Requests -->
+    <div class="admin-requests" id="adminRequests">
+      <div class="admin-requests-title">Position Requests</div>
+      <div id="adminRequestsList"></div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+
+      <!-- Tabs -->
+      <div class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-tab="next">Next Ladder</button>
+        <button class="tab-btn" data-tab="history">History</button>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="table-topbar">
+        <div class="table-topbar-left" id="topbarLeft">
+          <span class="th-icon">🕑</span>
+          <span class="th-title" id="nextLadderInfo"></span>
+        </div>
+        <div class="table-topbar-right">
+          <button class="btn btn-sm btn-outline" id="editLadderBtn">Edit Ladder Info</button>
+          <select id="historyDate" class="history-select">
+            <option value="">-- seleziona data --</option>
+          </select>
+          <div class="search-inline">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <span class="search-count" id="searchCount">0 scullers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="ladder-table" id="ladderTable">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="rules-summary">
+      <h3>Rules Recap</h3>
+      <ul>
+        <li>Slowest first, fastest last — not a race. Safety first.</li>
+        <li>Comply with the <a href="https://server1.pla.co.uk/assets/tidewaycodedigital.pdf" target="_blank">Tideway Code</a>.</li>
+        <li>No more than 2 boats abreast, especially near bridges and Oliver's Ait.</li>
+        <li>Capsize: following scullers stop and check the sculler is safe.</li>
+        <li>Don't stop under Chiswick Bridge. Use standard crossing points.</li>
+        <li>Join the WhatsApp group for updates and cancellations.</li>
+      </ul>
+      <p class="rules-link">Full rules on the <a href="./index.html">home page</a>.</p>
+    </div>
+
+  </div>
+
+  <!-- Modal: Edit Ladder -->
+  <div id="ladderModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 class="modal-title">Edit Ladder Info</h3>
+
+      <label class="modal-field">
+        <span class="modal-label">Date</span>
+        <input type="date" id="modalDate" class="modal-input">
+      </label>
+
+      <label class="modal-field">
+        <span class="modal-label">Time</span>
+        <input type="time" id="modalTime" class="modal-input">
+      </label>
+
+      <label class="modal-field">
+        <span class="modal-label">Start Location</span>
+        <input type="text" id="modalStart" class="modal-input" placeholder="e.g. Richmond Lock">
+      </label>
+
+      <label class="modal-field modal-field-last">
+        <span class="modal-label">Finish Location</span>
+        <input type="text" id="modalFinish" class="modal-input" placeholder="e.g. Chiswick Bridge">
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn btn-sm btn-outline" id="modalCancel">Cancel</button>
+        <button class="btn btn-sm btn-accent" id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
