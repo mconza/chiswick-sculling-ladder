@@ -10,19 +10,20 @@ var ranked = [];
 var unranked = [];
 var computedRanks = {};
 var myCaught = {};
+var myManualRanks = {};
 
 function init() {
-  computedRanks = computeRankings(scullers, myCaught, {});
+  computedRanks = computeRankings(scullers, myCaught, myManualRanks);
 
   ranked = scullers.filter(function(s) {
-    var r = getComputedRank(s, {}, computedRanks);
+    var r = getComputedRank(s, myManualRanks, computedRanks);
     return r > 0;
   }).sort(function(a, b) {
-    return getComputedRank(a, {}, computedRanks) - getComputedRank(b, {}, computedRanks);
+    return getComputedRank(a, myManualRanks, computedRanks) - getComputedRank(b, myManualRanks, computedRanks);
   });
 
   unranked = scullers.filter(function(s) {
-    var r = getComputedRank(s, {}, computedRanks);
+    var r = getComputedRank(s, myManualRanks, computedRanks);
     return r <= 0;
   });
 
@@ -42,7 +43,7 @@ function renderPodium() {
   [1, 0, 2].forEach(function(idx) {
     var s = top3[idx];
     if (!s) return;
-    var rank = getComputedRank(s, {}, computedRanks);
+    var rank = getComputedRank(s, myManualRanks, computedRanks);
     html += '<div class="pod-slot pod-' + (idx + 1) + '">' +
       '<div class="pod-name">' + escHtml(s.name) + '</div>' +
       '<div class="pod-club">' + escHtml(s.club) + '</div>' +
@@ -61,7 +62,7 @@ function renderList(list) {
     return;
   }
   el.innerHTML = list.map(function(s, i) {
-    var rank = getComputedRank(s, {}, computedRanks);
+    var rank = getComputedRank(s, myManualRanks, computedRanks);
     return '<div class="rank-row">' +
       '<span class="rank-num">' + rank + '</span>' +
       '<span class="rank-name">' + escHtml(s.name) + '</span>' +
@@ -97,7 +98,7 @@ function sortBy(key) {
     ranked.sort(function(a, b) { return a.club.localeCompare(b.club); });
   } else {
     ranked.sort(function(a, b) {
-      return getComputedRank(a, {}, computedRanks) - getComputedRank(b, {}, computedRanks);
+      return getComputedRank(a, myManualRanks, computedRanks) - getComputedRank(b, myManualRanks, computedRanks);
     });
   }
   renderList(ranked);
@@ -125,6 +126,7 @@ loadScullers().then(function(data) {
   if (data) {
     var lastSession = data.lastSession || {};
     myCaught = data.caught || {};
+    myManualRanks = data.manualRanks || {};
     scullers.forEach(function(s) {
       if (lastSession[s.id]) {
         s.lastStartPos = lastSession[s.id].lastStartPos;
