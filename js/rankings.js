@@ -26,7 +26,7 @@ export function computeRankings(scullers, myCaught, myManualRanks) {
   var i = 0;
   while (i < starters.length) {
     var caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
-    if (caught !== 'No') {
+    if (caught !== 'No' || i === starters.length - 1) {
       i++;
       continue;
     }
@@ -37,9 +37,7 @@ export function computeRankings(scullers, myCaught, myManualRanks) {
       i++;
     }
     var chainEnd = i - 1;
-    if (chainEnd === starters.length - 1 && chainEnd > chainStart) {
-      chainEnd--;
-    }
+    if (chainEnd === starters.length - 1) chainEnd--;
     var chainLen = chainEnd - chainStart + 1;
     if (chainLen <= 0) continue;
     var boundaryRank;

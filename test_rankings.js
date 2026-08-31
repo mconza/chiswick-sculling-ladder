@@ -70,8 +70,8 @@ console.log('Test 3: Simon Yes — Inkeri fills bottom');
     {}, {}
   );
   assertEqual(r[1], 12, 'ABA stays 12');
-  assertEqual(r[2], 13, 'Simon stays 13');
-  assertEqual(r[3], 11, 'Inkeri → 11');
+  assertEqual(r[2], 13, 'Simon stays 13 (caught by Inkeri)');
+  assertEqual(r[3], 171, 'Inkeri stays 171 (last person, No ignored)');
 })();
 
 console.log('\n=== Chain Rule Tests ===\n');
@@ -119,8 +119,8 @@ console.log('Test 7: myCaught overrides lastCaught');
     { 2: 'Yes' }, {}
   );
   assertEqual(r[1], 10, 'A stays 10');
-  assertEqual(r[2], 11, 'B stays 11 (skipped by myCaught)');
-  assertEqual(r[3], 9, 'C → 9');
+  assertEqual(r[2], 11, 'B stays 11 (caught by myCaught)');
+  assertEqual(r[3], 12, 'C stays 12 (last person, No ignored)');
 })();
 
 console.log('\n=== Edge Cases ===\n');
@@ -193,7 +193,7 @@ console.log('Test 13: Chain of 3 — last excluded');
   assertEqual(r[4], 10, 'D bumped to 10');
 })();
 
-console.log('Test 14: Single person chain at end');
+console.log('Test 14: Single person chain at end — last person No is ignored');
 (function() {
   var r = runTest(
     [sc(1,5,1,null), sc(2,6,2,'Yes'), sc(3,7,3,'No')],
@@ -201,7 +201,7 @@ console.log('Test 14: Single person chain at end');
   );
   assertEqual(r[1], 5, 'A stays 5');
   assertEqual(r[2], 6, 'B stays 6');
-  assertEqual(r[3], 4, 'C → 4');
+  assertEqual(r[3], 7, 'C stays 7 (last person, No ignored)');
 })();
 
 console.log('Test 15: Chain bumps boundary person');

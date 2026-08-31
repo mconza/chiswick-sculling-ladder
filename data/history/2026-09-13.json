@@ -25,7 +25,7 @@
       "startPos": "2",
       "caught": "Yes",
       "newRank": 207,
-      "newStartPos": 5
+      "newStartPos": 1
     },
     {
       "id": 3,
@@ -845,7 +845,7 @@
       "startPos": "1",
       "caught": "PathFind",
       "newRank": 78,
-      "newStartPos": 1
+      "newStartPos": 2
     },
     {
       "id": 85,
@@ -1635,7 +1635,7 @@
       "startPos": "4",
       "caught": "Yes",
       "newRank": 160,
-      "newStartPos": null
+      "newStartPos": 6
     },
     {
       "id": 164,
