@@ -16,6 +16,7 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 VOTES_FILE = DATA_DIR / "votes.json"
 CONFIG_FILE = DATA_DIR / "config.json"
+SCULLERS_FILE = DATA_DIR / "scullers.json"
 HISTORY_DIR = DATA_DIR / "history"
 
 DATA_DIR.mkdir(exist_ok=True)
@@ -27,11 +28,23 @@ def load_votes():
             data = json.load(f)
             data.setdefault("requests", [])
             return data
-    return {"caught": {}, "participation": {}, "manualRanks": {}, "manualStarts": {}, "lastSession": {}, "requests": []}
+    return {"caught": {}, "participation": {}, "manualStarts": {}, "requests": []}
 
 def save_votes(votes):
     with open(VOTES_FILE, "w") as f:
         json.dump(votes, f, indent=2)
+
+def load_scullers():
+    if SCULLERS_FILE.exists():
+        with open(SCULLERS_FILE, "r") as f:
+            return json.load(f)
+    return []
+
+def save_scullers(scullers):
+    tmp = SCULLERS_FILE.with_suffix(".tmp")
+    with open(tmp, "w") as f:
+        json.dump(scullers, f, indent=2)
+    tmp.rename(SCULLERS_FILE)
 
 def load_config():
     if CONFIG_FILE.exists():
@@ -137,18 +150,11 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                                 current.setdefault("participation", {}).pop(k, None)
                             else:
                                 current.setdefault("participation", {})[k] = v
-                if "manualRanks" in new_votes:
-                    if new_votes.get("clearParticipation"):
-                        current["manualRanks"] = {}
-                    else:
-                        current.setdefault("manualRanks", {}).update(new_votes["manualRanks"])
                 if "manualStarts" in new_votes:
                     if new_votes.get("clearParticipation"):
                         current["manualStarts"] = {}
                     else:
                         current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
-                if "lastSession" in new_votes:
-                    current["lastSession"] = new_votes["lastSession"]
                 save_votes(current)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -168,6 +174,22 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 current = load_config()
                 current.update(new_config)
                 save_config(current)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"ok": True}).encode())
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+        elif parsed.path == "/api/scullers":
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            try:
+                new_scullers = json.loads(body)
+                save_scullers(new_scullers)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -242,7 +264,7 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 

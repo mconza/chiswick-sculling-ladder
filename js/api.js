@@ -55,3 +55,11 @@ export function deleteRequest(id) {
 export function loadScullers() {
   return fetch('./data/scullers.json').then(function(r) { return r.json(); });
 }
+
+export function saveScullers(scullers) {
+  return fetch('/api/scullers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(scullers)
+  }).then(function(r) { return r.json(); }).catch(function() {});
+}

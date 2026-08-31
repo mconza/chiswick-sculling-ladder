@@ -1,6 +1,6 @@
 // js/app.js - Entry point for app.html
 
-import { loadScullers, getVotes, postVotes, getConfig, postConfig, getHistory, getHistoryDate, saveHistory, postRequest, deleteRequest } from './api.js';
+import { loadScullers, getVotes, postVotes, getConfig, postConfig, getHistory, getHistoryDate, saveHistory, postRequest, deleteRequest, saveScullers } from './api.js';
 import { checkAuth, isAdmin as authIsAdmin, getUserId, getMe, logout } from './auth.js';
 import { computeRankings, getComputedRank, computeNextPositions, computeLastPositions } from './rankings.js';
 import { showToast } from './toast.js';
@@ -17,7 +17,6 @@ var scullers = [];
 var nextLadder = {};
 var lastLadder = {};
 var myCaught = {};
-var myManualRanks = {};
 var myManualStarts = {};
 var computedRanks = {};
 var currentSort = 'nextStartPos';
@@ -30,11 +29,11 @@ var me = null;
 
 // Core functions
 function computeRankingsLocal() {
-  computedRanks = computeRankings(scullers, myCaught, myManualRanks);
+  computedRanks = computeRankings(scullers, myCaught, {});
 }
 
 function getComputedRankLocal(s) {
-  return getComputedRank(s, myManualRanks, computedRanks);
+  return getComputedRank(s, {}, computedRanks);
 }
 
 function getVal(s, key) {
@@ -184,16 +183,16 @@ function checkAndAdvanceLadder() {
       s.nextStartPos = null;
     });
     myCaught = {};
-    var lastSessionData = {};
-    scullers.forEach(function(s) {
-      lastSessionData[s.id] = { lastStartPos: s.lastStartPos, lastCaught: s.lastCaught };
-    });
     computeRankingsLocal();
+    scullers.forEach(function(s) {
+      s.rank = String(computedRanks[s.id] || s.rank || 0);
+    });
     renderTable();
     updateUserCard();
     updateLadderInfo(nextLadder);
     postConfig({ nextLadder: nextLadder, lastLadder: lastLadder });
-    postVotes({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {}, lastSession: lastSessionData });
+    postVotes({ participation: {}, clearParticipation: true, caught: {}, manualStarts: {}, lastSession: {} });
+    saveScullers(scullers);
   }
 }
 
@@ -309,7 +308,7 @@ function renderTable() {
       '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
       '</select>';
     }
-    var startingRank = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
+    var startingRank = s.rank ? parseInt(s.rank) : null;
     var newRank = computedRanks[s.id] || null;
     var diff = '';
     if (startingRank && newRank) {
@@ -445,15 +444,12 @@ function renderTable() {
                 var r = getComputedRankLocal(sc);
                 if (r >= lo && r <= hi) {
                   var newR = r + shift;
-                  myManualRanks[sc.id] = newR;
+                  sc.rank = String(newR);
                 }
               });
             }
-            myManualRanks[id] = val;
-            localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
-            var payload = { manualRanks: {} };
-            for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
-            postVotes(payload);
+            s.rank = String(val);
+            saveScullers(scullers);
           } else {
             var curPositions = computeNextPositions(scullers, myManualStarts);
             var oldStart = curPositions[id] || null;
@@ -906,21 +902,13 @@ loadScullers().then(function(data) {
 }).then(function(data) {
   myCaught = data.caught || {};
   var participation = data.participation || {};
-  myManualRanks = data.manualRanks || {};
   myManualStarts = data.manualStarts || {};
-  var lastSession = data.lastSession || {};
   scullers.forEach(function(s) {
     s.nextParticipating = null;
     s.nextStartPos = null;
   });
   scullers.forEach(function(s) {
     if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
-  });
-  scullers.forEach(function(s) {
-    if (lastSession[s.id]) {
-      s.lastStartPos = lastSession[s.id].lastStartPos;
-      s.lastCaught = lastSession[s.id].lastCaught;
-    }
   });
   return getConfig();
 }).then(function(data) {

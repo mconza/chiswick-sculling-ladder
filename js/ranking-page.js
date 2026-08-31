@@ -1,30 +1,23 @@
 // js/ranking-page.js - Entry point for ranking.html
+// Reads ranks directly from scullers.json (single source of truth)
 
-import { loadScullers, getVotes } from './api.js';
-import { computeRankings, getComputedRank } from './rankings.js';
+import { loadScullers } from './api.js';
 import { escHtml } from './ui.js';
 
 var scullers = [];
 var currentSort = 'rank';
 var ranked = [];
 var unranked = [];
-var computedRanks = {};
-var myCaught = {};
-var myManualRanks = {};
 
 function init() {
-  computedRanks = computeRankings(scullers, myCaught, myManualRanks);
-
   ranked = scullers.filter(function(s) {
-    var r = getComputedRank(s, myManualRanks, computedRanks);
-    return r > 0;
+    return s.rank && parseInt(s.rank) > 0;
   }).sort(function(a, b) {
-    return getComputedRank(a, myManualRanks, computedRanks) - getComputedRank(b, myManualRanks, computedRanks);
+    return parseInt(a.rank) - parseInt(b.rank);
   });
 
   unranked = scullers.filter(function(s) {
-    var r = getComputedRank(s, myManualRanks, computedRanks);
-    return r <= 0;
+    return !s.rank || parseInt(s.rank) <= 0;
   });
 
   document.getElementById('rankInfo').textContent =
@@ -43,11 +36,10 @@ function renderPodium() {
   [1, 0, 2].forEach(function(idx) {
     var s = top3[idx];
     if (!s) return;
-    var rank = getComputedRank(s, myManualRanks, computedRanks);
     html += '<div class="pod-slot pod-' + (idx + 1) + '">' +
       '<div class="pod-name">' + escHtml(s.name) + '</div>' +
       '<div class="pod-club">' + escHtml(s.club) + '</div>' +
-      '<div class="pod-rank">#' + rank + '</div>' +
+      '<div class="pod-rank">#' + s.rank + '</div>' +
       '<div class="pod-base">' + (idx + 1) + '</div>' +
       '</div>';
   });
@@ -61,10 +53,9 @@ function renderList(list) {
     el.innerHTML = '<div class="rank-row" style="justify-content:center;color:var(--text-light);">No results</div>';
     return;
   }
-  el.innerHTML = list.map(function(s, i) {
-    var rank = getComputedRank(s, myManualRanks, computedRanks);
+  el.innerHTML = list.map(function(s) {
     return '<div class="rank-row">' +
-      '<span class="rank-num">' + rank + '</span>' +
+      '<span class="rank-num">#' + s.rank + '</span>' +
       '<span class="rank-name">' + escHtml(s.name) + '</span>' +
       '<span class="rank-club">' + escHtml(s.club) + '</span>' +
       '</div>';
@@ -98,7 +89,7 @@ function sortBy(key) {
     ranked.sort(function(a, b) { return a.club.localeCompare(b.club); });
   } else {
     ranked.sort(function(a, b) {
-      return getComputedRank(a, myManualRanks, computedRanks) - getComputedRank(b, myManualRanks, computedRanks);
+      return parseInt(a.rank) - parseInt(b.rank);
     });
   }
   renderList(ranked);
@@ -118,22 +109,9 @@ function initEventListeners() {
   document.getElementById('sortClub').addEventListener('click', function() { sortBy('club'); });
 }
 
-// Init
+// Init - just load scullers, ranks are already in scullers.json
 loadScullers().then(function(data) {
   scullers = data;
-  return getVotes();
-}).then(function(data) {
-  if (data) {
-    var lastSession = data.lastSession || {};
-    myCaught = data.caught || {};
-    myManualRanks = data.manualRanks || {};
-    scullers.forEach(function(s) {
-      if (lastSession[s.id]) {
-        s.lastStartPos = lastSession[s.id].lastStartPos;
-        s.lastCaught = lastSession[s.id].lastCaught;
-      }
-    });
-  }
   init();
   initEventListeners();
 }).catch(function() {
