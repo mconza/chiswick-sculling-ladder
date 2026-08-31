@@ -99,50 +99,53 @@ document.addEventListener('DOMContentLoaded', function() {
     updateHomeDate();
     autoAdvanceLadder();
     updateHeaderButtons();
+    attachListeners();
   }).catch(function() {
     updateHeaderButtons();
+    attachListeners();
   });
 
-  // Login triggers
-  document.querySelectorAll('#loginTrigger, #loginTriggerBottom').forEach(function(el) {
-    el.addEventListener('click', function(e) {
-      e.preventDefault();
-      showLogin();
+  function attachListeners() {
+    document.querySelectorAll('#loginTrigger, #loginTriggerBottom').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        showLogin();
+      });
     });
-  });
 
-  var backLink = document.querySelector('.back-link');
-  if (backLink) {
-    backLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      showLanding();
-    });
-  }
+    var backLink = document.querySelector('.back-link');
+    if (backLink) {
+      backLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showLanding();
+      });
+    }
 
-  var loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var pw = document.getElementById('password').value.trim();
-      if (pw === 'admin') {
-        localStorage.setItem('csl_role', 'admin');
-        localStorage.setItem('csl_auth', 'true');
-        window.location.href = './app.html';
-      } else if (pw === 'ladder') {
-        loginForm.style.display = 'none';
-        document.getElementById('scullerSelect').style.display = '';
-        document.getElementById('scullerSearch').focus();
-      } else {
-        document.getElementById('errorMsg').classList.add('show');
-        document.getElementById('password').value = '';
-      }
-    });
-  }
+    var loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var pw = document.getElementById('password').value.trim();
+        if (pw === 'admin') {
+          localStorage.setItem('csl_role', 'admin');
+          localStorage.setItem('csl_auth', 'true');
+          window.location.href = './app.html';
+        } else if (pw === 'ladder') {
+          loginForm.style.display = 'none';
+          document.getElementById('scullerSelect').style.display = '';
+          document.getElementById('scullerSearch').focus();
+        } else {
+          document.getElementById('errorMsg').classList.add('show');
+          document.getElementById('password').value = '';
+        }
+      });
+    }
 
-  var scullerSearch = document.getElementById('scullerSearch');
-  if (scullerSearch) {
-    scullerSearch.addEventListener('input', function() {
-      renderScullerList(this.value);
-    });
+    var scullerSearch = document.getElementById('scullerSearch');
+    if (scullerSearch) {
+      scullerSearch.addEventListener('input', function() {
+        renderScullerList(this.value);
+      });
+    }
   }
 });
