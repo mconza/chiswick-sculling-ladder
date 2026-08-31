@@ -12,19 +12,11 @@
   font-weight: 600;
 }
 
-.user-card {
-  display: none;
-}
-
-.uc-section {
-  display: none;
-}
-
 #ucRequestAction {
   margin-left: auto;
 }
 
-.request-pos-form {
+.uc-request-form {
   display: none;
 }
 

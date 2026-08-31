@@ -15,7 +15,7 @@
       "startPos": null,
       "caught": null,
       "newRank": 85,
-      "newStartPos": null
+      "newStartPos": 4
     },
     {
       "id": 2,
@@ -25,7 +25,7 @@
       "startPos": "2",
       "caught": "Yes",
       "newRank": 207,
-      "newStartPos": null
+      "newStartPos": 5
     },
     {
       "id": 3,
@@ -35,7 +35,7 @@
       "startPos": null,
       "caught": null,
       "newRank": 116,
-      "newStartPos": null
+      "newStartPos": 2
     },
     {
       "id": 4,
@@ -45,7 +45,7 @@
       "startPos": null,
       "caught": null,
       "newRank": 117,
-      "newStartPos": null
+      "newStartPos": 3
     },
     {
       "id": 5,
@@ -845,7 +845,7 @@
       "startPos": "1",
       "caught": "PathFind",
       "newRank": 78,
-      "newStartPos": null
+      "newStartPos": 1
     },
     {
       "id": 85,
@@ -1634,7 +1634,7 @@
       "rank": "160",
       "startPos": "4",
       "caught": "Yes",
-      "newRank": 161,
+      "newRank": 160,
       "newStartPos": null
     },
     {
@@ -1703,7 +1703,7 @@
       "club": "MAA",
       "rank": "167",
       "startPos": "3",
-      "caught": "No",
+      "caught": "Yes",
       "newRank": 160,
       "newStartPos": null
     },
