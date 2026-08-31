@@ -690,10 +690,16 @@ function initEventListeners() {
           var current = me.nextParticipating;
           if (current === val) { me.nextParticipating = null; val = null; }
           else { me.nextParticipating = val; }
-          postVotes({ participation: {} }).then(function() {
-            var p = {}; p[currentUserId] = val;
-            postVotes({ participation: p });
-          });
+      postVotes({ participation: {} }).then(function() {
+        var p = {}; p[id] = val;
+        postVotes({ participation: p });
+      });
+      if (val === null || val === undefined) {
+        delete myManualStarts[id];
+        var payload = { manualStarts: {} };
+        payload.manualStarts[id] = null;
+        postVotes(payload);
+      }
         } else {
           var store = myCaught;
           var current = store[currentUserId];
@@ -727,6 +733,12 @@ function initEventListeners() {
           var p = {}; p[currentUserId] = val;
           postVotes({ participation: p });
         });
+        if (val === null || val === undefined) {
+          delete myManualStarts[currentUserId];
+          var payload = { manualStarts: {} };
+          payload.manualStarts[currentUserId] = null;
+          postVotes(payload);
+        }
         computeRankingsLocal();
         var nextPos = computeNextPositions(scullers, myManualStarts);
         me.nextStartPos = nextPos[me.id] || null;
