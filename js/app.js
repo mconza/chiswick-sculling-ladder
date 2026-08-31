@@ -1,226 +1,931 @@
-// Chiswick Sculling Ladder - App Logic
+// js/app.js - Entry point for app.html
 
-if (localStorage.getItem('csl_auth') !== 'true') {
-  window.location.href = './index.html';
+import { loadScullers, getVotes, postVotes, getConfig, postConfig, getHistory, getHistoryDate, saveHistory, postRequest, deleteRequest } from './api.js';
+import { checkAuth, isAdmin as authIsAdmin, getUserId, getMe, logout } from './auth.js';
+import { computeRankings, getComputedRank, computeNextPositions, computeLastPositions } from './rankings.js';
+import { showToast } from './toast.js';
+import { openModal, closeModal, saveModal, updateLadderInfo } from './modal.js';
+import { escHtml, parseLadderDate, formatDate, ladderDateToInput, inputToLadderDate, getLadderDate } from './ui.js';
+
+// Auth guard
+if (!checkAuth()) throw new Error('Not authenticated');
+
+// State
+var isAdmin = authIsAdmin();
+var currentUserId = getUserId();
+var scullers = [];
+var nextLadder = {};
+var lastLadder = {};
+var myCaught = {};
+var myManualRanks = {};
+var myManualStarts = {};
+var computedRanks = {};
+var currentSort = 'nextStartPos';
+var currentDir = 1;
+var skipSort = false;
+var activeTab = 'next';
+var historyData = null;
+var myRequests = [];
+var me = null;
+
+// Core functions
+function computeRankingsLocal() {
+  computedRanks = computeRankings(scullers, myCaught, myManualRanks);
 }
 
-var scullers = [{"id": 1, "name": "Aba C", "club": "PTRC", "rank": "85", "lastStartPos": "1", "lastCaught": "PathFind", "nextParticipating": null, "nextStartPos": null},{"id": 2, "name": "Inkeri", "club": "QBC", "rank": "207", "lastStartPos": "2", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 3},{"id": 3, "name": "Mary M", "club": "PTRC", "rank": "116", "lastStartPos": "3", "lastCaught": "No", "nextParticipating": null, "nextStartPos": null},{"id": 4, "name": "Jacqui S", "club": "QBC & TTRC", "rank": "117", "lastStartPos": "4", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 7},{"id": 5, "name": "Lorna", "club": "QBC", "rank": "205", "lastStartPos": "5", "lastCaught": "No", "nextParticipating": null, "nextStartPos": null},{"id": 6, "name": "Steve M", "club": "MAABC", "rank": "206", "lastStartPos": "6", "lastCaught": "Yes", "nextParticipating": "No", "nextStartPos": null},{"id": 7, "name": "Kirsty R-D", "club": "QBC", "rank": "49", "lastStartPos": "7", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 11},{"id": 8, "name": "Ainslie", "club": "QBC", "rank": "50", "lastStartPos": "8", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 12},{"id": 9, "name": "Caroline B", "club": "MAA", "rank": "51", "lastStartPos": "9", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 10},{"id": 10, "name": "Kathryn H", "club": "TSS", "rank": "52", "lastStartPos": "10", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 15},{"id": 11, "name": "Jonathan F", "club": "QBC", "rank": "53", "lastStartPos": "11", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 14},{"id": 12, "name": "David S", "club": "Sons", "rank": "48", "lastStartPos": "12", "lastCaught": "Yes", "nextParticipating": "No", "nextStartPos": null},{"id": 13, "name": "Devlin L", "club": "QBC", "rank": "47", "lastStartPos": "13", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 17},{"id": 14, "name": "Daisy W", "club": "MAA", "rank": "35", "lastStartPos": "14", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 20},{"id": 15, "name": "Guy", "club": "CYGNET", "rank": "36", "lastStartPos": "15", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 19},{"id": 16, "name": "Steph", "club": "TSS", "rank": "7", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 17, "name": "Tom B", "club": "QBC", "rank": "27", "lastStartPos": "17", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 23},{"id": 18, "name": "Mark O'B", "club": "QBC", "rank": "26", "lastStartPos": "18", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 26},{"id": 19, "name": "Michael DP", "club": "FSC", "rank": "16", "lastStartPos": "19", "lastCaught": "No", "nextParticipating": null, "nextStartPos": null},{"id": 20, "name": "Andrea M", "club": "FRBC", "rank": "17", "lastStartPos": "20", "lastCaught": "No", "nextParticipating": "No", "nextStartPos": null},{"id": 21, "name": "William P", "club": "CYG", "rank": "25", "lastStartPos": "21", "lastCaught": "Yes", "nextParticipating": "Yes", "nextStartPos": 27},{"id": 22, "name": "Simon H", "club": "QBC", "rank": "12", "lastStartPos": "22", "lastCaught": "No", "nextParticipating": "Yes", "nextStartPos": 28},{"id": 23, "name": "Richard R", "club": "TSS", "rank": "13", "lastStartPos": "23", "lastCaught": "No", "nextParticipating": "No", "nextStartPos": null},{"id": 24, "name": "Kit L", "club": "FSC", "rank": "14", "lastStartPos": "24", "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 25, "name": "Anthony Lowther", "club": "TSS", "rank": "1", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 26, "name": "Nick Palmer", "club": "TSS", "rank": "2", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 27, "name": "Kieran B", "club": "TSS", "rank": "3", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 28, "name": "Salvatore", "club": "TSS", "rank": "4", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 29, "name": "Ed W", "club": "MAA", "rank": "5", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 30, "name": "Heinrich V", "club": "PTRC", "rank": "6", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 31},{"id": 31, "name": "Stephen P", "club": "TSS & CRB", "rank": "7", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 32, "name": "Jack H", "club": "QBC", "rank": "8", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 33, "name": "Rory", "club": "TSS", "rank": "9", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 30},{"id": 34, "name": "Ali B", "club": "AK & PTRC", "rank": "10", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 35, "name": "Steve B", "club": "MAABC", "rank": "11", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 29},{"id": 36, "name": "Dov", "club": "QBC &TSS", "rank": "15", "lastStartPos": null, "lastCaught": null, "nextParticipating": "No", "nextStartPos": null},{"id": 37, "name": "Chris H", "club": "PTRC", "rank": "18", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 38, "name": "Ken A", "club": "QBC", "rank": "19", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 39, "name": "Jen B", "club": "MAABC", "rank": "20", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 40, "name": "Frederick W", "club": "KHS", "rank": "21", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 41, "name": "Roberto", "club": "TSS", "rank": "22", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 42, "name": "Alex K", "club": "MAA", "rank": "23", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 43, "name": "Steve A", "club": "TSS", "rank": "24", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 44, "name": "Mark B", "club": "PTRC", "rank": "28", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 22},{"id": 45, "name": "Robert W", "club": "TSS", "rank": "29", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 21},{"id": 46, "name": "Lasse B", "club": "TSS", "rank": "30", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 47, "name": "Mark A", "club": "TSS", "rank": "31", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 48, "name": "Ben B", "club": "TSS", "rank": "32", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 49, "name": "Holger W", "club": "TSS", "rank": "33", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 50, "name": "Nicholas Y", "club": "SONS", "rank": "34", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 51, "name": "David B", "club": "TTRC", "rank": "38", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 52, "name": "Simon S", "club": "TSS CYGNET", "rank": "39", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 53, "name": "Daniel R", "club": "MAA", "rank": "40", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 54, "name": "Rob P", "club": "PTRC", "rank": "41", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 18},{"id": 55, "name": "Hannah", "club": "BBL", "rank": "42", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 56, "name": "Nick Mc", "club": "TSS", "rank": "43", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 57, "name": "Rod S", "club": "UTRC", "rank": "44", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 58, "name": "Alessio", "club": "TSS", "rank": "45", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 59, "name": "Slavo R", "club": "QBC", "rank": "46", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 60, "name": "Maurizio", "club": "QBC", "rank": "54", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 13},{"id": 61, "name": "Ken C", "club": "QBC", "rank": "55", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 25},{"id": 62, "name": "Anna R", "club": "MAA", "rank": "56", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 63, "name": "Jose C", "club": "QBC", "rank": "57", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 64, "name": "James S", "club": "QBC", "rank": "58", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 65, "name": "Dan", "club": "PTRC", "rank": "40", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 66, "name": "Alex M", "club": "PTRC", "rank": "60", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 16},{"id": 67, "name": "Keith C", "club": "TSS", "rank": "61", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 68, "name": "Andrew", "club": "TSS", "rank": "62", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 69, "name": "Rebecca S", "club": "BBL", "rank": "63", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 70, "name": "Chris Williams", "club": "TSS", "rank": "64", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 71, "name": "Sarah P", "club": "BBL", "rank": "65", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 72, "name": "Chris G", "club": "TSS", "rank": "66", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 73, "name": "Geoff P", "club": "QBC", "rank": "67", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 74, "name": "Graham B", "club": "QBC", "rank": "68", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 75, "name": "Adam K", "club": "PTRC", "rank": "69", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 76, "name": "Giles C", "club": "QBC", "rank": "70", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 77, "name": "Fiona B", "club": "TSS", "rank": "71", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 9},{"id": 78, "name": "Barbara K", "club": "TSS", "rank": "72", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 79, "name": "Paul D", "club": "PTRC & TSS", "rank": "73", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 80, "name": "Jamie P", "club": "TSS", "rank": "74", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 81, "name": "Paul Mew", "club": "THAMES", "rank": "75", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 82, "name": "William C", "club": "TSS", "rank": "76", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 83, "name": "William M", "club": "QBC", "rank": "77", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 84, "name": "Zoe G", "club": "TSS", "rank": "78", "lastStartPos": null, "lastCaught": null, "nextParticipating": "PathFind", "nextStartPos": 2},{"id": 85, "name": "Deborah M", "club": "QBC", "rank": "79", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 86, "name": "Katy", "club": "BBL", "rank": "80", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 87, "name": "Colleen C", "club": "MAA", "rank": "81", "lastStartPos": null, "lastCaught": null, "nextParticipating": "No", "nextStartPos": null},{"id": 88, "name": "Dave N", "club": "QBC", "rank": "82", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 89, "name": "Kat R", "club": "MAA", "rank": "83", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 90, "name": "Andy C", "club": "PTRC", "rank": "84", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 91, "name": "Miranda", "club": "MAA", "rank": "86", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 92, "name": "Matthew D", "club": "TTRC", "rank": "87", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 93, "name": "Athene", "club": "PTRC", "rank": "88", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 8},{"id": 94, "name": "Rafael C", "club": "Sons", "rank": "89", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 95, "name": "Tony A", "club": "MAA", "rank": "90", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 96, "name": "Matthias K", "club": "BNT", "rank": "91", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 97, "name": "Richard I", "club": "FRBC & TYR", "rank": "92", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 98, "name": "Gareth F", "club": "CYGNET", "rank": "93", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 99, "name": "Dimitri", "club": "TSS", "rank": "94", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 100, "name": "John H", "club": "PTRC", "rank": "95", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 101, "name": "Harvey A", "club": "TSS", "rank": "96", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 102, "name": "Kai A", "club": "TSS", "rank": "97", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 103, "name": "George F", "club": "TSS", "rank": "98", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 104, "name": "Indy R", "club": "TSS", "rank": "99", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 105, "name": "Amaru C", "club": "TSS", "rank": "100", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 106, "name": "Noel", "club": "AK", "rank": "101", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 107, "name": "Tim E", "club": "TSS", "rank": "102", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 108, "name": "Ian B", "club": "BNT", "rank": "103", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 109, "name": "Charlie H", "club": "QBC", "rank": "104", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 110, "name": "Miro S", "club": "TSS", "rank": "105", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 111, "name": "Varsha D", "club": "MAA", "rank": "106", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 112, "name": "Thomas R", "club": "TSS", "rank": "107", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 113, "name": "Krishna S", "club": "UCLBC", "rank": "108", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 114, "name": "Hilary C", "club": "MAA", "rank": "109", "lastStartPos": null, "lastCaught": null, "nextParticipating": "PathFind", "nextStartPos": 1},{"id": 115, "name": "Susan M", "club": "PTRC", "rank": "110", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 116, "name": "Kasia L", "club": "TSS", "rank": "111", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 117, "name": "Bea", "club": "PTRC", "rank": "112", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 118, "name": "Mash", "club": "QBC", "rank": "113", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 119, "name": "Nick G", "club": "QBC", "rank": "114", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 120, "name": "Kate PdF", "club": "PTRC", "rank": "115", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 121, "name": "Roseanna", "club": "TSS", "rank": "118", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 122, "name": "Elaine F", "club": "TSS", "rank": "119", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 123, "name": "Joanna AJ", "club": "TSS", "rank": "120", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 124, "name": "Roger S", "club": "TSS", "rank": "121", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 125, "name": "Peter W", "club": "TSS", "rank": "122", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 126, "name": "Whit M", "club": "CYGNET", "rank": "123", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 127, "name": "Caroline R", "club": "TSS", "rank": "124", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 128, "name": "Mike H", "club": "TSS", "rank": "125", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 129, "name": "Eliot M", "club": "TSS", "rank": "126", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 130, "name": "Frank R", "club": "AK", "rank": "127", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 131, "name": "Paul M", "club": "MAA", "rank": "75", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 132, "name": "Nick H", "club": "AK", "rank": "129", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 133, "name": "William S", "club": "TSS", "rank": "130", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 134, "name": "Robert L", "club": "Sons", "rank": "131", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 135, "name": "Chris B", "club": "MAA & TSS", "rank": "132", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 136, "name": "Jade G", "club": "MAA", "rank": "133", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 137, "name": "Mia D", "club": "TSS", "rank": "134", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 138, "name": "Gavin E", "club": "Cygnet", "rank": "135", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 139, "name": "Paul A", "club": "TTRC", "rank": "136", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 140, "name": "Hady G", "club": "PTRC", "rank": "137", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 141, "name": "John A", "club": "TSS", "rank": "138", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 142, "name": "Sarah K", "club": "BBL", "rank": "139", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 143, "name": "Gabi L", "club": "PTRC", "rank": "140", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 144, "name": "Joy B", "club": "PTRC", "rank": "141", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 145, "name": "Matthew K", "club": "BNT", "rank": "142", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 146, "name": "Ksenia L", "club": "MAA", "rank": "143", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 147, "name": "Jemima", "club": "MAABC", "rank": "144", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 148, "name": "Jo E", "club": "MAA", "rank": "145", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 149, "name": "Pete M", "club": "QBC", "rank": "146", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 150, "name": "Henry B", "club": "UCLBC", "rank": "147", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 151, "name": "Cristobal", "club": "CYGNET", "rank": "148", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 152, "name": "Dean C", "club": "FSC", "rank": "149", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 153, "name": "Feargal S", "club": "TSS", "rank": "150", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 154, "name": "Judith S", "club": "TSS", "rank": "151", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 155, "name": "Richard B", "club": "MAA", "rank": "152", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 156, "name": "Cecile", "club": "TSS", "rank": "153", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 157, "name": "Nick R", "club": "QBC", "rank": "154", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 158, "name": "Zoe B", "club": "MAA", "rank": "155", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 159, "name": "Hon W", "club": "Sons", "rank": "156", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 160, "name": "Sophia S", "club": "TSS", "rank": "157", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 161, "name": "Ruth T", "club": "Sons", "rank": "158", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 162, "name": "Victoria", "club": "MAA", "rank": "159", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 163, "name": "Pieternel O", "club": "BBL", "rank": "160", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 164, "name": "Will M", "club": "Sons", "rank": "161", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 165, "name": "Tim R", "club": "TSS", "rank": "162", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 166, "name": "Gareth N", "club": "TSS", "rank": "163", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 167, "name": "Kat B", "club": "MAA", "rank": "164", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 168, "name": "Jim Mott", "club": "TSS", "rank": "165", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 169, "name": "Georgina H", "club": "MAA", "rank": "166", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 6},{"id": 170, "name": "Sanne C", "club": "MAA", "rank": "167", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 5},{"id": 171, "name": "Nicola D", "club": "MAA", "rank": "168", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 172, "name": "Kira V", "club": "QBC", "rank": "169", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 173, "name": "Roberta", "club": "QBC", "rank": "170", "lastStartPos": null, "lastCaught": null, "nextParticipating": "Yes", "nextStartPos": 4},{"id": 174, "name": "Rita P", "club": "QBC", "rank": "171", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 175, "name": "Sue H", "club": "TTRC", "rank": "172", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 176, "name": "Emily R", "club": "TSS", "rank": "173", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 177, "name": "Simon W", "club": "QBC", "rank": "174", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 178, "name": "CL French", "club": "TSS", "rank": "175", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 179, "name": "Johnny L", "club": "QBC", "rank": "176", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 180, "name": "Sara J", "club": "TSS", "rank": "177", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 181, "name": "Emma T", "club": "PTRC", "rank": "178", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 182, "name": "Hatty", "club": "TSS", "rank": "179", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 183, "name": "Chrissie G", "club": "MAA", "rank": "180", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 184, "name": "Antke", "club": "BNT", "rank": "181", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 185, "name": "Lisa K", "club": "MAA", "rank": "182", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 186, "name": "Robert H", "club": "TSS", "rank": "183", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 187, "name": "Raki", "club": "TSS", "rank": "184", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 188, "name": "Nikita R", "club": "UCLBC", "rank": "185", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 189, "name": "Emily F", "club": "QBC", "rank": "186", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 190, "name": "Pat C", "club": "TSS", "rank": "187", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 191, "name": "Ella W", "club": "UCLBC", "rank": "188", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 192, "name": "Lee B", "club": "MAA", "rank": "189", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 193, "name": "Chris N", "club": "TSS", "rank": "190", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 194, "name": "Mel G", "club": "QBC", "rank": "191", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 195, "name": "Sakti N", "club": "QBC", "rank": "192", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 196, "name": "Tara D", "club": "UCLBC", "rank": "193", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 197, "name": "Louise P", "club": "MAA", "rank": "194", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 198, "name": "Vicky S", "club": "TSS", "rank": "195", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 199, "name": "Shamae", "club": "UCLBC", "rank": "196", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 200, "name": "Cara X", "club": "BBL", "rank": "197", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 201, "name": "Bex T", "club": "UCLBC", "rank": "198", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 202, "name": "Suzanne D", "club": "BNT", "rank": "199", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 203, "name": "Sara W", "club": "PTRC", "rank": "200", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 204, "name": "Sharika F", "club": "MAA", "rank": "201", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 205, "name": "Liz B", "club": "QBC", "rank": "202", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 206, "name": "Steve C", "club": "QBC", "rank": "203", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 207, "name": "Chris S", "club": "MAABC", "rank": "204", "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 208, "name": "Abi W", "club": "MAA", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 209, "name": "Adrian B", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 210, "name": "Amelie GK", "club": "BBLRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 211, "name": "Anthony Letterese", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 212, "name": "Blyda", "club": "MAABC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 213, "name": "Dom", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 214, "name": "Dwain", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 215, "name": "Dylan M", "club": "PTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 216, "name": "Ele C", "club": "Putney", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 217, "name": "Ellie R", "club": "MAA", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 218, "name": "Hamish M", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 219, "name": "Harry Long", "club": "UCL", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 220, "name": "Henry H", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 221, "name": "Huw J", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 222, "name": "Ingrid", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 223, "name": "Jake B", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 224, "name": "Jane M", "club": "Sons", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 225, "name": "Joe B", "club": "UCL", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 226, "name": "John P", "club": "PTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 227, "name": "Jonny C", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 228, "name": "Julian K", "club": "TTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 229, "name": "Katie R", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 230, "name": "Kim W", "club": "TTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 231, "name": "Leif", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 232, "name": "Malachi R", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 233, "name": "Marc F", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 234, "name": "Michael R", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 235, "name": "Mickey", "club": "CYG", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 236, "name": "Millie E", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 237, "name": "Min S", "club": "AK", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 238, "name": "Naomi C", "club": "WEY", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 239, "name": "Nicholas H", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 240, "name": "Nicki McM", "club": "PTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 241, "name": "Nicola T", "club": "MAA", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 242, "name": "Pippa F", "club": "MAA", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 243, "name": "Rob F", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 244, "name": "Roger E", "club": "Sons", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 245, "name": "Ronald R", "club": "FSC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 246, "name": "Sophie I", "club": "MAABC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 247, "name": "Stan L", "club": "MAA", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 248, "name": "Stephen L", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 249, "name": "Stephen R", "club": "PTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 250, "name": "Steve S", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 251, "name": "Tim S", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 252, "name": "Tim W", "club": "Sons", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 253, "name": "Tom J", "club": "TTRC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 254, "name": "Walter C", "club": "TSS", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null},{"id": 255, "name": "Yan T", "club": "QBC", "rank": null, "lastStartPos": null, "lastCaught": null, "nextParticipating": null, "nextStartPos": null}];
-var nextLadder = {"date": "Sun 30-Aug-2026", "time": "10:30", "start": "Richmond Lock", "finish": "Chiswick Bridge"};
-var lastLadder = {"date": "Sun 16-Aug-2026", "time": "10:30", "start": "Richmond Lock"};
-var myVotes = JSON.parse(localStorage.getItem('csl_votes') || '{}');
-var currentSculler = null;
+function getComputedRankLocal(s) {
+  return getComputedRank(s, myManualRanks, computedRanks);
+}
 
-function parseLadderDate(dateStr) {
-  var match = dateStr.match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/);
-  if (!match) return null;
-  var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-  return new Date(parseInt(match[3]), months[match[2]], parseInt(match[1]));
+function getVal(s, key) {
+  if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
+  if (key === 'rank') { var r = getComputedRankLocal(s); return r || 9999; }
+  if (key === 'newRank') { var r = computedRanks[s.id]; return r || 9999; }
+  if (key === 'lastStartPos') {
+    return s.lastStartPos ? parseInt(s.lastStartPos) : 9999;
+  }
+  if (key === 'lastCaught') {
+    var c = myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
+    if (c === 'Yes' || c === 'PathFind') return 0;
+    if (c === 'No') return 1;
+    return 2;
+  }
+  if (key === 'nextParticipating') {
+    var p = s.nextParticipating;
+    if (p === 'Yes') return 0;
+    if (p === 'No') return 1;
+    return 2;
+  }
+  if (key === 'nextStartPos') {
+    var p = s.nextParticipating;
+    if (p !== 'Yes' && p !== 'PathFind') return 9999;
+    var nextPositions = computeNextPositions(scullers, myManualStarts);
+    return nextPositions[s.id] || 9999;
+  }
+  return 0;
 }
-function formatLadderDate(d) {
-  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return days[d.getDay()] + ' ' + d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+
+function updateUserCard() {
+  if (!me) return;
+  var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : me.lastCaught;
+  document.getElementById('ucName').textContent = me.name;
+  document.getElementById('ucClub').textContent = me.club;
+  document.getElementById('ucRank').textContent = me.nextParticipating === 'Yes' && me.nextStartPos ? '#' + me.nextStartPos : (getComputedRankLocal(me) || 'n/a');
+  var hasRaced = me.lastStartPos != null;
+  document.getElementById('ucCaughtAction').style.display = hasRaced ? '' : 'none';
+  if (hasRaced) {
+    document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
+    var caughtByEl = document.getElementById('ucCaughtBy');
+    var hasExplicitChoice = myCaught[me.id] !== undefined;
+    if (caughtVal === 'Yes') {
+      var myPos = parseInt(me.lastStartPos);
+      var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+      var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
+      caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
+    } else if (caughtVal === 'No') {
+      var myPos = parseInt(me.lastStartPos);
+      var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+      var behind = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
+      caughtByEl.textContent = behind ? behind.name + ' didn\'t catch you' : 'Not caught';
+    } else if (caughtVal === 'PathFind') {
+      caughtByEl.textContent = 'PathFind';
+    } else if (hasExplicitChoice && caughtVal !== me.lastCaught) {
+      caughtByEl.textContent = 'Last to start';
+    } else {
+      caughtByEl.textContent = me.lastCaught === 'No' ? 'Not caught' : '';
+    }
+  }
+  document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
+  document.querySelectorAll('#userCard .btn-table[data-uc]').forEach(function(btn) {
+    var ucType = btn.dataset.uc;
+    var val = btn.dataset.val;
+    var current = ucType === 'caught' ? caughtVal : me.nextParticipating;
+    var isActive = current === val || (val === '' && (current === undefined || current === null));
+    if (val === 'Yes') btn.className = 'btn-table ' + (isActive ? 'btn-yes' : 'btn-yes-dim');
+    else if (val === 'No') btn.className = 'btn-table ' + (isActive ? 'btn-no' : 'btn-no-dim');
+    else if (val === 'PathFind') btn.className = 'btn-table ' + (isActive ? 'btn-path' : 'btn-yes-dim');
+    else btn.className = 'btn-table ' + (isActive ? 'btn-no' : 'btn-no-dim');
+  });
+  var ucSelect = document.querySelector('#userCard .inline-select[data-uc="confirmed"]');
+  if (ucSelect) {
+    ucSelect.value = me.nextParticipating || '';
+    ucSelect.className = 'inline-select';
+    if (me.nextParticipating === 'Yes') ucSelect.classList.add('val-yes');
+    else if (me.nextParticipating === 'No') ucSelect.classList.add('val-no');
+    else if (me.nextParticipating === 'PathFind') ucSelect.classList.add('val-pf');
+  }
+  var reqAction = document.getElementById('ucRequestAction');
+  if (reqAction) reqAction.style.display = me.nextParticipating === 'Yes' ? '' : 'none';
 }
-function updateLadderDates() {
-  document.getElementById('nextLadderInfo').innerHTML =
-    '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
-    ' \u2014 ' + nextLadder.start + ' to ' + nextLadder.finish;
-  document.getElementById('nextLadderDate').textContent =
-    nextLadder.date + ' at ' + nextLadder.time + ', ' + nextLadder.start;
+
+function checkAutoSave() {
+  if (activeTab !== 'next') return;
+  var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
+  if (starters.length === 0) return;
+  var participants = starters.slice(0, -1);
+  var allVoted = participants.every(function(s) {
+    var cv = myCaught[s.id];
+    return cv === 'Yes' || cv === 'No' || cv === 'PathFind';
+  });
+  if (!allVoted) return;
+  autoSaveSession();
 }
-updateLadderDates();
-fetch('/api/config').then(function(r) { return r.json(); }).then(function(data) {
-  if (data.nextLadder) nextLadder = data.nextLadder;
-  updateLadderDates();
+
+function autoSaveSession() {
+  var dateStr = getLadderDate(nextLadder);
+  var snapshot = {
+    date: dateStr,
+    ladderInfo: nextLadder,
+    scullers: scullers.map(function(s) {
+      return {
+        id: s.id,
+        name: s.name,
+        club: s.club,
+        rank: s.rank,
+        startPos: s.lastStartPos || null,
+        caught: myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught,
+        newRank: getComputedRankLocal(s) || null,
+        newStartPos: null
+      };
+    })
+  };
+  var nextPos = computeNextPositions(scullers, myManualStarts);
+  snapshot.scullers.forEach(function(s) {
+    s.newStartPos = nextPos[s.id] || null;
+  });
+  saveHistory(snapshot).catch(function() {});
+}
+
+function checkAndAdvanceLadder() {
   var ladderDate = parseLadderDate(nextLadder.date);
-  if (ladderDate) {
-    var now = new Date();
-    var dt = new Date(ladderDate);
-    var parts = nextLadder.time.split(':');
-    dt.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
-    if (now > dt) {
-      var nd = new Date(ladderDate);
-      nd.setDate(nd.getDate() + 14);
-      nextLadder.date = formatLadderDate(nd);
-      updateLadderDates();
-      fetch('/api/config', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({nextLadder:nextLadder}) }).catch(function(){});
-    }
+  if (!ladderDate) return;
+  var now = new Date();
+  var ladderDateTime = new Date(ladderDate);
+  var parts = nextLadder.time.split(':');
+  ladderDateTime.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+  if (now > ladderDateTime) {
+    lastLadder = { date: nextLadder.date, time: nextLadder.time, start: nextLadder.start };
+    var newDate = new Date(ladderDate);
+    newDate.setDate(newDate.getDate() + 14);
+    nextLadder.date = formatDate(newDate);
+    var nextPos = computeNextPositions(scullers, myManualStarts);
+    scullers.forEach(function(s) {
+      if (s.nextParticipating === 'Yes') {
+        s.lastStartPos = nextPos[s.id] ? String(nextPos[s.id]) : null;
+        s.lastCaught = myCaught[s.id] !== undefined ? myCaught[s.id] : null;
+      } else if (s.nextParticipating === 'PathFind') {
+        s.lastStartPos = '1';
+        s.lastCaught = 'PathFind';
+      } else {
+        s.lastStartPos = null;
+        s.lastCaught = null;
+      }
+      s.nextParticipating = null;
+      s.nextStartPos = null;
+    });
+    myCaught = {};
+    var lastSessionData = {};
+    scullers.forEach(function(s) {
+      lastSessionData[s.id] = { lastStartPos: s.lastStartPos, lastCaught: s.lastCaught };
+    });
+    computeRankingsLocal();
+    renderTable();
+    updateUserCard();
+    updateLadderInfo(nextLadder);
+    postConfig({ nextLadder: nextLadder, lastLadder: lastLadder });
+    postVotes({ participation: {}, clearParticipation: true, caught: {}, manualRanks: {}, manualStarts: {}, lastSession: lastSessionData });
   }
-}).catch(function() {});
-renderList(scullers);
+}
 
-document.getElementById('searchInput').addEventListener('input', function() {
-  var q = this.value.toLowerCase().trim();
-  if (!q) { renderList(scullers); return; }
-  var filtered = scullers.filter(function(s) {
-    return s.name.toLowerCase().indexOf(q) !== -1 ||
-           s.club.toLowerCase().indexOf(q) !== -1;
+function renderTable() {
+  if (activeTab === 'history') {
+    renderHistoryTable();
+    return;
+  }
+  var lastLadderLabel = 'Last Session<br>' + lastLadder.date + '<br><small>(' + lastLadder.time + ', ' + lastLadder.start + ')</small>';
+  var nextLadderLabel = 'Next Session<br>' + nextLadder.date + '<br><small>(' + nextLadder.time + ', ' + nextLadder.start + ')</small>';
+  document.getElementById('tableHead').innerHTML =
+    isAdmin ?
+    '<tr>' +
+    '<th class="col-group-header sortable" data-sort="name" rowspan="2">Sculler</th>' +
+    '<th class="col-group-header col-next-header" colspan="2">' + nextLadderLabel + '</th>' +
+    '<th class="col-separator" rowspan="2"></th>' +
+    '<th class="col-group-header col-prev-header" colspan="4">' + lastLadderLabel + ' <button class="btn btn-xs btn-accent" id="saveSessionBtn" style="display:none;margin-left:0.5rem;vertical-align:middle;padding:0.15rem 0.45rem;font-size:0.6rem;line-height:1;border-radius:3px;" title="Save current Last Session results to history">Save Results</button></th>' +
+    '</tr>' +
+    '<tr>' +
+    '<th class="sortable col-next" data-sort="nextParticipating">' +
+    '<span class="th-label">In?</span>' +
+    '</th>' +
+    '<th class="sortable col-next" data-sort="nextStartPos">' +
+    '<span class="th-label">Start Pos</span>' +
+    '</th>' +
+    '<th class="col-rank">' +
+    '<span class="th-label">Caught?</span>' +
+    '</th>' +
+    '<th class="sortable col-rank" data-sort="lastStartPos">' +
+    '<span class="th-label">Start</span>' +
+    '</th>' +
+    '<th class="sortable col-rank" data-sort="rank">' +
+    '<span class="th-label">Rank</span>' +
+    '</th>' +
+    '<th class="sortable col-next" data-sort="newRank">' +
+    '<span class="th-label">New Rank</span>' +
+    '</th>' +
+    '</tr>'
+    :
+    '<tr>' +
+    '<th class="sortable col-name" data-sort="name">Sculler</th>' +
+    '<th class="sortable col-next" data-sort="nextStartPos">' +
+    '<span class="th-label">Start Pos</span>' +
+    '</th>' +
+    '<th class="sortable col-rank" data-sort="rank">' +
+    '<span class="th-label">Rank</span>' +
+    '</th>' +
+    '</tr>';
+  document.querySelectorAll('#tableHead .sortable').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var sortKey = this.dataset.sort;
+      if (currentSort === sortKey) { currentDir *= -1; }
+      else { currentSort = sortKey; currentDir = 1; }
+      renderTable();
+    });
   });
-  renderList(filtered);
-});
-
-document.getElementById('backBtn').addEventListener('click', function() {
-  showList();
-});
-
-document.getElementById('navAll').addEventListener('click', function(e) {
-  e.preventDefault();
-  showList();
-});
-
-document.getElementById('navMy').addEventListener('click', function(e) {
-  e.preventDefault();
-  showMyProfile();
-});
-
-document.getElementById('logoutBtn').addEventListener('click', function() {
-  localStorage.removeItem('csl_auth');
-  window.location.href = './index.html';
-});
-
-function showList() {
-  document.getElementById('listView').classList.remove('hidden');
-  document.getElementById('profileView').classList.remove('active');
-  document.getElementById('navAll').classList.add('active');
-  document.getElementById('navMy').classList.remove('active');
-  renderList(scullers);
-}
-
-function showProfile(id) {
-  currentSculler = scullers.find(function(s) { return s.id === id; });
-  if (!currentSculler) return;
-
-  document.getElementById('listView').classList.add('hidden');
-  document.getElementById('profileView').classList.add('active');
-  document.getElementById('navAll').classList.remove('active');
-  document.getElementById('navMy').classList.remove('active');
-
-  var initials = currentSculler.name.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2);
-  document.getElementById('profileAvatar').textContent = initials;
-  document.getElementById('profileName').textContent = currentSculler.name;
-  document.getElementById('profileClub').textContent = currentSculler.club || 'Independent';
-  document.getElementById('statRank').textContent = currentSculler.rank || '-';
-
-  document.getElementById('statNextPos').textContent = currentSculler.nextStartPos || '-';
-  document.getElementById('statLastPos').textContent = currentSculler.lastStartPos || '-';
-
-  var ladderCount = scullers.filter(function(s) {
-    return s.lastStartPos !== null && s.lastStartPos !== undefined;
-  }).length;
-  document.getElementById('statLadders').textContent = ladderCount;
-  document.getElementById('statCaught').textContent = currentSculler.lastCaught || '-';
-
-  updateVoteButtons();
-
-  var historyHtml = '';
-  if (currentSculler.lastStartPos) {
-    historyHtml = '<div class="history-item">' +
-      '<div class="history-left">' +
-        '<div class="history-dot participated"></div>' +
-        '<div>' +
-          '<div class="history-date">' + lastLadder.date + '</div>' +
-          '<div class="history-detail">Start position: ' + currentSculler.lastStartPos +
-          (currentSculler.lastCaught ? ' \u2014 Caught: ' + currentSculler.lastCaught : '') + '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
+  var q = document.getElementById('searchInput').value.toLowerCase().trim();
+  var list = isAdmin ? scullers.slice() : scullers.filter(function(s) {
+    return s.nextParticipating === 'Yes' || s.nextParticipating === 'PathFind';
+  });
+  if (q) {
+    list = list.filter(function(s) {
+      return s.name.toLowerCase().indexOf(q) !== -1 ||
+      s.club.toLowerCase().indexOf(q) !== -1;
+    });
   }
-  if (!historyHtml) {
-    historyHtml = '<div class="no-history">No ladder history yet. Join the next one!</div>';
+  var nextPositions = computeNextPositions(scullers, myManualStarts);
+  if (!skipSort) {
+    list = list.slice().sort(function(a, b) {
+      var va = getVal(a, currentSort);
+      var vb = getVal(b, currentSort);
+      if (va < vb) return -1 * currentDir;
+      if (va > vb) return 1 * currentDir;
+      return 0;
+    });
   }
-  document.getElementById('historyList').innerHTML = historyHtml;
-}
-
-function showMyProfile() {
-  var mySculler = null;
-  for (var key in myVotes) {
-    if (myVotes.hasOwnProperty(key)) {
-      var found = scullers.find(function(s) { return s.id === parseInt(key); });
-      if (found) { mySculler = found; break; }
+  document.getElementById('searchCount').textContent =
+    list.length + ' of ' + (isAdmin ? list.length : scullers.length) + ' scullers';
+  var rows = list.map(function(s) {
+    var participatingVal = s.nextParticipating;
+    var caughtVal = myCaught[s.id] !== undefined ? myCaught[s.id] : null;
+    var startPos = nextPositions[s.id] || null;
+    var btnYesCls = participatingVal === 'Yes' ? 'btn-yes' : 'btn-yes-dim';
+    var btnNoCls = participatingVal === 'No' ? 'btn-no' : 'btn-no-dim';
+    var isMyRow = isAdmin || s.id === currentUserId;
+    var confirmBtns;
+    if (isMyRow) {
+      var selectedVal = participatingVal !== null && participatingVal !== undefined ? participatingVal : '';
+      var selectClass = 'inline-select';
+      if (selectedVal === 'Yes') selectClass += ' val-yes';
+      else if (selectedVal === 'No') selectClass += ' val-no';
+      else if (selectedVal === 'PathFind') selectClass += ' val-pf';
+      confirmBtns = '<select class="' + selectClass + '" data-type="participation" data-id="' + s.id + '">' +
+      '<option value=""' + (selectedVal === '' ? ' selected' : '') + '>-</option>' +
+      '<option value="Yes"' + (selectedVal === 'Yes' ? ' selected' : '') + '>Yes</option>' +
+      '<option value="No"' + (selectedVal === 'No' ? ' selected' : '') + '>No</option>' +
+      '<option value="PathFind"' + (selectedVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
+      '</select>';
+    } else {
+      confirmBtns = '<span class="muted">' + (participatingVal || '-') + '</span>';
     }
-  }
-  if (mySculler) {
-    showProfile(mySculler.id);
-  } else {
-    showList();
-    document.getElementById('searchInput').focus();
-    document.getElementById('searchInput').placeholder = 'Search your name to get started...';
-  }
-}
+    var caughtBtns = '';
+    if (isAdmin) {
+      var caughtSelectVal = caughtVal !== null && caughtVal !== undefined ? caughtVal : '';
+      var caughtSelectClass = 'inline-select';
+      if (caughtSelectVal === 'Yes') caughtSelectClass += ' val-yes';
+      else if (caughtSelectVal === 'No') caughtSelectClass += ' val-no';
+      else if (caughtSelectVal === 'PathFind') caughtSelectClass += ' val-pf';
+      caughtBtns = '<select class="' + caughtSelectClass + '" data-type="caught" data-id="' + s.id + '">' +
+      '<option value=""' + (caughtSelectVal === '' ? ' selected' : '') + '>-</option>' +
+      '<option value="Yes"' + (caughtSelectVal === 'Yes' ? ' selected' : '') + '>Yes</option>' +
+      '<option value="No"' + (caughtSelectVal === 'No' ? ' selected' : '') + '>No</option>' +
+      '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
+      '</select>';
+    }
+    var startingRank = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : null);
+    var newRank = computedRanks[s.id] || null;
+    var diff = '';
+    if (startingRank && newRank) {
+      var d = startingRank - newRank;
+      if (d > 0) diff = '<span style="color:var(--success);font-weight:700;">▲' + d + '</span>';
+      else if (d < 0) diff = '<span style="color:var(--danger);font-weight:700;">▼' + Math.abs(d) + '</span>';
+      else diff = '<span style="color:var(--text-light);">—</span>';
+    }
+    return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
+    '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
+    (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
+    '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
+    (isAdmin ? '<td class="col-separator"></td>' : '') +
+    (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
+    (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
+    '<td class="col-rank">' + (isAdmin ? '<span class="editable-cell" data-field="rank" data-id="' + s.id + '">' : '') + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + (isAdmin ? '</span>' : '') + '</td>' +
+    (isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
+    '</tr>';
+  }).join('');
+  document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 3) + '" class="empty-state">No scullers found</td></tr>';
 
-document.getElementById('btnYes').addEventListener('click', function() {
-  if (!currentSculler) return;
-  myVotes[currentSculler.id] = 'yes';
-  localStorage.setItem('csl_votes', JSON.stringify(myVotes));
-  updateVoteButtons();
-});
-
-document.getElementById('btnNo').addEventListener('click', function() {
-  if (!currentSculler) return;
-  myVotes[currentSculler.id] = 'no';
-  localStorage.setItem('csl_votes', JSON.stringify(myVotes));
-  updateVoteButtons();
-});
-
-function updateVoteButtons() {
-  if (!currentSculler) return;
-  var vote = myVotes[currentSculler.id];
-  var btnYes = document.getElementById('btnYes');
-  var btnNo = document.getElementById('btnNo');
-  btnYes.className = 'btn ' + (vote === 'yes' ? 'btn-yes' : 'btn-outline');
-  btnNo.className = 'btn ' + (vote === 'no' ? 'btn-no' : 'btn-outline');
-  var statusText = '';
-  if (vote === 'yes') statusText = '\u2713 You said Yes!';
-  else if (vote === 'no') statusText = '\u2717 You said No';
-  else statusText = 'Not yet responded';
-  document.getElementById('currentStatus').textContent = statusText;
-}
-
-function renderList(list) {
-  var sorted = list.slice().sort(function(a, b) {
-    var na = a.nextStartPos ? parseInt(a.nextStartPos) : 9999;
-    var nb = b.nextStartPos ? parseInt(b.nextStartPos) : 9999;
-    return na - nb;
+  // Attach table event listeners
+  document.querySelectorAll('.btn-table[data-type="participation"]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = parseInt(this.dataset.id);
+      var val = this.dataset.val;
+      var sc = scullers.find(function(s) { return s.id === id; });
+      if (!sc) return;
+      var current = sc.nextParticipating;
+      if (val === '') {
+        sc.nextParticipating = null;
+        val = null;
+      } else if (val) {
+        if (current === val) { sc.nextParticipating = null; val = null; }
+        else { sc.nextParticipating = val; }
+      } else {
+        var next;
+        if (current === undefined || current === null || current === '???') next = 'Yes';
+        else if (current === 'Yes') next = 'No';
+        else next = undefined;
+        sc.nextParticipating = next || null;
+        val = sc.nextParticipating;
+      }
+      postVotes({ participation: {} }).then(function() {
+        var p = {}; p[id] = val;
+        postVotes({ participation: p });
+      });
+      var row = this.closest('tr');
+      if (row) {
+        row.style.transition = 'background 0.4s';
+        row.style.background = 'rgba(99, 102, 241, 0.15)';
+        setTimeout(function() { row.style.background = ''; }, 400);
+      }
+      computeRankingsLocal();
+      renderTable();
+      checkAutoSave();
+    });
   });
 
-  var html = sorted.map(function(s) {
-    var rank = s.rank || 'n/a';
-    var vote = myVotes[s.id];
-    var statusHtml = '';
-    if (vote === 'yes') statusHtml = '<span class="status-badge status-yes">Yes</span>';
-    else if (vote === 'no') statusHtml = '<span class="status-badge status-no">No</span>';
-    else if (s.nextParticipating === 'Yes') statusHtml = '<span class="status-badge status-yes">Yes</span>';
-    else if (s.nextParticipating === 'No') statusHtml = '<span class="status-badge status-no">No</span>';
+  document.querySelectorAll('.inline-select[data-type="caught"]').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      var id = parseInt(this.dataset.id);
+      var val = this.value || null;
+      var store = myCaught;
+      if (val === '' || val === null) { delete store[id]; val = null; }
+      else { store[id] = val; }
+      localStorage.setItem('csl_caught', JSON.stringify(store));
+      var payload = { caught: {} };
+      payload.caught[id] = val;
+      postVotes(payload);
+      var row = this.closest('tr');
+      if (row) {
+        row.style.transition = 'background 0.4s';
+        row.style.background = 'rgba(99, 102, 241, 0.15)';
+        setTimeout(function() { row.style.background = ''; }, 400);
+      }
+      computeRankingsLocal();
+      renderTable();
+      checkAutoSave();
+    });
+  });
 
-    var startPos = s.nextStartPos || '-';
-    var lastPos = s.lastStartPos || '-';
+  document.querySelectorAll('.inline-select[data-type="participation"]').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      var id = parseInt(this.dataset.id);
+      var val = this.value || null;
+      var sc = scullers.find(function(s) { return s.id === id; });
+      if (!sc) return;
+      sc.nextParticipating = val;
+      postVotes({ participation: {} }).then(function() {
+        var p = {}; p[id] = val;
+        postVotes({ participation: p });
+      });
+      computeRankingsLocal();
+      renderTable();
+      checkAutoSave();
+    });
+  });
 
-    return '<div class="sculler-row" data-id="' + s.id + '">' +
-      '<div class="sculler-info">' +
-        '<div class="sculler-rank">' + startPos + '</div>' +
-        '<div class="sculler-name">' + escHtml(s.name) + '</div>' +
-      '</div>' +
-      '<div class="sculler-status">' +
-        (s.club ? '<span class="sculler-club">' + escHtml(s.club) + '</span>' : '') +
-        '<span class="pos-badge" title="Last session start pos">' + lastPos + '</span>' +
-        statusHtml +
-        '<span class="arrow">\u203a</span>' +
-      '</div>' +
+  if (isAdmin) {
+    document.querySelectorAll('.editable-cell').forEach(function(cell) {
+      cell.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var field = this.dataset.field;
+        var id = parseInt(this.dataset.id);
+        var s = scullers.find(function(s) { return s.id === id; });
+        var currentVal = '';
+        if (field === 'rank') currentVal = getComputedRankLocal(s);
+        else currentVal = myManualStarts[id] || '';
+        var orig = this;
+        var input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.value = currentVal || '';
+        input.className = 'inline-edit-input';
+        input.style.width = '50px';
+        orig.textContent = '';
+        orig.appendChild(input);
+        input.focus();
+        input.select();
+        function save() {
+          var val = parseInt(input.value);
+          if (isNaN(val) || val < 0) { renderTable(); return; }
+          if (field === 'rank') {
+            var oldRank = getComputedRankLocal(s);
+            if (oldRank !== val) {
+              var shift = val < oldRank ? 1 : -1;
+              var lo = Math.min(oldRank, val);
+              var hi = Math.max(oldRank, val);
+              scullers.forEach(function(sc) {
+                if (sc.id === id) return;
+                var r = getComputedRankLocal(sc);
+                if (r >= lo && r <= hi) {
+                  var newR = r + shift;
+                  myManualRanks[sc.id] = newR;
+                }
+              });
+            }
+            myManualRanks[id] = val;
+            localStorage.setItem('csl_manualRanks', JSON.stringify(myManualRanks));
+            var payload = { manualRanks: {} };
+            for (var k in myManualRanks) { payload.manualRanks[k] = myManualRanks[k]; }
+            postVotes(payload);
+          } else {
+            var curPositions = computeNextPositions(scullers, myManualStarts);
+            var oldStart = curPositions[id] || null;
+            if (oldStart !== null && oldStart !== val) {
+              var shift2 = val < oldStart ? 1 : -1;
+              var lo2 = Math.min(oldStart, val);
+              var hi2 = Math.max(oldStart, val);
+              scullers.forEach(function(sc) {
+                if (sc.id === id) return;
+                var cur = curPositions[sc.id];
+                if (cur != null && cur >= lo2 && cur <= hi2) {
+                  var newCur = cur + shift2;
+                  myManualStarts[sc.id] = newCur;
+                }
+              });
+            }
+            myManualStarts[id] = val;
+            localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+            var payload = { manualStarts: {} };
+            for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
+            postVotes(payload);
+          }
+          computeRankingsLocal();
+          if (field === 'startPos') {
+            currentSort = 'nextStartPos';
+            currentDir = 1;
+          }
+          renderTable();
+        }
+        input.addEventListener('keydown', function(ev) {
+          if (ev.key === 'Enter') { ev.preventDefault(); save(); }
+          if (ev.key === 'Escape') { renderTable(); }
+        });
+        input.addEventListener('blur', function() { save(); });
+      });
+    });
+    var btn = document.getElementById('saveSessionBtn');
+    if (btn) btn.style.display = (isAdmin && activeTab === 'next') ? '' : 'none';
+  }
+}
+
+function renderHistoryTable() {
+  document.getElementById('tableHead').innerHTML =
+  '<tr>' +
+  '<th class="sortable col-name" data-sort="name">Name</th>' +
+  '<th class="sortable col-last" data-sort="startPos">' +
+  '<span class="th-label">Start Pos</span>' +
+  '</th>' +
+  '<th class="sortable col-last" data-sort="caught">' +
+  '<span class="th-label">Caught?</span>' +
+  '</th>' +
+  '<th class="sortable col-rank" data-sort="rank">' +
+  '<span class="th-label">Starting Rank</span>' +
+  '<span class="th-sub">Before race</span>' +
+  '</th>' +
+  '<th class="sortable col-next" data-sort="newRank">' +
+  '<span class="th-label">New Rank</span>' +
+  '<span class="th-sub">After race</span>' +
+  '</th>' +
+  '</tr>';
+  document.querySelectorAll('#tableHead .sortable').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var sortKey = this.dataset.sort;
+      if (currentSort === sortKey) { currentDir *= -1; }
+      else { currentSort = sortKey; currentDir = 1; }
+      renderHistoryTable();
+    });
+  });
+  if (!historyData || !historyData.scullers) {
+    document.getElementById('tableBody').innerHTML =
+    '<tr><td colspan="5" class="empty-state">Seleziona una sessione per visualizzare i risultati</td></tr>';
+    document.getElementById('searchCount').textContent = '0 scullers';
+    return;
+  }
+  var q = document.getElementById('searchInput').value.toLowerCase().trim();
+  var list = historyData.scullers.filter(function(s) { return s.startPos != null; });
+  if (q) {
+    list = list.filter(function(s) {
+      return s.name.toLowerCase().indexOf(q) !== -1 ||
+      s.club.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  list = list.slice().sort(function(a, b) {
+    var av = parseInt(a.startPos) || 9999;
+    var bv = parseInt(b.startPos) || 9999;
+    if (av < bv) return -1 * currentDir;
+    if (av > bv) return 1 * currentDir;
+    return 0;
+  });
+  var total = historyData.scullers.filter(function(s) { return s.startPos != null; }).length;
+  document.getElementById('searchCount').textContent =
+  list.length + ' of ' + total + ' participants';
+  var rows = list.map(function(s) {
+    var caughtIcon = '';
+    if (s.caught === 'Yes') caughtIcon = '<span class="btn-table btn-yes" style="cursor:default;">✓ Yes</span>';
+    else if (s.caught === 'No') caughtIcon = '<span class="btn-table btn-no" style="cursor:default;">✗ No</span>';
+    else caughtIcon = '<span class="muted">-</span>';
+    var diff = '';
+    if (s.rank && s.newRank) {
+      var d = parseInt(s.rank) - parseInt(s.newRank);
+      if (d > 0) diff = '<span style="color:var(--success);font-weight:700;">▲' + d + '</span>';
+      else if (d < 0) diff = '<span style="color:var(--danger);font-weight:700;">▼' + Math.abs(d) + '</span>';
+      else diff = '<span style="color:var(--text-light);">—</span>';
+    }
+    return '<tr>' +
+    '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
+    '<td class="col-last">' + (s.startPos || '<span class="muted">-</span>') + '</td>' +
+    '<td class="col-last">' + caughtIcon + '</td>' +
+    '<td class="col-rank">' + (s.rank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
+    '<td class="col-next">' + (s.newRank || '<span class="muted">-</span>') + '</td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="5" class="empty-state">No participants found</td></tr>';
+}
+
+function loadRequests() {
+  getVotes().then(function(data) {
+    myRequests = (data.requests || []).filter(function(r) { return r.status === 'pending'; });
+    renderRequests();
+  }).catch(function() {});
+}
+
+function renderRequests() {
+  if (!isAdmin) return;
+  var container = document.getElementById('adminRequests');
+  var list = document.getElementById('adminRequestsList');
+  if (myRequests.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = '';
+  list.innerHTML = myRequests.map(function(r) {
+    var dirLabel = r.position === 'before' ? 'before' : 'after';
+    return '<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.85rem;">' +
+    '<span style="font-weight:600;">' + escHtml(r.scullerName) + '</span>' +
+    '<span style="color:var(--text-light);">(' + escHtml(r.scullerClub) + ')</span>' +
+    '<span>' + dirLabel + ' <strong>' + escHtml(r.refScullerName) + '</strong></span>' +
+    '<span style="flex:1;"></span>' +
+    '<button class="btn-table btn-yes" data-req-action="apply" data-req-id="' + r.id + '" data-req-rid="' + r.refScullerId + '" data-req-dir="' + r.position + '" data-req-sid="' + r.scullerId + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">Apply</button>' +
+    '<button class="btn-table btn-no-dim" data-req-action="dismiss" data-req-id="' + r.id + '" style="font-size:0.7rem;padding:0.2rem 0.5rem;">X</button>' +
     '</div>';
   }).join('');
-
-  document.getElementById('scullerList').innerHTML = html || '<div class="empty-state"><div class="icon">&#128269;</div><p>No scullers found</p></div>';
-  document.getElementById('searchCount').textContent = sorted.length + ' of ' + scullers.length + ' scullers';
-
-  document.querySelectorAll('.sculler-row').forEach(function(row) {
-    row.addEventListener('click', function() {
-      showProfile(parseInt(this.dataset.id));
+  list.querySelectorAll('[data-req-action]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var action = this.dataset.reqAction;
+      var reqId = parseInt(this.dataset.reqId);
+      if (action === 'apply') {
+        var refSid = parseInt(this.dataset.reqRid);
+        var dir = this.dataset.reqDir;
+        var sid = parseInt(this.dataset.reqSid);
+        var refSc = scullers.find(function(s) { return s.id === refSid; });
+        if (refSc) {
+          var refPos = myManualStarts[refSid] || (refSc.nextStartPos ? parseInt(refSc.nextStartPos) : null);
+          if (refPos != null) {
+            var newPos = dir === 'before' ? refPos : refPos + 1;
+            myManualStarts[sid] = newPos;
+            localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+            var payload = { manualStarts: {} };
+            payload.manualStarts[sid] = newPos;
+            postVotes(payload);
+          }
+        }
+      }
+      deleteRequest(reqId);
+      myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
+      renderRequests();
+      computeRankingsLocal();
+      renderTable();
     });
   });
 }
 
-function escHtml(str) {
-  var div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
+function loadHistoryDates() {
+  getHistory().then(function(data) {
+    var sel = document.getElementById('historyDate');
+    sel.innerHTML = '<option value="">-- seleziona data --</option>';
+    var dates = data.dates || [];
+    dates.forEach(function(d) {
+      var opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
+      sel.appendChild(opt);
+    });
+    if (dates.length > 0) {
+      sel.value = dates[0];
+      sel.dispatchEvent(new Event('change'));
+    }
+  }).catch(function() {});
 }
+
+function initEventListeners() {
+  document.getElementById('searchInput').addEventListener('input', function() {
+    renderTable();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    logout();
+  });
+
+  if (isAdmin) {
+    document.getElementById('editLadderBtn').style.display = '';
+    document.getElementById('editLadderBtn').addEventListener('click', function() {
+      openModal(nextLadder);
+    });
+  }
+
+  document.getElementById('modalCancel').addEventListener('click', function() {
+    closeModal();
+  });
+
+  document.getElementById('modalSave').addEventListener('click', function() {
+    saveModal(nextLadder, lastLadder);
+    updateLadderInfo(nextLadder);
+    computeRankingsLocal();
+    renderTable();
+    updateUserCard();
+  });
+
+  document.getElementById('ladderModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target.id === 'saveSessionBtn' || e.target.closest('#saveSessionBtn')) {
+      var dateStr = getLadderDate(nextLadder);
+      var snapshot = {
+        date: dateStr,
+        ladderInfo: nextLadder,
+        scullers: scullers.map(function(s) {
+          return {
+            id: s.id,
+            name: s.name,
+            club: s.club,
+            rank: s.rank,
+            startPos: s.lastStartPos || null,
+            caught: myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught,
+            newRank: getComputedRankLocal(s) || null,
+            newStartPos: null
+          };
+        })
+      };
+      var nextPos = computeNextPositions(scullers, myManualStarts);
+      snapshot.scullers.forEach(function(s) {
+        s.newStartPos = nextPos[s.id] || null;
+      });
+      saveHistory(snapshot).then(function(data) {
+        if (data.ok) showToast('Session saved: ' + dateStr);
+        else showToast('Error: ' + (data.error || 'unknown'), 'error');
+      }).catch(function() { showToast('Network error', 'error'); });
+    }
+  });
+
+  // User card buttons
+  if (!isAdmin && me) {
+    document.querySelectorAll('#userCard .btn-table[data-uc]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var ucType = this.dataset.uc;
+        var val = this.dataset.val;
+        if (ucType === 'confirmed') {
+          var current = me.nextParticipating;
+          if (current === val) { me.nextParticipating = null; val = null; }
+          else { me.nextParticipating = val; }
+          postVotes({ participation: {} }).then(function() {
+            var p = {}; p[currentUserId] = val;
+            postVotes({ participation: p });
+          });
+        } else {
+          var store = myCaught;
+          var current = store[currentUserId];
+          if (val === '') {
+            if (current === null) { delete store[currentUserId]; val = null; }
+            else { store[currentUserId] = null; val = null; }
+          } else if (current === val) {
+            delete store[currentUserId];
+            val = null;
+          } else {
+            store[currentUserId] = val;
+          }
+          localStorage.setItem('csl_caught', JSON.stringify(store));
+          var payload = { caught: {} };
+          payload.caught[currentUserId] = val;
+          postVotes(payload);
+        }
+        updateUserCard();
+        computeRankingsLocal();
+        renderTable();
+        checkAutoSave();
+      });
+    });
+
+    var ucConfirmedSelect = document.querySelector('#userCard .inline-select[data-uc="confirmed"]');
+    if (ucConfirmedSelect) {
+      ucConfirmedSelect.addEventListener('change', function() {
+        var val = this.value || null;
+        me.nextParticipating = val;
+        postVotes({ participation: {} }).then(function() {
+          var p = {}; p[currentUserId] = val;
+          postVotes({ participation: p });
+        });
+        computeRankingsLocal();
+        var nextPos = computeNextPositions(scullers, myManualStarts);
+        me.nextStartPos = nextPos[me.id] || null;
+        updateUserCard();
+        renderTable();
+        checkAutoSave();
+      });
+    }
+  }
+
+  // Position request
+  if (!isAdmin) {
+    var selectedRefSculler = null;
+    var selectedDir = 'before';
+    document.getElementById('requestDirToggle').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-dir]');
+      if (!btn) return;
+      selectedDir = btn.dataset.dir;
+      this.querySelectorAll('.toggle-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.dir === selectedDir);
+        b.style.background = b.dataset.dir === selectedDir ? 'var(--accent)' : 'var(--bg-card)';
+        b.style.color = b.dataset.dir === selectedDir ? '#fff' : 'var(--text)';
+      });
+    });
+    document.getElementById('requestPosBtn').addEventListener('click', function() {
+      document.getElementById('requestPosForm').style.display = '';
+      document.getElementById('requestPosSearch').focus();
+    });
+    document.getElementById('requestPosCancel').addEventListener('click', function() {
+      document.getElementById('requestPosForm').style.display = 'none';
+      document.getElementById('requestPosSearch').value = '';
+      document.getElementById('requestPosResults').style.display = 'none';
+      selectedRefSculler = null;
+    });
+    document.getElementById('requestPosSearch').addEventListener('input', function() {
+      var q = this.value.toLowerCase().trim();
+      var results = document.getElementById('requestPosResults');
+      if (q.length < 1) { results.style.display = 'none'; return; }
+      var matches = scullers.filter(function(s) {
+        return s.id !== currentUserId && (s.name.toLowerCase().indexOf(q) >= 0 || s.club.toLowerCase().indexOf(q) >= 0);
+      }).slice(0, 8);
+      if (matches.length === 0) { results.style.display = 'none'; return; }
+      results.style.display = '';
+      results.innerHTML = matches.map(function(s) {
+        return '<div class="request-result" data-rid="' + s.id + '" style="padding:0.3rem 0.5rem;cursor:pointer;border-bottom:1px solid var(--border);">' + escHtml(s.name) + ' <span style="color:var(--text-light);font-size:0.75rem;">' + escHtml(s.club) + '</span></div>';
+      }).join('');
+      results.querySelectorAll('.request-result').forEach(function(el) {
+        el.addEventListener('click', function() {
+          var sid = parseInt(this.dataset.rid);
+          selectedRefSculler = scullers.find(function(s) { return s.id === sid; });
+          document.getElementById('requestPosSearch').value = selectedRefSculler.name;
+          results.style.display = 'none';
+        });
+      });
+    });
+    document.getElementById('requestPosSubmit').addEventListener('click', function() {
+      if (!selectedRefSculler) return;
+      var dir = selectedDir;
+      var payload = {
+        scullerId: currentUserId,
+        scullerName: me.name,
+        scullerClub: me.club,
+        refScullerId: selectedRefSculler.id,
+        refScullerName: selectedRefSculler.name,
+        position: dir,
+        timestamp: new Date().toISOString()
+      };
+      postRequest(payload).then(function(data) {
+        if (data.ok) {
+          document.getElementById('requestPosForm').style.display = 'none';
+          document.getElementById('requestPosSearch').value = '';
+          document.getElementById('requestPosResults').style.display = 'none';
+          selectedRefSculler = null;
+          showToast('Request sent!');
+        } else {
+          showToast('Error: ' + (data.error || 'unknown'), 'error');
+        }
+      }).catch(function() { showToast('Network error', 'error'); });
+    });
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = this.dataset.tab;
+      activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      if (tab === 'next') {
+        document.getElementById('userCard').style.display = isAdmin ? 'none' : '';
+        document.getElementById('nextLadderInfo').textContent = nextLadder.date + ' at ' + nextLadder.time;
+        document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\u23F3';
+        document.getElementById('historyDate').style.display = 'none';
+        currentSort = 'nextStartPos';
+        currentDir = 1;
+        renderTable();
+      } else {
+        document.getElementById('nextLadderInfo').textContent = 'Ladder Precedente';
+        document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\uD83D\uDCC4';
+        document.getElementById('historyDate').style.display = '';
+        currentSort = 'startPos';
+        currentDir = 1;
+        loadHistoryDates();
+      }
+    });
+  });
+
+  document.getElementById('historyDate').addEventListener('change', function() {
+    var date = this.value;
+    if (!date) {
+      historyData = null;
+      renderTable();
+      document.getElementById('nextLadderInfo').textContent = 'Ladder Precedente';
+      return;
+    }
+    getHistoryDate(date).then(function(data) {
+      historyData = data;
+      document.getElementById('nextLadderInfo').textContent = 'Ladder ' + date;
+      currentSort = 'startPos';
+      currentDir = 1;
+      renderTable();
+    }).catch(function() {});
+  });
+}
+
+// Init
+function initApp() {
+  updateLadderInfo(nextLadder);
+  initEventListeners();
+
+  me = isAdmin ? null : getMe(scullers);
+  if (me) {
+    document.getElementById('userBadge').textContent = me.name + ' (' + me.club + ')';
+    document.getElementById('userCard').style.display = '';
+    updateUserCard();
+    var inCol = document.querySelector('th[data-sort="nextParticipating"]');
+    if (inCol) inCol.style.display = 'none';
+  }
+
+  computeRankingsLocal();
+  renderTable();
+  checkAndAdvanceLadder();
+  if (isAdmin) loadRequests();
+}
+
+// Start
+loadScullers().then(function(data) {
+  scullers = data;
+  return getVotes();
+}).then(function(data) {
+  myCaught = data.caught || {};
+  var participation = data.participation || {};
+  myManualRanks = data.manualRanks || {};
+  myManualStarts = data.manualStarts || {};
+  var lastSession = data.lastSession || {};
+  scullers.forEach(function(s) {
+    s.nextParticipating = null;
+    s.nextStartPos = null;
+  });
+  scullers.forEach(function(s) {
+    if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
+  });
+  scullers.forEach(function(s) {
+    if (lastSession[s.id]) {
+      s.lastStartPos = lastSession[s.id].lastStartPos;
+      s.lastCaught = lastSession[s.id].lastCaught;
+    }
+  });
+  return getConfig();
+}).then(function(data) {
+  if (data.nextLadder) nextLadder = data.nextLadder;
+  if (data.lastLadder) lastLadder = data.lastLadder;
+  initApp();
+}).catch(function() {
+  initApp();
+});

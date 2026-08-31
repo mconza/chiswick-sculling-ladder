@@ -2,9 +2,30 @@
 
 ## Overview
 Website for the Chiswick Sculling Ladder, a rowing training group on the Thames Tideway.
-Main file: `app.html` (single-page app with inline JS, ~846 lines).
+Three HTML pages: `index.html` (landing/login), `app.html` (admin/user ladder), `ranking.html` (public rankings).
 
-## Ranking Algorithm (computeRankings)
+## Architecture
+- **HTML**: Structural markup, links to CSS and JS modules
+- **CSS**: `css/style.css` (shared), `css/app.css`, `css/ranking.css`, `css/login.css`
+- **JS**: ES modules in `js/` (imported via `<script type="module">`)
+- **Backend**: `server.py` (pure Python stdlib, no dependencies)
+- **Data**: `data/scullers.json` (single source of truth), `data/votes.json`, `data/config.json`, `data/history/`
+
+## JS Modules
+
+| Module | Responsibility |
+|--------|---------------|
+| `js/app.js` | Entry point for app.html — init, state, event binding, rendering |
+| `js/rankings.js` | Pure business logic: `computeRankings()`, `getComputedRank()`, `computeNextPositions()`, `computeLastPositions()` |
+| `js/api.js` | All HTTP calls: `getVotes()`, `postVotes()`, `getConfig()`, `postConfig()`, `getHistory()`, `getHistoryDate()`, `saveHistory()`, `postRequest()`, `deleteRequest()`, `loadScullers()` |
+| `js/auth.js` | Auth: `checkAuth()`, `isAdmin()`, `getUserId()`, `getMe()`, `logout()` |
+| `js/toast.js` | `showToast(msg, type)` |
+| `js/modal.js` | `openModal()`, `closeModal()`, `saveModal()`, `updateLadderInfo()` |
+| `js/ui.js` | DOM helpers: `escHtml()`, date formatters, `getLadderDate()` |
+| `js/landing.js` | Entry point for index.html — login, sculler picker |
+| `js/ranking-page.js` | Entry point for ranking.html — podium, ranked/unranked lists |
+
+## Ranking Algorithm (`js/rankings.js`)
 
 ### Core Concept
 The ladder is NOT a race. Scullers start slowest-first. Each person only knows their result relative to the person directly adjacent to them:
@@ -12,28 +33,10 @@ The ladder is NOT a race. Scullers start slowest-first. Each person only knows t
 - **"Yes" (caught)** = the sculler was caught by the person behind them → they don't improve
 - **Last person** = no one behind → no caught status
 
-### Block
-The block of contested ranks is `[min_rank, min_rank + N - 1]` where N = number of starters.
-
 ### The Chain Rule (CRITICAL)
 The cascade of "No" improvements propagates from the slowest to the fastest starter. **The chain STOPS at the first "Yes" (caught) person.** That "Yes" person is the boundary.
 
-Example with real data (10 starters):
-```
-Pos 1: Inkeri (207) - No  ← chain starts here
-Pos 5: Jacqui S (117) - No
-Pos 11: Caroline B (51) - No
-Pos 12: Kirsty R-D (49) - No
-Pos 13: Ainslie (50) - No
-Pos 15: Jonathan F (53) - Yes ← chain STOPS here
-Pos 16: Kathryn H (52) - No
-Pos 18: Devlin L (47) - Yes
-Pos 19: Guy (36) - No
-Pos 20: Daisy W (35) - No
-```
-- Inkeri "No" → takes Jonathan's position (the first "Yes")
-- Jonathan gets bumped
-- Chain does NOT continue past Jonathan
+The **last person** in the chain is excluded if they have 'No' — their 'No' is meaningless (no one behind them).
 
 ### Known Correct Results (3 people, block [12,13,14])
 | Scenario | Result |
@@ -42,35 +45,41 @@ Pos 20: Daisy W (35) - No
 | Inkeri(171) Yes, Simon(13) No, ABA(12) last | S=12, A=13, I=171 |
 | Inkeri(171) No, Simon(13) Yes, ABA(12) last | I=13, S=14, A=12 |
 
-### Algorithm Fix (Implemented)
-1. Assign initial block positions by START ORDER (slowest = worst position in block)
-2. Run cascade from fastest to slowest
-3. After cascade, displaced people fill free positions (lowest first)
-4. Revert people whose original rank was outside the block AND caught != "No"
-
 ## User Preferences
 - User is Italian-speaking (Maurizio Conza)
 - Conversations mix Italian and English
 - Prefers step-by-step explanations with examples before code changes
-- Wants to verify each example before moving to the next
 
 ## File Structure
-- `app.html` - Main app (admin page with ranking logic, ~846 lines)
-- `index.html` - Landing page with rules
-- `ranking.html` - Rankings display
-- `server.py` - Python backend, port 8080
-- `data.json` - Sculler data
-- `data/votes.json` - Persisted votes
-- `js/app.js` - Client-side JS
-- `css/style.css` - Styles
-
-## Key Functions in app.html
-- `computeRankings()` (line ~134) - Ranking algorithm (fixed)
-- `computeNextPositions()` (line ~371) - Computes start positions for next ladder
-- `computeLastPositions()` (line ~415) - Computes positions from last ladder
-- `getComputedRank(s)` (line ~200) - Returns computed rank for a sculler
-- `renderTable()` (line ~423) - Renders the admin table
-- Button handlers (line ~515) - Handle caught/confirmed status changes
+```
+├── index.html          (landing/login page)
+├── app.html            (admin/user ladder page)
+├── ranking.html        (public rankings page)
+├── server.py           (Python backend, port 8080)
+├── test_rankings.js    (unit tests for rankings.js)
+├── package.json        (Node.js config for ES module tests)
+├── css/
+│   ├── style.css       (shared styles)
+│   ├── app.css         (app.html styles)
+│   ├── ranking.css     (ranking.html styles)
+│   └── login.css       (index.html styles)
+├── js/
+│   ├── app.js          (app.html entry point)
+│   ├── rankings.js     (ranking algorithm)
+│   ├── api.js          (HTTP calls)
+│   ├── auth.js         (authentication)
+│   ├── toast.js        (notifications)
+│   ├── modal.js        (edit ladder modal)
+│   ├── ui.js           (DOM helpers)
+│   ├── landing.js      (index.html entry point)
+│   └── ranking-page.js (ranking.html entry point)
+├── data/
+│   ├── scullers.json   (255 scullers - single source of truth)
+│   ├── config.json     (ladder schedule)
+│   ├── votes.json      (persisted votes/state)
+│   └── history/        (session snapshots)
+└── render.yaml         (Render deployment)
+```
 
 ## Sculler Data Format
 ```json
@@ -85,3 +94,10 @@ Pos 20: Daisy W (35) - No
   "nextStartPos": null
 }
 ```
+
+## Deployment
+- Render free tier, Python 3.11
+- `python3 server.py` on PORT env var
+- GitHub: `https://github.com/mconza/chiswick-sculling-ladder`
+- Render: `https://chiswick-sculling-ladder.onrender.com`
+- `data/votes.json` and `data/config.json` tracked in git for persistence

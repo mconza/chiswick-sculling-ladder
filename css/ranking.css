@@ -1,0 +1,100 @@
+/* css/ranking.css - Styles for ranking.html extracted from inline */
+
+.podium { display: flex; justify-content: center; align-items: flex-end; gap: 0.5rem; margin-bottom: 2rem; }
+.pod-slot { text-align: center; flex: 1; max-width: 200px; }
+.pod-name { font-weight: 700; font-size: 0.8rem; margin-top: 0.4rem; }
+.pod-club { font-size: 0.65rem; color: var(--text-light); }
+.pod-rank { font-size: 0.7rem; color: var(--accent); font-weight: 600; margin-top: 0.2rem; }
+.pod-base {
+  height: var(--h);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 0.5rem;
+}
+.pod-1 .pod-base { background: linear-gradient(135deg, #FFD700, #FFA500); --h: 100px; }
+.pod-2 .pod-base { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); --h: 75px; }
+.pod-3 .pod-base { background: linear-gradient(135deg, #CD7F32, #A0522D); --h: 60px; }
+
+.rank-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.rank-search {
+  padding: 0.45rem 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  width: 220px;
+  max-width: 100%;
+}
+.rank-search:focus { outline: none; border-color: var(--primary); }
+.rank-sort-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-light);
+}
+.rank-sort-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.rank-list {
+  background: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-row:hover { background: #f8fafc; }
+.rank-num { width: 45px; font-weight: 700; color: var(--primary); text-align: center; flex-shrink: 0; }
+.rank-name { flex: 1; font-weight: 600; }
+.rank-club { font-size: 0.7rem; color: var(--text-light); background: var(--bg); padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.5rem; white-space: nowrap; }
+
+.not-ranked .rank-num { color: var(--text-light); font-weight: 500; }
+.not-ranked .rank-name { font-weight: 500; }
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .pod-slot { max-width: 120px; }
+  .pod-1 .pod-base { --h: 80px; font-size: 1.5rem; }
+  .pod-2 .pod-base { --h: 60px; font-size: 1.3rem; }
+  .pod-3 .pod-base { --h: 50px; font-size: 1.3rem; }
+  .pod-name { font-size: 0.7rem; }
+  .rank-row { font-size: 0.72rem; padding: 0.4rem 0.6rem; }
+  .rank-search { width: 100%; }
+}

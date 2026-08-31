@@ -1,0 +1,7 @@
+{
+  "name": "chiswick-sculling-ladder",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Chiswick Sculling Ladder website",
+  "private": true
+}
