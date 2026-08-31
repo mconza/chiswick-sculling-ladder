@@ -38,7 +38,7 @@ function renderPodium() {
   var podium = document.getElementById('podium');
   if (ranked.length < 3) { podium.innerHTML = ''; return; }
   var top3 = ranked.slice(0, 3);
-  var html = '';
+  var html = '<div class="podium">';
   [1, 0, 2].forEach(function(idx) {
     var s = top3[idx];
     if (!s) return;
@@ -50,6 +50,7 @@ function renderPodium() {
       '<div class="pod-base">' + (idx + 1) + '</div>' +
       '</div>';
   });
+  html += '</div>';
   podium.innerHTML = html;
 }
 
