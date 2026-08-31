@@ -47,7 +47,7 @@ function renderPodium() {
       '<div class="pod-name">' + escHtml(s.name) + '</div>' +
       '<div class="pod-club">' + escHtml(s.club) + '</div>' +
       '<div class="pod-rank">#' + rank + '</div>' +
-      '<div class="pod-base"></div>' +
+      '<div class="pod-base">' + (idx + 1) + '</div>' +
       '</div>';
   });
   podium.innerHTML = html;

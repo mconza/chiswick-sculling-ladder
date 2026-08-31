@@ -1,7 +1,7 @@
 /* css/ranking.css - Styles for ranking.html extracted from inline */
 
 .podium { display: flex; justify-content: center; align-items: flex-end; gap: 0.5rem; margin-bottom: 2rem; }
-.pod-slot { text-align: center; flex: 1; max-width: 200px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.pod-slot { text-align: center; flex: 1; max-width: 200px; }
 .pod-name { font-weight: 700; font-size: 0.8rem; margin-top: 0.4rem; }
 .pod-club { font-size: 0.65rem; color: var(--text-light); }
 .pod-rank { font-size: 0.7rem; color: var(--accent); font-weight: 600; margin-top: 0.2rem; }
