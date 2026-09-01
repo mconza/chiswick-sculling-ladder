@@ -91,17 +91,26 @@ export function computeRankings(scullers, myCaught) {
     }
   });
 
-  scullers.forEach(function(s) {
-    if (computedRanks[s.id] > 0 && chainRanks[computedRanks[s.id]] &&
-        !chains.some(function(c) {
-          return c.noPeople.some(function(p) { return p.id === s.id; }) ||
-                 (c.boundary && c.boundary.id === s.id);
-        })) {
-      var origRank = computedRanks[s.id];
-      var newRank = origRank + 1;
-      while (chainRanks[newRank]) newRank++;
-      computedRanks[s.id] = newRank;
-      chainRanks[newRank] = true;
+  var occupied = {};
+  Object.keys(chainRanks).forEach(function(r) { occupied[r] = true; });
+
+  var nonChain = scullers.filter(function(s) {
+    return !chains.some(function(c) {
+      return c.noPeople.some(function(p) { return p.id === s.id; }) ||
+             (c.boundary && c.boundary.id === s.id);
+    });
+  });
+
+  nonChain.sort(function(a, b) {
+    return computedRanks[a.id] - computedRanks[b.id];
+  });
+
+  nonChain.forEach(function(s) {
+    var rank = computedRanks[s.id];
+    if (occupied[rank]) {
+      while (occupied[rank]) rank++;
+      computedRanks[s.id] = rank;
+      occupied[rank] = true;
     }
   });
 

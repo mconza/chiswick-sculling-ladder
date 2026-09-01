@@ -373,6 +373,35 @@ console.log('Test 27: Chain shifts when fastest rank is strictly faster than fir
   assertEqual(r[3], 12, 'C(30) → 12 (endpoint follows)');
 })();
 
+console.log('Test 28: Cascading displacement — chain shifts two existing ladder occupants');
+(function() {
+  var r = runTest(
+    [sc(1,52,1,'No'), sc(2,49,2,'Yes'),
+     sc(3,50,3,null), sc(4,51,4,null)],
+    {}
+  );
+  assertEqual(r[1], 49, 'Kathryn → 49');
+  assertEqual(r[2], 50, 'Devlin → 50');
+  assertEqual(r[3], 51, 'Other(50) → 51 (shifted by chain)');
+  assertEqual(r[4], 52, 'Other2(51) → 52 (cascaded shift)');
+  var vals = [r[1], r[2], r[3], r[4]];
+  var unique = new Set(vals);
+  assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
+console.log('Test 29: Non-chain duplicate — chain does not move, no shifting occurs');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), sc(2,20,2,'Yes'),
+     sc(3,15,3,null), sc(4,15,4,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10 (chain does not move)');
+  assertEqual(r[2], 20, 'B stays 20');
+  assertEqual(r[3], 15, 'C stays 15');
+  assertEqual(r[4], 15, 'D stays 15 (no chain claimed this rank)');
+})();
+
 console.log('\n=== computeNextPositions Tests ===\n');
 
 function scNext(id, rank, nextParticipating) {
