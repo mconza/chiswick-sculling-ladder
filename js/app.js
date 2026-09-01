@@ -707,8 +707,8 @@ function initEventListeners() {
           payload.caught[currentUserId] = val;
           postVotes(payload);
         }
-        updateUserCard();
         computeRankingsLocal();
+        updateUserCard();
         renderTable();
         checkAutoSave();
       });
