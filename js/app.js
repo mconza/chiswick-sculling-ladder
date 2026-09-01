@@ -869,6 +869,9 @@ function initApp() {
   updateLadderInfo(nextLadder);
 
   me = isAdmin ? null : getMe(scullers);
+
+  computeRankingsLocal();
+
   if (me) {
     document.getElementById('userBadge').textContent = me.name + ' (' + me.club + ')';
     document.getElementById('userCard').style.display = '';
@@ -878,8 +881,6 @@ function initApp() {
   }
 
   initEventListeners();
-
-  computeRankingsLocal();
   renderTable();
   checkAndAdvanceLadder();
   if (isAdmin) loadRequests();
