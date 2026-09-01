@@ -402,6 +402,48 @@ console.log('Test 29: Non-chain duplicate — chain does not move, no shifting o
   assertEqual(r[4], 15, 'D stays 15 (no chain claimed this rank)');
 })();
 
+console.log('Test 30: Chain shifts non-starters — real ladder scenario');
+(function() {
+  var r = runTest(
+    [
+      sc(1,52,1,'No'),    // Kathryn — starter
+      sc(2,49,2,'Yes'),   // Devlin — starter
+      sc(3,50,null,null), // Other — NOT a starter, rank 50 in ladder
+      sc(4,51,null,null), // Other2 — NOT a starter, rank 51 in ladder
+    ],
+    {}
+  );
+  assertEqual(r[1], 49, 'Kathryn → 49');
+  assertEqual(r[2], 50, 'Devlin → 50');
+  assertEqual(r[3], 51, 'Other(50) → 51 (non-starter shifted)');
+  assertEqual(r[4], 52, 'Other2(51) → 52 (non-starter cascaded)');
+  var vals = [r[1], r[2], r[3], r[4]];
+  var unique = new Set(vals);
+  assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
+console.log('Test 31: Chain shifts non-starters — four displaced');
+(function() {
+  var r = runTest(
+    [
+      sc(1,52,1,'No'),    // Kathryn — starter
+      sc(2,49,2,'Yes'),   // Devlin — starter
+      sc(3,50,null,null), // Other — NOT a starter, rank 50
+      sc(4,51,null,null), // Other2 — NOT a starter, rank 51
+      sc(5,48,null,null), // Other3 — NOT a starter, rank 48 (not affected)
+    ],
+    {}
+  );
+  assertEqual(r[1], 49, 'Kathryn → 49');
+  assertEqual(r[2], 50, 'Devlin → 50');
+  assertEqual(r[3], 51, 'Other(50) → 51 (shifted)');
+  assertEqual(r[4], 52, 'Other2(51) → 52 (cascaded)');
+  assertEqual(r[5], 48, 'Other3(48) stays 48 (not affected)');
+  var vals = [r[1], r[2], r[3], r[4], r[5]];
+  var unique = new Set(vals);
+  assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
 console.log('\n=== computeNextPositions Tests ===\n');
 
 function scNext(id, rank, nextParticipating) {
