@@ -324,7 +324,7 @@ function renderTable() {
     (isAdmin ? '<td class="col-separator"></td>' : '') +
     (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
     (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
-    '<td class="col-rank">' + (startingRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
+    '<td class="col-rank">' + ((isAdmin ? startingRank : newRank) || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
     (isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
     '</tr>';
   }).join('');
