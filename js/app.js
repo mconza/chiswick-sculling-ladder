@@ -75,23 +75,13 @@ function updateUserCard() {
   if (hasRaced) {
     document.getElementById('ucCaughtActionLabel').textContent = 'Caught (' + lastLadder.date + ')?';
     var caughtByEl = document.getElementById('ucCaughtBy');
-    var hasExplicitChoice = myCaught[me.id] !== undefined;
-    if (caughtVal === 'Yes') {
-      var myPos = parseInt(me.lastStartPos);
-      var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
-      var catcher = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
-      caughtByEl.textContent = catcher ? 'by ' + catcher.name : '';
-    } else if (caughtVal === 'No') {
+    if (caughtVal === 'PathFind') {
+      caughtByEl.textContent = 'PathFind';
+    } else {
       var myPos = parseInt(me.lastStartPos);
       var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
       var behind = participants.find(function(s) { return parseInt(s.lastStartPos) === myPos + 1; });
-      caughtByEl.textContent = behind ? behind.name + ' didn\'t catch you' : 'Not caught';
-    } else if (caughtVal === 'PathFind') {
-      caughtByEl.textContent = 'PathFind';
-    } else if (hasExplicitChoice && caughtVal !== me.lastCaught) {
-      caughtByEl.textContent = 'Last to start';
-    } else {
-      caughtByEl.textContent = me.lastCaught === 'No' ? 'Not caught' : '';
+      caughtByEl.textContent = behind ? 'by ' + behind.name + '?' : '';
     }
   }
   document.getElementById('ucNextActionLabel').textContent = 'Participate on ' + nextLadder.date + '?';
