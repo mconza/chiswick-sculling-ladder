@@ -691,13 +691,13 @@ function initEventListeners() {
           if (current === val) { me.nextParticipating = null; val = null; }
           else { me.nextParticipating = val; }
       postVotes({ participation: {} }).then(function() {
-        var p = {}; p[id] = val;
+        var p = {}; p[currentUserId] = val;
         postVotes({ participation: p });
       });
       if (val === null || val === undefined) {
-        delete myManualStarts[id];
+        delete myManualStarts[currentUserId];
         var payload = { manualStarts: {} };
-        payload.manualStarts[id] = null;
+        payload.manualStarts[currentUserId] = null;
         postVotes(payload);
       }
         } else {
