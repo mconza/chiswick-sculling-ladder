@@ -308,6 +308,33 @@ console.log('Test 22: Mixed ranks — chain [A,B,C] with D(Yes) boundary, fastes
   assertEqual(r[4], 119, 'D(205) → 119 (boundary follows)');
 })();
 
+console.log('\n=== Edge Case: Chain Guards ===\n');
+
+console.log('Test 23: Chain must not move to a slower rank (all ranks already ordered)');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), sc(2,20,2,'No'), sc(3,30,3,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays at 10');
+  assertEqual(r[2], 20, 'B stays at 20');
+  assertEqual(r[3], 30, 'C stays at 30');
+})();
+
+console.log('Test 24: Competing chain must shift existing ladder occupants');
+(function() {
+  var r = runTest(
+    [sc(1,52,1,'No'), sc(2,49,2,'Yes'), sc(3,50,3,null)],
+    {}
+  );
+  assertEqual(r[1], 49, 'Kathryn → 49');
+  assertEqual(r[2], 50, 'Devlin → 50');
+  assertEqual(r[3], 51, 'Rank-50 occupant shifted to 51');
+  var vals = [r[1], r[2], r[3]];
+  var unique = new Set(vals);
+  assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
 console.log('\n=== computeNextPositions Tests ===\n');
 
 function scNext(id, rank, nextParticipating) {
