@@ -58,50 +58,50 @@ export function computeRankings(scullers, myCaught) {
   }
 
   chains = chains.filter(function(chain) {
-    var chainSize = chain.noPeople.length + (chain.boundary ? 1 : 0);
-    if (chainSize < starters.length) return true;
-    var allRanks = chain.noPeople.map(function(s) { return computedRanks[s.id]; });
-    if (chain.boundary) allRanks.push(computedRanks[chain.boundary.id]);
-    for (var k = 1; k < allRanks.length; k++) {
-      if (allRanks[k] < allRanks[k - 1]) return true;
-    }
-    return false;
+    var firstRank = computedRanks[chain.noPeople[0].id];
+    return chain.fastestRank < firstRank;
   });
 
   chains.sort(function(a, b) { return b.startPos - a.startPos; });
 
-  var takenRanks = {};
+  var chainRanks = {};
 
   chains.forEach(function(chain) {
+    var chainLen = chain.noPeople.length + (chain.boundary ? 1 : 0);
     var startRank = chain.fastestRank;
-    while (takenRanks[startRank]) {
+    while (true) {
+      var available = true;
+      for (var k = 0; k < chainLen; k++) {
+        if (chainRanks[startRank + k]) { available = false; break; }
+      }
+      if (available) break;
       startRank++;
     }
 
     var rank = startRank;
     chain.noPeople.forEach(function(s) {
       computedRanks[s.id] = rank;
-      takenRanks[rank] = true;
+      chainRanks[rank] = true;
       rank++;
     });
     if (chain.boundary) {
       computedRanks[chain.boundary.id] = rank;
-      takenRanks[rank] = true;
+      chainRanks[rank] = true;
       rank++;
     }
   });
 
   scullers.forEach(function(s) {
-    if (computedRanks[s.id] > 0 && takenRanks[computedRanks[s.id]] &&
+    if (computedRanks[s.id] > 0 && chainRanks[computedRanks[s.id]] &&
         !chains.some(function(c) {
           return c.noPeople.some(function(p) { return p.id === s.id; }) ||
                  (c.boundary && c.boundary.id === s.id);
         })) {
       var origRank = computedRanks[s.id];
       var newRank = origRank + 1;
-      while (takenRanks[newRank]) newRank++;
+      while (chainRanks[newRank]) newRank++;
       computedRanks[s.id] = newRank;
-      takenRanks[newRank] = true;
+      chainRanks[newRank] = true;
     }
   });
 

@@ -49,10 +49,10 @@ console.log('Test 1: Chain [Simon, Inkeri(last)] — fastest=13');
   );
   assertEqual(r[1], 12, 'ABA stays 12');
   assertEqual(r[2], 13, 'Simon stays 13 (fastest in chain)');
-  assertEqual(r[3], 14, 'Inkeri → 14 (endpoint follows)');
+  assertEqual(r[3], 171, 'Inkeri stays 171 (chain must be strictly faster)');
 })();
 
-console.log('Test 2: Chain [Simon, Inkeri(Yes)] — fastest=13');
+console.log('Test 2: Chain [Simon, Inkeri(Yes)] — fastest=13, no movement');
 (function() {
   var r = runTest(
     [sc(1,12,1,null), sc(2,13,2,'No'), sc(3,171,3,'Yes')],
@@ -60,7 +60,7 @@ console.log('Test 2: Chain [Simon, Inkeri(Yes)] — fastest=13');
   );
   assertEqual(r[1], 12, 'ABA stays 12');
   assertEqual(r[2], 13, 'Simon stays 13 (fastest in chain)');
-  assertEqual(r[3], 14, 'Inkeri → 14 (boundary follows)');
+  assertEqual(r[3], 171, 'Inkeri stays 171 (chain must be strictly faster)');
 })();
 
 console.log('Test 3: Simon Yes — Inkeri fills bottom');
@@ -276,8 +276,8 @@ console.log('Test 20: Manual lineup — A not caught (better than boundary), B,C
     [sc(1,10,1,'No'), sc(2,20,2,'Yes'), sc(3,5,3,'Yes'), sc(4,4,4,null)],
     {}
   );
-  assertEqual(r[1], 10, 'A(10) stays 10 — already better than boundary B(20)');
-  assertEqual(r[2], 11, 'B(20) → 11 = A+1 (caught, placed after A)');
+  assertEqual(r[1], 10, 'A(10) stays 10 — chain must be strictly faster');
+  assertEqual(r[2], 20, 'B(20) stays 20 (chain does not move)');
   assertEqual(r[3], 5, 'C(5) stays 5 — already better');
   assertEqual(r[4], 4, 'D(4) stays 4');
 })();
@@ -333,6 +333,44 @@ console.log('Test 24: Competing chain must shift existing ladder occupants');
   var vals = [r[1], r[2], r[3]];
   var unique = new Set(vals);
   assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
+console.log('Test 25: Two chains compete for same rank — later-starting chain wins');
+(function() {
+  var r = runTest(
+    [sc(1,50,1,'No'), sc(2,49,2,'Yes'),
+     sc(3,50,3,'No'), sc(4,49,4,null)],
+    {}
+  );
+  assertEqual(r[1], 51, 'Chain1-A(50) → 51 (shifted by Chain2)');
+  assertEqual(r[2], 52, 'Chain1-B(49) → 52 (boundary follows)');
+  assertEqual(r[3], 49, 'Chain2-C(50) → 49 (later start wins)');
+  assertEqual(r[4], 50, 'Chain2-D(49) → 50 (endpoint follows)');
+  var vals = [r[1], r[2], r[3], r[4]];
+  var unique = new Set(vals);
+  assertEqual(vals.length, unique.size, 'No duplicate ranks');
+})();
+
+console.log('Test 26: Chain does not move when fastest rank equals first person rank');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), sc(2,20,2,'No'), sc(3,30,3,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10 (fastest = first rank)');
+  assertEqual(r[2], 20, 'B stays 20');
+  assertEqual(r[3], 30, 'C stays 30');
+})();
+
+console.log('Test 27: Chain shifts when fastest rank is strictly faster than first person');
+(function() {
+  var r = runTest(
+    [sc(1,20,1,'No'), sc(2,10,2,'No'), sc(3,30,3,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A(20) → 10 (fastest rank)');
+  assertEqual(r[2], 11, 'B(10) → 11');
+  assertEqual(r[3], 12, 'C(30) → 12 (endpoint follows)');
 })();
 
 console.log('\n=== computeNextPositions Tests ===\n');
