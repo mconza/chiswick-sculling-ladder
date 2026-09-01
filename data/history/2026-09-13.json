@@ -12,10 +12,10 @@
       "name": "Aba C",
       "club": "PTRC",
       "rank": "85",
-      "startPos": null,
-      "caught": null,
+      "startPos": "1",
+      "caught": "PathFind",
       "newRank": 85,
-      "newStartPos": 4
+      "newStartPos": 2
     },
     {
       "id": 2,
@@ -23,38 +23,38 @@
       "club": "QBC",
       "rank": "207",
       "startPos": "2",
-      "caught": "Yes",
-      "newRank": 207,
-      "newStartPos": 1
+      "caught": "No",
+      "newRank": 116,
+      "newStartPos": 3
     },
     {
       "id": 3,
       "name": "Mary M",
       "club": "PTRC",
       "rank": "116",
-      "startPos": null,
-      "caught": null,
-      "newRank": 116,
-      "newStartPos": 2
+      "startPos": "3",
+      "caught": "No",
+      "newRank": 117,
+      "newStartPos": null
     },
     {
       "id": 4,
       "name": "Jacqui S",
       "club": "QBC & TTRC",
       "rank": "117",
-      "startPos": null,
-      "caught": null,
-      "newRank": 117,
-      "newStartPos": 3
+      "startPos": "4",
+      "caught": "No",
+      "newRank": 118,
+      "newStartPos": null
     },
     {
       "id": 5,
       "name": "Lorna",
       "club": "QBC",
       "rank": "205",
-      "startPos": null,
-      "caught": null,
-      "newRank": 205,
+      "startPos": "5",
+      "caught": "Yes",
+      "newRank": 119,
       "newStartPos": null
     },
     {
@@ -62,19 +62,19 @@
       "name": "Steve M",
       "club": "MAABC",
       "rank": "206",
-      "startPos": null,
-      "caught": null,
-      "newRank": 206,
-      "newStartPos": null
+      "startPos": "6",
+      "caught": "No",
+      "newRank": 49,
+      "newStartPos": 1
     },
     {
       "id": 7,
       "name": "Kirsty R-D",
       "club": "QBC",
       "rank": "49",
-      "startPos": null,
-      "caught": null,
-      "newRank": 49,
+      "startPos": "7",
+      "caught": "Yes",
+      "newRank": 50,
       "newStartPos": null
     },
     {
@@ -82,8 +82,8 @@
       "name": "Ainslie",
       "club": "QBC",
       "rank": "50",
-      "startPos": null,
-      "caught": null,
+      "startPos": "8",
+      "caught": "Yes",
       "newRank": 50,
       "newStartPos": null
     },
@@ -92,8 +92,8 @@
       "name": "Caroline B",
       "club": "MAA",
       "rank": "51",
-      "startPos": null,
-      "caught": null,
+      "startPos": "9",
+      "caught": "Yes",
       "newRank": 51,
       "newStartPos": null
     },
@@ -102,9 +102,9 @@
       "name": "Kathryn H",
       "club": "TSS",
       "rank": "52",
-      "startPos": null,
-      "caught": null,
-      "newRank": 52,
+      "startPos": "10",
+      "caught": "No",
+      "newRank": 35,
       "newStartPos": null
     },
     {
@@ -112,9 +112,9 @@
       "name": "Jonathan F",
       "club": "QBC",
       "rank": "53",
-      "startPos": null,
-      "caught": null,
-      "newRank": 53,
+      "startPos": "11",
+      "caught": "No",
+      "newRank": 36,
       "newStartPos": null
     },
     {
@@ -122,9 +122,9 @@
       "name": "David S",
       "club": "Sons",
       "rank": "48",
-      "startPos": null,
-      "caught": null,
-      "newRank": 48,
+      "startPos": "12",
+      "caught": "No",
+      "newRank": 37,
       "newStartPos": null
     },
     {
@@ -132,9 +132,9 @@
       "name": "Devlin L",
       "club": "QBC",
       "rank": "47",
-      "startPos": null,
-      "caught": null,
-      "newRank": 47,
+      "startPos": "13",
+      "caught": "No",
+      "newRank": 38,
       "newStartPos": null
     },
     {
@@ -142,9 +142,9 @@
       "name": "Daisy W",
       "club": "MAA",
       "rank": "35",
-      "startPos": null,
-      "caught": null,
-      "newRank": 35,
+      "startPos": "14",
+      "caught": "Yes",
+      "newRank": 39,
       "newStartPos": null
     },
     {
@@ -152,8 +152,8 @@
       "name": "Guy",
       "club": "CYGNET",
       "rank": "36",
-      "startPos": null,
-      "caught": null,
+      "startPos": "15",
+      "caught": "Yes",
       "newRank": 36,
       "newStartPos": null
     },
@@ -172,9 +172,9 @@
       "name": "Tom B",
       "club": "QBC",
       "rank": "27",
-      "startPos": null,
-      "caught": null,
-      "newRank": 27,
+      "startPos": "17",
+      "caught": "No",
+      "newRank": 26,
       "newStartPos": null
     },
     {
@@ -182,9 +182,9 @@
       "name": "Mark O'B",
       "club": "QBC",
       "rank": "26",
-      "startPos": null,
-      "caught": null,
-      "newRank": 26,
+      "startPos": "18",
+      "caught": "Yes",
+      "newRank": 27,
       "newStartPos": null
     },
     {
@@ -192,8 +192,8 @@
       "name": "Michael DP",
       "club": "FSC",
       "rank": "16",
-      "startPos": null,
-      "caught": null,
+      "startPos": "19",
+      "caught": "No",
       "newRank": 16,
       "newStartPos": null
     },
@@ -202,8 +202,8 @@
       "name": "Andrea M",
       "club": "FRBC",
       "rank": "17",
-      "startPos": null,
-      "caught": null,
+      "startPos": "20",
+      "caught": "Yes",
       "newRank": 17,
       "newStartPos": null
     },
@@ -212,8 +212,8 @@
       "name": "William P",
       "club": "CYG",
       "rank": "25",
-      "startPos": null,
-      "caught": null,
+      "startPos": "21",
+      "caught": "Yes",
       "newRank": 25,
       "newStartPos": null
     },
@@ -222,8 +222,8 @@
       "name": "Simon H",
       "club": "QBC",
       "rank": "12",
-      "startPos": null,
-      "caught": null,
+      "startPos": "22",
+      "caught": "No",
       "newRank": 12,
       "newStartPos": null
     },
@@ -232,8 +232,8 @@
       "name": "Richard R",
       "club": "TSS",
       "rank": "13",
-      "startPos": null,
-      "caught": null,
+      "startPos": "23",
+      "caught": "No",
       "newRank": 13,
       "newStartPos": null
     },
@@ -242,8 +242,8 @@
       "name": "Kit L",
       "club": "FSC",
       "rank": "14",
-      "startPos": null,
-      "caught": null,
+      "startPos": "24",
+      "caught": "No",
       "newRank": 14,
       "newStartPos": null
     },
@@ -842,10 +842,10 @@
       "name": "Zoe G",
       "club": "TSS",
       "rank": "78",
-      "startPos": "1",
+      "startPos": null,
       "caught": "PathFind",
       "newRank": 78,
-      "newStartPos": 2
+      "newStartPos": null
     },
     {
       "id": 85,
@@ -1632,10 +1632,10 @@
       "name": "Pieternel O",
       "club": "BBL",
       "rank": "160",
-      "startPos": "4",
-      "caught": "PathFind",
+      "startPos": null,
+      "caught": "Yes",
       "newRank": 160,
-      "newStartPos": 6
+      "newStartPos": null
     },
     {
       "id": 164,
@@ -1702,9 +1702,9 @@
       "name": "Sanne C",
       "club": "MAA",
       "rank": "167",
-      "startPos": "3",
+      "startPos": null,
       "caught": "Yes",
-      "newRank": 160,
+      "newRank": 167,
       "newStartPos": null
     },
     {

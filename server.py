@@ -154,7 +154,11 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                     if new_votes.get("clearParticipation"):
                         current["manualStarts"] = {}
                     else:
-                        current.setdefault("manualStarts", {}).update(new_votes["manualStarts"])
+                        for k, v in new_votes["manualStarts"].items():
+                            if v is None:
+                                current.setdefault("manualStarts", {}).pop(k, None)
+                            else:
+                                current.setdefault("manualStarts", {})[k] = v
                 save_votes(current)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

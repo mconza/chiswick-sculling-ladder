@@ -34,16 +34,22 @@ The ladder is NOT a race. Scullers start slowest-first. Each person only knows t
 - **Last person** = no one behind → no caught status
 
 ### The Chain Rule (CRITICAL)
-The cascade of "No" improvements propagates from the slowest to the fastest starter. **The chain STOPS at the first "Yes" (caught) person.** That "Yes" person is the boundary.
+Each "No" sculler starts a chain of consecutive "No" people. The chain ends at the first "Yes" person (boundary) or the last person in the lineup (endpoint). The boundary/endpoint person is included in the chain for rank purposes.
 
-The **last person** in the chain is excluded if they have 'No' — their 'No' is meaningless (no one behind them).
+**Algorithm:**
+1. Identify chains: consecutive "No" people + boundary (Yes person or last person)
+2. Find the fastest (lowest) rank in the complete chain (including boundary)
+3. The "No" people get consecutive ranks starting from that fastest rank, preserving lineup order
+4. The boundary/endpoint person gets the next rank after the last "No" person
+5. If two chains compete for the same rank, the chain whose first person starts **later** in the lineup gets priority. The earlier chain shifts slower
+6. No duplicate ranks are ever created
 
 ### Known Correct Results (3 people, block [12,13,14])
 | Scenario | Result |
 |----------|--------|
-| Inkeri(171) No, Simon(13) No, ABA(12) last | I=12, S=13, A=14 |
-| Inkeri(171) Yes, Simon(13) No, ABA(12) last | S=12, A=13, I=171 |
-| Inkeri(171) No, Simon(13) Yes, ABA(12) last | I=13, S=14, A=12 |
+| Inkeri(171) No, Simon(13) No, ABA(12) last | S=13, A=14 (chain fastest=13) |
+| Inkeri(171) Yes, Simon(13) No, ABA(12) last | S=13, A=14 (chain fastest=13) |
+| Inkeri(171) No, Simon(13) Yes, ABA(12) last | I=13, S=14, A=12 (chain fastest=13, boundary follows) |
 
 ## User Preferences
 - User is Italian-speaking (Maurizio Conza)

@@ -1,70 +1,89 @@
 // js/rankings.js - Pure ranking business logic (no DOM)
 // Shared by app.html, ranking.html, and test_rankings.js
 
-export function computeRankings(scullers, myCaught, myManualRanks) {
+export function computeRankings(scullers, myCaught) {
   var computedRanks = {};
+
   scullers.forEach(function(s) {
-    computedRanks[s.id] = (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) ? myManualRanks[s.id] : (s.rank ? parseInt(s.rank) : 0);
+    computedRanks[s.id] = s.rank ? parseInt(s.rank) : 0;
   });
-  var starters = scullers.filter(function(s) { return s.lastStartPos != null; });
+
+  var starters = scullers.filter(function(s) {
+    return s.lastStartPos != null;
+  });
+
   if (starters.length === 0) return computedRanks;
-  starters.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
-  var minRank = Infinity;
-  starters.forEach(function(s) {
-    var r = getComputedRank(s, myManualRanks, computedRanks);
-    if (r > 0 && r < minRank) minRank = r;
+
+  starters.sort(function(a, b) {
+    return parseInt(a.lastStartPos) - parseInt(b.lastStartPos);
   });
-  if (minRank === Infinity) return computedRanks;
-  var originalRank = {};
-  starters.forEach(function(s) {
-    originalRank[s.id] = getComputedRank(s, myManualRanks, computedRanks);
-  });
-  var result = {};
-  starters.forEach(function(s) {
-    result[s.id] = originalRank[s.id];
-  });
+
+  function getCaught(s) {
+    return myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
+  }
+
+  var chains = [];
   var i = 0;
   while (i < starters.length) {
-    var caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
-    if (caught !== 'No' || i === starters.length - 1) {
-      i++;
-      continue;
-    }
-    var chainStart = i;
-    while (i < starters.length) {
-      caught = myCaught[starters[i].id] !== undefined ? myCaught[starters[i].id] : starters[i].lastCaught;
-      if (caught !== 'No') break;
-      i++;
-    }
-    var chainEnd = i - 1;
-    if (chainEnd === starters.length - 1) chainEnd--;
-    var chainLen = chainEnd - chainStart + 1;
-    if (chainLen <= 0) continue;
-    var boundaryRank;
-    if (i < starters.length) {
-      boundaryRank = originalRank[starters[i].id];
-    } else if (chainEnd < starters.length - 1) {
-      boundaryRank = originalRank[starters[chainEnd + 1].id];
+    var caught = getCaught(starters[i]);
+
+    if (caught === 'No') {
+      var noPeople = [];
+      var boundary = null;
+
+      while (i < starters.length && getCaught(starters[i]) === 'No') {
+        noPeople.push(starters[i]);
+        i++;
+      }
+
+      if (i < starters.length) {
+        boundary = starters[i];
+        i++;
+      }
+
+      var allRanks = noPeople.map(function(s) { return computedRanks[s.id]; });
+      if (boundary) allRanks.push(computedRanks[boundary.id]);
+      var fastestRank = Math.min.apply(null, allRanks);
+
+      chains.push({
+        noPeople: noPeople,
+        boundary: boundary,
+        fastestRank: fastestRank,
+        totalLen: noPeople.length + (boundary ? 1 : 0),
+        startPos: parseInt(noPeople[0].lastStartPos),
+      });
     } else {
-      boundaryRank = minRank - 1;
-    }
-    for (var j = 0; j < chainLen; j++) {
-      result[starters[chainStart + j].id] = boundaryRank + j;
-    }
-    if (i < starters.length) {
-      result[starters[i].id] = boundaryRank + chainLen;
-    } else if (chainEnd < starters.length - 1) {
-      result[starters[chainEnd + 1].id] = boundaryRank + chainLen;
+      i++;
     }
   }
-  starters.forEach(function(s) {
-    computedRanks[s.id] = result[s.id];
+
+  chains.sort(function(a, b) { return b.startPos - a.startPos; });
+
+  var takenRanks = {};
+
+  chains.forEach(function(chain) {
+    var startRank = chain.fastestRank;
+    while (takenRanks[startRank]) {
+      startRank++;
+    }
+
+    var rank = startRank;
+    chain.noPeople.forEach(function(s) {
+      computedRanks[s.id] = rank;
+      takenRanks[rank] = true;
+      rank++;
+    });
+    if (chain.boundary) {
+      computedRanks[chain.boundary.id] = rank;
+      takenRanks[rank] = true;
+      rank++;
+    }
   });
+
   return computedRanks;
 }
 
-export function getComputedRank(s, myManualRanks, computedRanks) {
-  if (myManualRanks[s.id] !== undefined && myManualRanks[s.id] !== null) return myManualRanks[s.id];
+export function getComputedRank(s, computedRanks) {
   if (computedRanks && computedRanks[s.id] !== undefined) return computedRanks[s.id];
   return s.rank ? parseInt(s.rank) : 0;
 }
@@ -76,47 +95,42 @@ export function computeNextPositions(scullers, myManualStarts) {
   var confirmed = scullers.filter(function(s) {
     return s.nextParticipating === 'Yes';
   });
-  var withManual = [];
-  var withoutManual = [];
+  var total = pathfinders.length + confirmed.length;
+  if (total === 0) return {};
+
+  var map = {};
+  pathfinders.forEach(function(s, idx) { map[s.id] = idx + 1; });
+
+  var manual = [];
+  var natural = [];
   confirmed.forEach(function(s) {
-    if (myManualStarts[s.id] !== undefined) withManual.push(s);
-    else withoutManual.push(s);
+    var mp = myManualStarts[s.id];
+    if (mp != null && mp !== '' && !isNaN(mp) && parseInt(mp) > 0) {
+      manual.push({ sc: s, pos: parseInt(mp) });
+    } else {
+      natural.push(s);
+    }
   });
-  withoutManual.sort(function(a, b) {
+
+  natural.sort(function(a, b) {
     var ra = a.rank ? parseInt(a.rank) : 0;
     var rb = b.rank ? parseInt(b.rank) : 0;
     if (ra === 0 && rb !== 0) return -1;
     if (rb === 0 && ra !== 0) return 1;
     return rb - ra;
   });
-  var map = {};
-  pathfinders.forEach(function(s) { map[s.id] = 1; });
-  withManual.forEach(function(s) {
-    var manualPos = myManualStarts[s.id];
-    if (manualPos === 1 && pathfinders.length > 0) manualPos = pathfinders.length + 1;
-    map[s.id] = manualPos;
+
+  manual.sort(function(a, b) { return a.pos - b.pos; });
+
+  var ordered = [];
+  manual.forEach(function(e) { ordered.push(e.sc); });
+  natural.forEach(function(s) { ordered.push(s); });
+
+  var startNum = pathfinders.length + 1;
+  ordered.forEach(function(s, idx) {
+    map[s.id] = startNum + idx;
   });
-  var nextSlot = pathfinders.length > 0 ? 2 : 1;
-  for (var i = nextSlot; i <= confirmed.length + pathfinders.length; i++) {
-    var occupied = false;
-    for (var k in map) { if (map[k] === i) { occupied = true; break; } }
-    if (!occupied) {
-      while (withoutManual.length > 0) {
-        var candidate = withoutManual.shift();
-        if (myManualStarts[candidate.id] === undefined) {
-          map[candidate.id] = i;
-          break;
-        }
-      }
-    }
-  }
-  withoutManual.forEach(function(s) {
-    if (map[s.id] === undefined) {
-      var maxPos = 0;
-      for (var k in map) { if (map[k] > maxPos) maxPos = map[k]; }
-      map[s.id] = maxPos + 1;
-    }
-  });
+
   return map;
 }
 

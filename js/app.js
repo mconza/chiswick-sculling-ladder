@@ -29,11 +29,11 @@ var me = null;
 
 // Core functions
 function computeRankingsLocal() {
-  computedRanks = computeRankings(scullers, myCaught, {});
+  computedRanks = computeRankings(scullers, myCaught);
 }
 
 function getComputedRankLocal(s) {
-  return getComputedRank(s, {}, computedRanks);
+  return getComputedRank(s, computedRanks);
 }
 
 function getVal(s, key) {
@@ -900,6 +900,22 @@ loadScullers().then(function(data) {
   scullers.forEach(function(s) {
     if (participation[s.id] !== undefined) s.nextParticipating = participation[s.id];
   });
+  // Clean up stale myManualStarts for non-participating scullers
+  var staleIds = [];
+  for (var k in myManualStarts) {
+    var sid = parseInt(k);
+    var sc = scullers.find(function(s) { return s.id === sid; });
+    if (!sc || (sc.nextParticipating !== 'Yes' && sc.nextParticipating !== 'PathFind')) {
+      staleIds.push(sid);
+    }
+  }
+  if (staleIds.length > 0) {
+    staleIds.forEach(function(sid) { delete myManualStarts[sid]; });
+    localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+    var payload = { manualStarts: {} };
+    staleIds.forEach(function(sid) { payload.manualStarts[sid] = null; });
+    postVotes(payload);
+  }
   return getConfig();
 }).then(function(data) {
   if (data.nextLadder) nextLadder = data.nextLadder;
