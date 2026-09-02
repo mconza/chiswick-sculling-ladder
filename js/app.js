@@ -141,10 +141,11 @@ function checkAutoSave() {
 }
 
 function autoSaveSession() {
-  var dateStr = getLadderDate(nextLadder);
+  var ladderInfo = (lastLadder && lastLadder.date) ? lastLadder : nextLadder;
+  var dateStr = getLadderDate(ladderInfo);
   var snapshot = {
     date: dateStr,
-    ladderInfo: nextLadder,
+    ladderInfo: ladderInfo,
     scullers: scullers.map(function(s) {
       return {
         id: s.id,
@@ -667,10 +668,11 @@ function initEventListeners() {
 
   document.addEventListener('click', function(e) {
     if (e.target.id === 'saveSessionBtn' || e.target.closest('#saveSessionBtn')) {
-      var dateStr = getLadderDate(nextLadder);
+      var ladderInfo = (lastLadder && lastLadder.date) ? lastLadder : nextLadder;
+      var dateStr = getLadderDate(ladderInfo);
       var snapshot = {
         date: dateStr,
-        ladderInfo: nextLadder,
+        ladderInfo: ladderInfo,
         scullers: scullers.map(function(s) {
           return {
             id: s.id,
