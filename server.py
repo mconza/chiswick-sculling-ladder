@@ -182,6 +182,13 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
             self.end_headers()
             scullers = load_scullers()
+            needs_save = False
+            for s in scullers:
+                if 'newRank' not in s or s.get('newRank') is None:
+                    s['newRank'] = s.get('rank')
+                    needs_save = True
+            if needs_save:
+                save_scullers(scullers)
             self.wfile.write(json.dumps(scullers).encode())
         elif parsed.path == "/api/config":
             self.send_response(200)
