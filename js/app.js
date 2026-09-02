@@ -591,12 +591,12 @@ function renderRequests() {
     btn.addEventListener('click', function() {
       var action = this.dataset.reqAction;
       var reqId = parseInt(this.dataset.reqId);
+      var voteChain = Promise.resolve();
       if (action === 'apply') {
         var refSid = parseInt(this.dataset.reqRid);
         var dir = this.dataset.reqDir;
         var sid = parseInt(this.dataset.reqSid);
         var refSc = scullers.find(function(s) { return s.id === refSid; });
-        var voteChain = Promise.resolve();
         if (refSc) {
           var refPos = myManualStarts[refSid] || (refSc.nextStartPos ? parseInt(refSc.nextStartPos) : null);
           if (refPos != null) {
@@ -608,8 +608,8 @@ function renderRequests() {
             voteChain = postVotes(payload);
           }
         }
-        }
-        voteChain.then(function(data) {
+      }
+      voteChain.then(function(data) {
           deleteRequest(reqId);
           myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
           renderRequests();
