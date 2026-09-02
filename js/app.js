@@ -905,7 +905,10 @@ function initApp() {
   initEventListeners();
   renderTable();
   checkAndAdvanceLadder();
-  if (isAdmin) loadRequests();
+  if (isAdmin) {
+    loadRequests();
+    setInterval(loadRequests, 5000);
+  }
 }
 
 // Start
