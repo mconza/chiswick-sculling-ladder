@@ -595,7 +595,8 @@ function renderRequests() {
         var sid = parseInt(this.dataset.reqSid);
         var refSc = scullers.find(function(s) { return s.id === refSid; });
         if (refSc) {
-          var refPos = myManualStarts[refSid] || (refSc.nextStartPos ? parseInt(refSc.nextStartPos) : null);
+          var nextPositions = computeNextPositions(scullers, myManualStarts);
+          var refPos = myManualStarts[refSid] || nextPositions[refSid] || null;
           if (refPos != null) {
             var newPos = dir === 'before' ? refPos : refPos + 1;
             myManualStarts[sid] = newPos;
