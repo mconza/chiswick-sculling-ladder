@@ -608,6 +608,7 @@ function renderRequests() {
             voteChain = postVotes(payload);
           }
         }
+        }
         voteChain.then(function(data) {
           deleteRequest(reqId);
           myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
@@ -616,7 +617,7 @@ function renderRequests() {
           else computeRankingsLocal();
           renderTable();
         });
-    });
+      });
   });
 }
 
@@ -776,6 +777,7 @@ function initEventListeners() {
           updateUserCard();
           renderTable();
           checkAutoSave();
+        });
       });
     }
   }
