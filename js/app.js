@@ -53,7 +53,7 @@ function applyServerRankings(rankings) {
 function getComputedRankLocal(s) {
   return (s.newRank !== undefined && s.newRank !== null && s.newRank !== '')
     ? parseInt(s.newRank)
-    : (computedRanks && computedRanks[s.id] !== undefined ? computedRanks[s.id] : (s.rank ? parseInt(s.rank) : 0));
+    : (s.rank ? parseInt(s.rank) : 0);
 }
 
 function getVal(s, key) {
