@@ -32,6 +32,24 @@ function computeRankingsLocal() {
   computedRanks = computeRankings(scullers, myCaught);
 }
 
+function initComputedRanksFromNewRank() {
+  scullers.forEach(function(s) {
+    computedRanks[s.id] = (s.newRank !== undefined && s.newRank !== null)
+      ? parseInt(s.newRank)
+      : (s.rank ? parseInt(s.rank) : 0);
+  });
+}
+
+function applyServerRankings(rankings) {
+  if (!rankings) return;
+  Object.keys(rankings).forEach(function(k) {
+    var id = parseInt(k);
+    computedRanks[id] = rankings[k];
+    var sc = scullers.find(function(s) { return s.id === id; });
+    if (sc) sc.newRank = String(rankings[k]);
+  });
+}
+
 function getComputedRankLocal(s) {
   return getComputedRank(s, computedRanks);
 }
@@ -176,6 +194,7 @@ function checkAndAdvanceLadder() {
     computeRankingsLocal();
     scullers.forEach(function(s) {
       s.rank = String(computedRanks[s.id] || s.rank || 0);
+      s.newRank = s.rank;
     });
     renderTable();
     updateUserCard();
@@ -345,7 +364,12 @@ function renderTable() {
       }
       postVotes({ participation: {} }).then(function() {
         var p = {}; p[id] = val;
-        postVotes({ participation: p });
+        return postVotes({ participation: p });
+      }).then(function(data) {
+        if (data && data.rankings) applyServerRankings(data.rankings);
+        else computeRankingsLocal();
+        renderTable();
+        checkAutoSave();
       });
       var row = this.closest('tr');
       if (row) {
@@ -353,9 +377,6 @@ function renderTable() {
         row.style.background = 'rgba(99, 102, 241, 0.15)';
         setTimeout(function() { row.style.background = ''; }, 400);
       }
-      computeRankingsLocal();
-      renderTable();
-      checkAutoSave();
     });
   });
 
@@ -369,16 +390,18 @@ function renderTable() {
       localStorage.setItem('csl_caught', JSON.stringify(store));
       var payload = { caught: {} };
       payload.caught[id] = val;
-      postVotes(payload);
+      postVotes(payload).then(function(data) {
+        if (data && data.rankings) applyServerRankings(data.rankings);
+        else computeRankingsLocal();
+        renderTable();
+        checkAutoSave();
+      });
       var row = this.closest('tr');
       if (row) {
         row.style.transition = 'background 0.4s';
         row.style.background = 'rgba(99, 102, 241, 0.15)';
         setTimeout(function() { row.style.background = ''; }, 400);
       }
-      computeRankingsLocal();
-      renderTable();
-      checkAutoSave();
     });
   });
 
@@ -391,11 +414,13 @@ function renderTable() {
       sc.nextParticipating = val;
       postVotes({ participation: {} }).then(function() {
         var p = {}; p[id] = val;
-        postVotes({ participation: p });
+        return postVotes({ participation: p });
+      }).then(function(data) {
+        if (data && data.rankings) applyServerRankings(data.rankings);
+        else computeRankingsLocal();
+        renderTable();
+        checkAutoSave();
       });
-      computeRankingsLocal();
-      renderTable();
-      checkAutoSave();
     });
   });
 
@@ -439,13 +464,15 @@ function renderTable() {
           localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
           var payload = { manualStarts: {} };
           for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
-          postVotes(payload);
-          computeRankingsLocal();
-          if (field === 'startPos') {
-            currentSort = 'nextStartPos';
-            currentDir = 1;
-          }
-          renderTable();
+          postVotes(payload).then(function(data) {
+            if (data && data.rankings) applyServerRankings(data.rankings);
+            else computeRankingsLocal();
+            if (field === 'startPos') {
+              currentSort = 'nextStartPos';
+              currentDir = 1;
+            }
+            renderTable();
+          });
         }
         input.addEventListener('keydown', function(ev) {
           if (ev.key === 'Enter') { ev.preventDefault(); save(); }
@@ -569,6 +596,7 @@ function renderRequests() {
         var dir = this.dataset.reqDir;
         var sid = parseInt(this.dataset.reqSid);
         var refSc = scullers.find(function(s) { return s.id === refSid; });
+        var voteChain = Promise.resolve();
         if (refSc) {
           var refPos = myManualStarts[refSid] || (refSc.nextStartPos ? parseInt(refSc.nextStartPos) : null);
           if (refPos != null) {
@@ -577,15 +605,17 @@ function renderRequests() {
             localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
             var payload = { manualStarts: {} };
             payload.manualStarts[sid] = newPos;
-            postVotes(payload);
+            voteChain = postVotes(payload);
           }
         }
-      }
-      deleteRequest(reqId);
-      myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
-      renderRequests();
-      computeRankingsLocal();
-      renderTable();
+        voteChain.then(function(data) {
+          deleteRequest(reqId);
+          myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
+          renderRequests();
+          if (data && data.rankings) applyServerRankings(data.rankings);
+          else computeRankingsLocal();
+          renderTable();
+        });
     });
   });
 }
@@ -680,16 +710,23 @@ function initEventListeners() {
           var current = me.nextParticipating;
           if (current === val) { me.nextParticipating = null; val = null; }
           else { me.nextParticipating = val; }
-      postVotes({ participation: {} }).then(function() {
-        var p = {}; p[currentUserId] = val;
-        postVotes({ participation: p });
-      });
-      if (val === null || val === undefined) {
-        delete myManualStarts[currentUserId];
-        var payload = { manualStarts: {} };
-        payload.manualStarts[currentUserId] = null;
-        postVotes(payload);
-      }
+          var chain = postVotes({ participation: {} }).then(function() {
+            var p = {}; p[currentUserId] = val;
+            return postVotes({ participation: p });
+          });
+          if (val === null || val === undefined) {
+            delete myManualStarts[currentUserId];
+            var payload = { manualStarts: {} };
+            payload.manualStarts[currentUserId] = null;
+            chain = chain.then(function() { return postVotes(payload); });
+          }
+          chain.then(function(data) {
+            if (data && data.rankings) applyServerRankings(data.rankings);
+            else computeRankingsLocal();
+            updateUserCard();
+            renderTable();
+            checkAutoSave();
+          });
         } else {
           var store = myCaught;
           var current = store[currentUserId];
@@ -705,12 +742,14 @@ function initEventListeners() {
           localStorage.setItem('csl_caught', JSON.stringify(store));
           var payload = { caught: {} };
           payload.caught[currentUserId] = val;
-          postVotes(payload);
+          postVotes(payload).then(function(data) {
+            if (data && data.rankings) applyServerRankings(data.rankings);
+            else computeRankingsLocal();
+            updateUserCard();
+            renderTable();
+            checkAutoSave();
+          });
         }
-        computeRankingsLocal();
-        updateUserCard();
-        renderTable();
-        checkAutoSave();
       });
     });
 
@@ -719,22 +758,24 @@ function initEventListeners() {
       ucConfirmedSelect.addEventListener('change', function() {
         var val = this.value || null;
         me.nextParticipating = val;
-        postVotes({ participation: {} }).then(function() {
+        var chain = postVotes({ participation: {} }).then(function() {
           var p = {}; p[currentUserId] = val;
-          postVotes({ participation: p });
+          return postVotes({ participation: p });
         });
         if (val === null || val === undefined) {
           delete myManualStarts[currentUserId];
           var payload = { manualStarts: {} };
           payload.manualStarts[currentUserId] = null;
-          postVotes(payload);
+          chain = chain.then(function() { return postVotes(payload); });
         }
-        computeRankingsLocal();
-        var nextPos = computeNextPositions(scullers, myManualStarts);
-        me.nextStartPos = nextPos[me.id] || null;
-        updateUserCard();
-        renderTable();
-        checkAutoSave();
+        chain.then(function(data) {
+          if (data && data.rankings) applyServerRankings(data.rankings);
+          else computeRankingsLocal();
+          var nextPos = computeNextPositions(scullers, myManualStarts);
+          me.nextStartPos = nextPos[me.id] || null;
+          updateUserCard();
+          renderTable();
+          checkAutoSave();
       });
     }
   }
@@ -860,7 +901,7 @@ function initApp() {
 
   me = isAdmin ? null : getMe(scullers);
 
-  computeRankingsLocal();
+  initComputedRanksFromNewRank();
 
   if (me) {
     document.getElementById('userBadge').textContent = me.name + ' (' + me.club + ')';

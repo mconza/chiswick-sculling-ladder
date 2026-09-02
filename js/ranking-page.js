@@ -9,15 +9,23 @@ var currentSort = 'rank';
 var ranked = [];
 var unranked = [];
 
+function getDisplayRank(s) {
+  return (s.newRank !== undefined && s.newRank !== null && s.newRank !== '')
+    ? parseInt(s.newRank)
+    : (s.rank ? parseInt(s.rank) : 0);
+}
+
 function init() {
   ranked = scullers.filter(function(s) {
-    return s.rank && parseInt(s.rank) > 0;
+    var r = getDisplayRank(s);
+    return r > 0;
   }).sort(function(a, b) {
-    return parseInt(a.rank) - parseInt(b.rank);
+    return getDisplayRank(a) - getDisplayRank(b);
   });
 
   unranked = scullers.filter(function(s) {
-    return !s.rank || parseInt(s.rank) <= 0;
+    var r = getDisplayRank(s);
+    return r <= 0;
   });
 
   document.getElementById('rankInfo').textContent =
@@ -39,7 +47,7 @@ function renderPodium() {
     html += '<div class="pod-slot pod-' + (idx + 1) + '">' +
       '<div class="pod-name">' + escHtml(s.name) + '</div>' +
       '<div class="pod-club">' + escHtml(s.club) + '</div>' +
-      '<div class="pod-rank">#' + s.rank + '</div>' +
+      '<div class="pod-rank">#' + getDisplayRank(s) + '</div>' +
       '<div class="pod-base">' + (idx + 1) + '</div>' +
       '</div>';
   });
@@ -55,7 +63,7 @@ function renderList(list) {
   }
   el.innerHTML = list.map(function(s) {
     return '<div class="rank-row">' +
-      '<span class="rank-num">#' + s.rank + '</span>' +
+      '<span class="rank-num">#' + getDisplayRank(s) + '</span>' +
       '<span class="rank-name">' + escHtml(s.name) + '</span>' +
       '<span class="rank-club">' + escHtml(s.club) + '</span>' +
       '</div>';
@@ -89,7 +97,7 @@ function sortBy(key) {
     ranked.sort(function(a, b) { return a.club.localeCompare(b.club); });
   } else {
     ranked.sort(function(a, b) {
-      return parseInt(a.rank) - parseInt(b.rank);
+      return getDisplayRank(a) - getDisplayRank(b);
     });
   }
   renderList(ranked);

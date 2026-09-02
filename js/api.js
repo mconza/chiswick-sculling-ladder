@@ -9,7 +9,7 @@ export function postVotes(payload) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).catch(function() {});
+  }).then(function(r) { return r.json(); }).catch(function() { return {}; });
 }
 
 export function getConfig() {

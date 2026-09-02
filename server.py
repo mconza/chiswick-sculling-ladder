@@ -22,6 +22,112 @@ HISTORY_DIR = DATA_DIR / "history"
 DATA_DIR.mkdir(exist_ok=True)
 HISTORY_DIR.mkdir(exist_ok=True)
 
+def compute_rankings(scullers, caught):
+    """Pure function: compute rankings from scullers and caught votes.
+    Returns {sculler_id: rank_int}. Mirrors js/rankings.js computeRankings()."""
+    computed = {}
+    for s in scullers:
+        computed[s['id']] = int(s['rank']) if s.get('rank') else 0
+
+    starters = [s for s in scullers if s.get('lastStartPos') is not None]
+    if not starters:
+        return computed
+
+    starters.sort(key=lambda s: int(s['lastStartPos']))
+
+    def get_caught(s):
+        sid = str(s['id'])
+        if sid in caught:
+            return caught[sid]
+        return s.get('lastCaught')
+
+    chains = []
+    i = 0
+    while i < len(starters):
+        c = get_caught(starters[i])
+        if c == 'No':
+            no_people = []
+            boundary = None
+            while i < len(starters) and get_caught(starters[i]) == 'No':
+                no_people.append(starters[i])
+                i += 1
+            if i < len(starters):
+                boundary = starters[i]
+                i += 1
+
+            all_ranks = [computed[s['id']] for s in no_people]
+            if boundary:
+                all_ranks.append(computed[boundary['id']])
+            fastest_rank = min(all_ranks)
+
+            chains.append({
+                'noPeople': no_people,
+                'boundary': boundary,
+                'fastestRank': fastest_rank,
+                'totalLen': len(no_people) + (1 if boundary else 0),
+                'startPos': int(no_people[0]['lastStartPos']),
+            })
+        else:
+            i += 1
+
+    chains = [c for c in chains if c['fastestRank'] < computed[c['noPeople'][0]['id']]]
+    chains.sort(key=lambda c: c['startPos'], reverse=True)
+
+    chain_ranks = {}
+    for chain in chains:
+        chain_len = len(chain['noPeople']) + (1 if chain['boundary'] else 0)
+        start_rank = chain['fastestRank']
+        while True:
+            available = True
+            for k in range(chain_len):
+                if (start_rank + k) in chain_ranks:
+                    available = False
+                    break
+            if available:
+                break
+            start_rank += 1
+
+        rank = start_rank
+        for s in chain['noPeople']:
+            computed[s['id']] = rank
+            chain_ranks[rank] = True
+            rank += 1
+        if chain['boundary']:
+            computed[chain['boundary']['id']] = rank
+            chain_ranks[rank] = True
+            rank += 1
+
+    occupied = dict(chain_ranks)
+
+    chain_ids = set()
+    for c in chains:
+        for p in c['noPeople']:
+            chain_ids.add(p['id'])
+        if c['boundary']:
+            chain_ids.add(c['boundary']['id'])
+
+    non_chain = [s for s in scullers if s['id'] not in chain_ids]
+    non_chain.sort(key=lambda s: computed[s['id']])
+
+    for s in non_chain:
+        rank = computed[s['id']]
+        if rank in occupied:
+            while rank in occupied:
+                rank += 1
+            computed[s['id']] = rank
+            occupied[rank] = True
+
+    return computed
+
+
+def persist_new_ranks(scullers, computed_ranks):
+    """Separate persistence operation: update newRank in scullers and save."""
+    for s in scullers:
+        if s['id'] in computed_ranks:
+            s['newRank'] = str(computed_ranks[s['id']])
+    save_scullers(scullers)
+
+
 def load_votes():
     if VOTES_FILE.exists():
         with open(VOTES_FILE, "r") as f:
@@ -160,11 +266,14 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                             else:
                                 current.setdefault("manualStarts", {})[k] = v
                 save_votes(current)
+                scullers = load_scullers()
+                computed_ranks = compute_rankings(scullers, current.get('caught', {}))
+                persist_new_ranks(scullers, computed_ranks)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
-                self.wfile.write(json.dumps({"ok": True}).encode())
+                self.wfile.write(json.dumps({"ok": True, "rankings": computed_ranks}).encode())
             except Exception as e:
                 self.send_response(400)
                 self.send_header("Content-Type", "application/json")
@@ -193,6 +302,9 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length)
             try:
                 new_scullers = json.loads(body)
+                for s in new_scullers:
+                    if 'newRank' not in s or s.get('newRank') is None:
+                        s['newRank'] = s.get('rank')
                 save_scullers(new_scullers)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
