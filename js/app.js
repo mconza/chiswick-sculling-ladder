@@ -193,9 +193,8 @@ function checkAndAdvanceLadder() {
       s.nextStartPos = null;
     });
     myCaught = {};
-    computeRankingsLocal();
     scullers.forEach(function(s) {
-      s.rank = String(computedRanks[s.id] || s.rank || 0);
+      s.rank = s.newRank || s.rank;
       s.newRank = s.rank;
     });
     renderTable();
@@ -328,6 +327,9 @@ function renderTable() {
       else if (d < 0) diff = '<span style="color:var(--danger);font-weight:700;">▼' + Math.abs(d) + '</span>';
       else diff = '<span style="color:var(--text-light);">—</span>';
     }
+    var rankCell = isAdmin
+      ? (startingRank || '<span class="muted">n/a</span>') + ' ' + diff
+      : (liveRank || '<span class="muted">n/a</span>') + ' ' + diff;
     return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
     '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
     (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
@@ -335,7 +337,7 @@ function renderTable() {
     (isAdmin ? '<td class="col-separator"></td>' : '') +
     (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
     (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
-    '<td class="col-rank">' + (liveRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
+    '<td class="col-rank">' + rankCell + '</td>' +
     (isAdmin ? '<td class="col-next">' + (liveRank || '<span class="muted">-</span>') + '</td>' : '') +
     '</tr>';
   }).join('');
