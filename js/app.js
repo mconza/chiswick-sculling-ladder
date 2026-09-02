@@ -655,7 +655,6 @@ function initEventListeners() {
   document.getElementById('modalSave').addEventListener('click', function() {
     saveModal(nextLadder, lastLadder);
     updateLadderInfo(nextLadder);
-    computeRankingsLocal();
     renderTable();
     updateUserCard();
   });
