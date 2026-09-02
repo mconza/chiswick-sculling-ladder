@@ -717,7 +717,6 @@ td.col-last + td.col-next {
   border-radius: 6px;
 }
 #requestPosResults {
-  display: none;
   position: absolute;
   top: 100%;
   left: 0;
