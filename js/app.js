@@ -601,7 +601,7 @@ function renderRequests() {
             myManualStarts[sid] = newPos;
             localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
             var payload = { manualStarts: {} };
-            payload.manualStarts[sid] = newPos;
+            for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
             voteChain = postVotes(payload);
           }
         }
