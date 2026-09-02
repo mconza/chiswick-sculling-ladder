@@ -147,8 +147,8 @@ export function computeNextPositions(scullers, myManualStarts) {
   });
 
   natural.sort(function(a, b) {
-    var ra = a.rank ? parseInt(a.rank) : 0;
-    var rb = b.rank ? parseInt(b.rank) : 0;
+    var ra = (a.newRank !== undefined && a.newRank !== null && a.newRank !== '') ? parseInt(a.newRank) : (a.rank ? parseInt(a.rank) : 0);
+    var rb = (b.newRank !== undefined && b.newRank !== null && b.newRank !== '') ? parseInt(b.newRank) : (b.rank ? parseInt(b.rank) : 0);
     if (ra === 0 && rb !== 0) return -1;
     if (rb === 0 && ra !== 0) return 1;
     return rb - ra;
