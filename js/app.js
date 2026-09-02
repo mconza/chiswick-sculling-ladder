@@ -124,7 +124,7 @@ function updateUserCard() {
     else if (me.nextParticipating === 'PathFind') ucSelect.classList.add('val-pf');
   }
   var reqAction = document.getElementById('ucRequestAction');
-  if (reqAction) reqAction.style.display = (isAdmin || me.nextParticipating === 'Yes') ? '' : 'none';
+  if (reqAction) reqAction.style.display = me.nextParticipating === 'Yes' ? '' : 'none';
 }
 
 function checkAutoSave() {
