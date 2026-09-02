@@ -364,12 +364,9 @@ function renderTable() {
         sc.nextParticipating = next || null;
         val = sc.nextParticipating;
       }
-      postVotes({ participation: {} }).then(function() {
-        var p = {}; p[id] = val;
-        return postVotes({ participation: p });
-      }).then(function(data) {
+      var p = {}; p[id] = val;
+      postVotes({ participation: p }).then(function(data) {
         if (data && data.rankings) applyServerRankings(data.rankings);
-        else computeRankingsLocal();
         renderTable();
         checkAutoSave();
       });
@@ -394,7 +391,6 @@ function renderTable() {
       payload.caught[id] = val;
       postVotes(payload).then(function(data) {
         if (data && data.rankings) applyServerRankings(data.rankings);
-        else computeRankingsLocal();
         renderTable();
         checkAutoSave();
       });
@@ -414,12 +410,9 @@ function renderTable() {
       var sc = scullers.find(function(s) { return s.id === id; });
       if (!sc) return;
       sc.nextParticipating = val;
-      postVotes({ participation: {} }).then(function() {
-        var p = {}; p[id] = val;
-        return postVotes({ participation: p });
-      }).then(function(data) {
+      var p = {}; p[id] = val;
+      postVotes({ participation: p }).then(function(data) {
         if (data && data.rankings) applyServerRankings(data.rankings);
-        else computeRankingsLocal();
         renderTable();
         checkAutoSave();
       });
@@ -468,7 +461,6 @@ function renderTable() {
           for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
           postVotes(payload).then(function(data) {
             if (data && data.rankings) applyServerRankings(data.rankings);
-            else computeRankingsLocal();
             if (field === 'startPos') {
               currentSort = 'nextStartPos';
               currentDir = 1;
@@ -616,7 +608,6 @@ function renderRequests() {
           myRequests = myRequests.filter(function(r) { return r.id !== reqId; });
           renderRequests();
           if (data && data.rankings) applyServerRankings(data.rankings);
-          else computeRankingsLocal();
           renderTable();
         });
       });
@@ -713,10 +704,8 @@ function initEventListeners() {
           var current = me.nextParticipating;
           if (current === val) { me.nextParticipating = null; val = null; }
           else { me.nextParticipating = val; }
-          var chain = postVotes({ participation: {} }).then(function() {
-            var p = {}; p[currentUserId] = val;
-            return postVotes({ participation: p });
-          });
+          var p = {}; p[currentUserId] = val;
+          var chain = postVotes({ participation: p });
           if (val === null || val === undefined) {
             delete myManualStarts[currentUserId];
             var payload = { manualStarts: {} };
@@ -725,7 +714,6 @@ function initEventListeners() {
           }
           chain.then(function(data) {
             if (data && data.rankings) applyServerRankings(data.rankings);
-            else computeRankingsLocal();
             updateUserCard();
             renderTable();
             checkAutoSave();
@@ -747,7 +735,6 @@ function initEventListeners() {
           payload.caught[currentUserId] = val;
           postVotes(payload).then(function(data) {
             if (data && data.rankings) applyServerRankings(data.rankings);
-            else computeRankingsLocal();
             updateUserCard();
             renderTable();
             checkAutoSave();
@@ -761,10 +748,8 @@ function initEventListeners() {
       ucConfirmedSelect.addEventListener('change', function() {
         var val = this.value || null;
         me.nextParticipating = val;
-        var chain = postVotes({ participation: {} }).then(function() {
-          var p = {}; p[currentUserId] = val;
-          return postVotes({ participation: p });
-        });
+        var p = {}; p[currentUserId] = val;
+        var chain = postVotes({ participation: p });
         if (val === null || val === undefined) {
           delete myManualStarts[currentUserId];
           var payload = { manualStarts: {} };
@@ -773,7 +758,6 @@ function initEventListeners() {
         }
         chain.then(function(data) {
           if (data && data.rankings) applyServerRankings(data.rankings);
-          else computeRankingsLocal();
           var nextPos = computeNextPositions(scullers, myManualStarts);
           me.nextStartPos = nextPos[me.id] || null;
           updateUserCard();
