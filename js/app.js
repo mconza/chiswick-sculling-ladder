@@ -51,13 +51,15 @@ function applyServerRankings(rankings) {
 }
 
 function getComputedRankLocal(s) {
-  return getComputedRank(s, computedRanks);
+  return (s.newRank !== undefined && s.newRank !== null && s.newRank !== '')
+    ? parseInt(s.newRank)
+    : (computedRanks && computedRanks[s.id] !== undefined ? computedRanks[s.id] : (s.rank ? parseInt(s.rank) : 0));
 }
 
 function getVal(s, key) {
   if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
   if (key === 'rank') { var r = getComputedRankLocal(s); return r || 9999; }
-  if (key === 'newRank') { var r = computedRanks[s.id]; return r || 9999; }
+  if (key === 'newRank') { var r = s.newRank ? parseInt(s.newRank) : null; return r || 9999; }
   if (key === 'lastStartPos') {
     return s.lastStartPos ? parseInt(s.lastStartPos) : 9999;
   }
@@ -318,10 +320,10 @@ function renderTable() {
       '</select>';
     }
     var startingRank = s.rank ? parseInt(s.rank) : null;
-    var newRank = computedRanks[s.id] || null;
+    var liveRank = s.newRank ? parseInt(s.newRank) : startingRank;
     var diff = '';
-    if (startingRank && newRank) {
-      var d = startingRank - newRank;
+    if (startingRank && liveRank) {
+      var d = startingRank - liveRank;
       if (d > 0) diff = '<span style="color:var(--success);font-weight:700;">▲' + d + '</span>';
       else if (d < 0) diff = '<span style="color:var(--danger);font-weight:700;">▼' + Math.abs(d) + '</span>';
       else diff = '<span style="color:var(--text-light);">—</span>';
@@ -333,8 +335,8 @@ function renderTable() {
     (isAdmin ? '<td class="col-separator"></td>' : '') +
     (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
     (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
-    '<td class="col-rank">' + ((isAdmin ? startingRank : newRank) || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
-    (isAdmin ? '<td class="col-next">' + (newRank || '<span class="muted">-</span>') + '</td>' : '') +
+    '<td class="col-rank">' + (liveRank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
+    (isAdmin ? '<td class="col-next">' + (liveRank || '<span class="muted">-</span>') + '</td>' : '') +
     '</tr>';
   }).join('');
   document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="' + (isAdmin ? 8 : 3) + '" class="empty-state">No scullers found</td></tr>';
