@@ -17,7 +17,6 @@
 }
 
 .admin-requests {
-  display: none;
   margin-bottom: 0.75rem;
   background: var(--bg-card);
   border-radius: var(--radius);
@@ -29,10 +28,6 @@
   font-weight: 700;
   font-size: 0.85rem;
   margin-bottom: 0.5rem;
-}
-
-#historyDate {
-  display: none;
 }
 
 .modal-overlay {
