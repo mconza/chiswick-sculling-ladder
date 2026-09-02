@@ -3,11 +3,13 @@
 
 import { loadScullers } from './api.js';
 import { escHtml } from './ui.js';
+import { checkAuth, isAdmin, getUserId, getMe, logout } from './auth.js';
 
 var scullers = [];
 var currentSort = 'rank';
 var ranked = [];
 var unranked = [];
+var me = null;
 
 function getDisplayRank(s) {
   return (s.newRank !== undefined && s.newRank !== null && s.newRank !== '')
@@ -15,7 +17,24 @@ function getDisplayRank(s) {
     : (s.rank ? parseInt(s.rank) : 0);
 }
 
+function initHeader() {
+  var badge = document.getElementById('userBadge');
+  var logoutBtn = document.getElementById('logoutBtn');
+  if (me) {
+    badge.textContent = me.name + ' (' + me.club + ')';
+    badge.style.display = '';
+    logoutBtn.style.display = '';
+  } else {
+    badge.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+  logoutBtn.addEventListener('click', function() {
+    logout();
+  });
+}
+
 function init() {
+  initHeader();
   ranked = scullers.filter(function(s) {
     var r = getDisplayRank(s);
     return r > 0;
@@ -120,9 +139,11 @@ function initEventListeners() {
 // Init - just load scullers, ranks are already in scullers.json
 loadScullers().then(function(data) {
   scullers = data;
+  me = getMe(scullers);
   init();
   initEventListeners();
 }).catch(function() {
+  me = getMe(scullers);
   init();
   initEventListeners();
 });
