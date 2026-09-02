@@ -53,7 +53,7 @@ export function deleteRequest(id) {
 }
 
 export function loadScullers() {
-  return fetch('./data/scullers.json').then(function(r) { return r.json(); });
+  return fetch('/api/scullers', { cache: 'no-store' }).then(function(r) { return r.json(); });
 }
 
 export function saveScullers(scullers) {

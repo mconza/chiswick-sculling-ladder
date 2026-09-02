@@ -1,5 +1,5 @@
 // js/ranking-page.js - Entry point for ranking.html
-// Reads ranks directly from scullers.json (single source of truth)
+// Reads ranks from /api/scullers (server-computed newRank is the live rank)
 
 import { loadScullers } from './api.js';
 import { escHtml } from './ui.js';

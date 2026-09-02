@@ -175,6 +175,14 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             votes = load_votes()
             self.wfile.write(json.dumps(votes).encode())
+        elif parsed.path == "/api/scullers":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+            self.end_headers()
+            scullers = load_scullers()
+            self.wfile.write(json.dumps(scullers).encode())
         elif parsed.path == "/api/config":
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -302,9 +310,15 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length)
             try:
                 new_scullers = json.loads(body)
+                existing = load_scullers()
+                existing_map = {s['id']: s for s in existing}
                 for s in new_scullers:
                     if 'newRank' not in s or s.get('newRank') is None:
-                        s['newRank'] = s.get('rank')
+                        prev = existing_map.get(s['id'])
+                        if prev and prev.get('newRank') is not None:
+                            s['newRank'] = prev['newRank']
+                        else:
+                            s['newRank'] = s.get('rank')
                 save_scullers(new_scullers)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
