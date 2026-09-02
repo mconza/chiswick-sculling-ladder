@@ -58,7 +58,7 @@ function getComputedRankLocal(s) {
 
 function getVal(s, key) {
   if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
-  if (key === 'rank') { var r = getComputedRankLocal(s); return r || 9999; }
+  if (key === 'rank') { var r = s.rank ? parseInt(s.rank) : null; return r || 9999; }
   if (key === 'newRank') { var r = s.newRank ? parseInt(s.newRank) : null; return r || 9999; }
   if (key === 'lastStartPos') {
     return s.lastStartPos ? parseInt(s.lastStartPos) : 9999;
@@ -86,7 +86,7 @@ function getVal(s, key) {
 
 function updateUserCard() {
   if (!me) return;
-  var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : me.lastCaught;
+  var caughtVal = myCaught[me.id] !== undefined ? myCaught[me.id] : null;
   document.getElementById('ucName').textContent = me.name;
   document.getElementById('ucClub').textContent = me.club;
   document.getElementById('ucRank').textContent = me.nextParticipating === 'Yes' && me.nextStartPos ? '#' + me.nextStartPos : (getComputedRankLocal(me) || 'n/a');
