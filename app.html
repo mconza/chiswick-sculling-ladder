@@ -16,12 +16,22 @@
   <header class="app-header">
     <a href="./index.html" class="logo">🚣 <span>Chiswick Sculling Ladder</span></a>
     <div class="right-group">
-      <a href="./app.html" class="header-link">Ladder</a>
+      <a href="./app.html" class="header-link active">Ladder</a>
       <a href="./ranking.html" class="header-link">Rankings</a>
-      <span id="userBadge" class="user-badge"></span>
+      <span id="userBadge" class="user-badge">{{USER_NAME}}</span>
       <button class="logout-btn" id="logoutBtn">Log Out</button>
     </div>
   </header>
+  <script>
+    (function() {
+      var b = document.getElementById('userBadge');
+      if (b.textContent.indexOf('{{') === 0) {
+        var n = localStorage.getItem('csl_user_name');
+        var c = localStorage.getItem('csl_user_club');
+        b.textContent = (n ? n + (c ? ' (' + c + ')' : '') : '');
+      }
+    })();
+  </script>
 
   <div class="container">
 

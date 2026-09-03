@@ -20,8 +20,11 @@ function getDisplayRank(s) {
 function initHeader() {
   var badge = document.getElementById('userBadge');
   var logoutBtn = document.getElementById('logoutBtn');
-  if (me) {
-    badge.textContent = me.name + ' (' + me.club + ')';
+  var isLoggedIn = localStorage.getItem('csl_auth') === 'true';
+  if (isLoggedIn) {
+    if (me) {
+      badge.textContent = me.name + ' (' + me.club + ')';
+    }
     badge.style.display = '';
     logoutBtn.style.display = '';
   } else {
@@ -34,6 +37,15 @@ function initHeader() {
 }
 
 function init() {
+  var uid = localStorage.getItem('csl_user_id');
+  if (uid) {
+    document.querySelectorAll('.header-link').forEach(function(a) {
+      var url = new URL(a.href, location.origin);
+      url.searchParams.set('uid', uid);
+      a.href = url.pathname + url.search;
+    });
+  }
+
   initHeader();
   ranked = scullers.filter(function(s) {
     var r = getDisplayRank(s);

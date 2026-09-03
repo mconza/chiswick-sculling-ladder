@@ -220,6 +220,26 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": "not found"}).encode())
+        elif parsed.path in ("/app.html", "/ranking.html"):
+            params = urllib.parse.parse_qs(parsed.query)
+            uid = params.get("uid", [None])[0]
+            user_name = ""
+            if uid:
+                scullers = load_scullers()
+                sc = next((s for s in scullers if str(s["id"]) == str(uid)), None)
+                if sc:
+                    user_name = f'{sc["name"]} ({sc["club"]})'
+            file_path = BASE_DIR / parsed.path.lstrip("/")
+            if file_path.exists():
+                html = file_path.read_text(encoding="utf-8")
+                html = html.replace("{{USER_NAME}}", user_name)
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+                self.end_headers()
+                self.wfile.write(html.encode("utf-8"))
+            else:
+                super().do_GET()
         else:
             super().do_GET()
 

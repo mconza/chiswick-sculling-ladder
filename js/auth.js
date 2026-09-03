@@ -27,5 +27,7 @@ export function logout() {
   localStorage.removeItem('csl_auth');
   localStorage.removeItem('csl_role');
   localStorage.removeItem('csl_user_id');
+  localStorage.removeItem('csl_user_name');
+  localStorage.removeItem('csl_user_club');
   window.location.href = './index.html';
 }

@@ -20,11 +20,13 @@ function updateHeaderButtons() {
   var headerBtn = document.getElementById('headerBtn');
   var bottomBtn = document.getElementById('bottomBtn');
   var loggedIn = localStorage.getItem('csl_auth') === 'true';
+  var uid = localStorage.getItem('csl_user_id');
+  var ladderUrl = uid ? './app.html?uid=' + uid : './app.html';
   if (loggedIn) {
-    headerBtn.innerHTML = '<a href="./app.html" class="btn btn-primary">Go to Ladder</a>';
-    if (bottomBtn) bottomBtn.innerHTML = '<a href="./app.html" class="bottom-link">Go to Ladder</a>';
+    headerBtn.innerHTML = '<a href="' + ladderUrl + '" class="login-btn">Go to Ladder</a>';
+    if (bottomBtn) bottomBtn.innerHTML = '<a href="' + ladderUrl + '" class="bottom-link">Go to Ladder</a>';
   } else {
-    headerBtn.innerHTML = '<a href="#login" class="btn btn-primary" id="loginTrigger">Log In</a>';
+    headerBtn.innerHTML = '<a href="#login" class="login-btn" id="loginTrigger">Log In</a>';
     if (bottomBtn) bottomBtn.innerHTML = '<a href="#login" class="bottom-link" id="loginTriggerBottom">Log In to participate</a>';
   }
 }
@@ -63,10 +65,15 @@ function renderScullerList(query) {
 }
 
 function selectSculler(id) {
+  var sc = scullers.find(function(s) { return s.id === id; });
   localStorage.setItem('csl_role', 'user');
   localStorage.setItem('csl_user_id', id);
   localStorage.setItem('csl_auth', 'true');
-  window.location.href = './app.html';
+  if (sc) {
+    localStorage.setItem('csl_user_name', sc.name);
+    localStorage.setItem('csl_user_club', sc.club);
+  }
+  window.location.href = './app.html?uid=' + id;
 }
 
 function autoAdvanceLadder() {

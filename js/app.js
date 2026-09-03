@@ -889,6 +889,15 @@ function initEventListeners() {
 
 // Init
 function initApp() {
+  var uid = localStorage.getItem('csl_user_id');
+  if (uid) {
+    document.querySelectorAll('.header-link').forEach(function(a) {
+      var url = new URL(a.href, location.origin);
+      url.searchParams.set('uid', uid);
+      a.href = url.pathname + url.search;
+    });
+  }
+
   updateLadderInfo(nextLadder);
 
   me = isAdmin ? null : getMe(scullers);

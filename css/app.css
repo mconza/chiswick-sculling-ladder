@@ -3,13 +3,7 @@
 .right-group {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.user-badge {
-  color: var(--accent-light);
-  font-size: 0.8rem;
-  font-weight: 600;
+  gap: 0.5rem;
 }
 
 #ucRequestAction {
