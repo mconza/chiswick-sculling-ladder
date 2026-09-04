@@ -27,7 +27,11 @@ def compute_rankings(scullers, caught):
     Returns {sculler_id: rank_int}. Mirrors js/rankings.js computeRankings()."""
     computed = {}
     for s in scullers:
-        computed[s['id']] = int(s['rank']) if s.get('rank') else 0
+        try:
+            r = int(s['rank']) if s.get('rank') else 0
+        except (ValueError, TypeError):
+            r = 0
+        computed[s['id']] = r
 
     starters = [s for s in scullers if s.get('lastStartPos') is not None]
     if not starters:
@@ -150,7 +154,8 @@ def persist_new_ranks(scullers, computed_ranks):
     """Separate persistence operation: update newRank in scullers and save."""
     for s in scullers:
         if s['id'] in computed_ranks:
-            s['newRank'] = str(computed_ranks[s['id']])
+            rank = computed_ranks[s['id']]
+            s['newRank'] = str(rank) if rank > 0 else 'n/a'
     save_scullers(scullers)
 
 
@@ -211,7 +216,8 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             caught = load_votes().get('caught', {})
             computed = compute_rankings(scullers, caught)
             for s in scullers:
-                s['newRank'] = str(computed.get(s['id'], 0))
+                rank = computed.get(s['id'], 0)
+                s['newRank'] = str(rank) if rank > 0 else 'n/a'
             self.wfile.write(json.dumps(scullers).encode())
         elif parsed.path == "/api/config":
             self.send_response(200)
@@ -363,7 +369,8 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 caught = load_votes().get('caught', {})
                 computed = compute_rankings(new_scullers, caught)
                 for s in new_scullers:
-                    s['newRank'] = str(computed.get(s['id'], 0))
+                    rank = computed.get(s['id'], 0)
+                    s['newRank'] = str(rank) if rank > 0 else 'n/a'
                 save_scullers(new_scullers)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

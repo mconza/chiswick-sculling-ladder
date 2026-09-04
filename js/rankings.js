@@ -5,7 +5,8 @@ export function computeRankings(scullers, myCaught) {
   var computedRanks = {};
 
   scullers.forEach(function(s) {
-    computedRanks[s.id] = s.rank ? parseInt(s.rank) : 0;
+    var r = s.rank ? parseInt(s.rank) : 0;
+    computedRanks[s.id] = (isNaN(r) || r === 0) ? 0 : r;
   });
 
   var starters = scullers.filter(function(s) {

@@ -28,15 +28,19 @@ var myRequests = [];
 var me = null;
 
 // Core functions
+function parseRank(v) {
+  if (v === undefined || v === null || v === '' || v === 'n/a') return 0;
+  var n = parseInt(v);
+  return isNaN(n) ? 0 : n;
+}
+
 function computeRankingsLocal() {
   computedRanks = computeRankings(scullers, myCaught);
 }
 
 function initComputedRanksFromNewRank() {
   scullers.forEach(function(s) {
-    computedRanks[s.id] = (s.newRank !== undefined && s.newRank !== null)
-      ? parseInt(s.newRank)
-      : (s.rank ? parseInt(s.rank) : 0);
+    computedRanks[s.id] = parseRank(s.newRank) || parseRank(s.rank);
   });
 }
 
@@ -51,15 +55,13 @@ function applyServerRankings(rankings) {
 }
 
 function getComputedRankLocal(s) {
-  return (s.newRank !== undefined && s.newRank !== null && s.newRank !== '')
-    ? parseInt(s.newRank)
-    : (s.rank ? parseInt(s.rank) : 0);
+  return parseRank(s.newRank) || parseRank(s.rank);
 }
 
 function getVal(s, key) {
   if (key === 'name') return (s.name + ' ' + s.club).toLowerCase();
-  if (key === 'rank') { var r = s.rank ? parseInt(s.rank) : null; return r || 9999; }
-  if (key === 'newRank') { var r = s.newRank ? parseInt(s.newRank) : null; return r || 9999; }
+  if (key === 'rank') { var r = parseRank(s.rank); return r || 9999; }
+  if (key === 'newRank') { var r = parseRank(s.newRank); return r || 9999; }
   if (key === 'lastStartPos') {
     return s.lastStartPos ? parseInt(s.lastStartPos) : 9999;
   }
@@ -319,8 +321,8 @@ function renderTable() {
       '<option value="PathFind"' + (caughtSelectVal === 'PathFind' ? ' selected' : '') + '>PathFind</option>' +
       '</select>';
     }
-    var startingRank = s.rank ? parseInt(s.rank) : null;
-    var liveRank = s.newRank ? parseInt(s.newRank) : startingRank;
+    var startingRank = parseRank(s.rank) || null;
+    var liveRank = parseRank(s.newRank) || startingRank;
     var diff = '';
     if (startingRank && liveRank) {
       var d = startingRank - liveRank;
@@ -578,7 +580,7 @@ function renderHistoryTable() {
     else caughtIcon = '<span class="muted">-</span>';
     var diff = '';
     if (s.rank && s.newRank) {
-      var d = parseInt(s.rank) - parseInt(s.newRank);
+      var d = parseRank(s.rank) - parseRank(s.newRank);
       if (d > 0) diff = '<span style="color:var(--success);font-weight:700;">▲' + d + '</span>';
       else if (d < 0) diff = '<span style="color:var(--danger);font-weight:700;">▼' + Math.abs(d) + '</span>';
       else diff = '<span style="color:var(--text-light);">—</span>';
