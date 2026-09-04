@@ -333,11 +333,12 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
                 scullers = load_scullers()
                 computed_ranks = compute_rankings(scullers, current.get('caught', {}))
                 persist_new_ranks(scullers, computed_ranks)
+                filtered_rankings = {k: v for k, v in computed_ranks.items() if v > 0}
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
-                self.wfile.write(json.dumps({"ok": True, "rankings": computed_ranks}).encode())
+                self.wfile.write(json.dumps({"ok": True, "rankings": filtered_rankings}).encode())
             except Exception as e:
                 self.send_response(400)
                 self.send_header("Content-Type", "application/json")

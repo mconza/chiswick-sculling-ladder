@@ -48,9 +48,11 @@ function applyServerRankings(rankings) {
   if (!rankings) return;
   Object.keys(rankings).forEach(function(k) {
     var id = parseInt(k);
-    computedRanks[id] = rankings[k];
+    var rank = rankings[k];
+    if (!rank || rank <= 0) return;
+    computedRanks[id] = rank;
     var sc = scullers.find(function(s) { return s.id === id; });
-    if (sc) sc.newRank = String(rankings[k]);
+    if (sc) sc.newRank = String(rank);
   });
 }
 
