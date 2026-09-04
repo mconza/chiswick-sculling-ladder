@@ -73,6 +73,15 @@ def compute_rankings(scullers, caught):
             while i < len(starters) and get_caught(starters[i]) == 'No' and not is_ranked(starters[i]):
                 i += 1
 
+            while i < len(starters):
+                bs = starters[i]
+                bc = get_caught(bs)
+                bu = not is_ranked(bs)
+                if bu and bc == 'Yes':
+                    i += 1
+                else:
+                    break
+
             if i < len(starters):
                 boundary = starters[i]
                 i += 1

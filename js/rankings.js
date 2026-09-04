@@ -56,6 +56,17 @@ export function computeRankings(scullers, myCaught) {
         i++;
       }
 
+      while (i < starters.length) {
+        var bs = starters[i];
+        var bc = getCaught(bs);
+        var bu = !bs.rank || parseInt(bs.rank) === 0;
+        if (bu && bc === 'Yes') {
+          i++;
+        } else {
+          break;
+        }
+      }
+
       if (i < starters.length) {
         boundary = starters[i];
         i++;
