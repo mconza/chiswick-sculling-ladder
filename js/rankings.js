@@ -172,30 +172,13 @@ export function computeRankings(scullers, myCaught) {
           if (nr > 0) prevRank = nr;
         }
       }
+      if (prevRank === 0) return;
       var nextRank = prevRank + 1;
       while (usedRanks[nextRank]) nextRank++;
       computedRanks[s.id] = nextRank;
       usedRanks[nextRank] = true;
     });
   });
-
-  var fallbackUnranked = starters.filter(function(s) {
-    return computedRanks[s.id] === 0;
-  });
-  if (fallbackUnranked.length > 0) {
-    var usedRanks = {};
-    scullers.forEach(function(s) {
-      var r = computedRanks[s.id];
-      if (r > 0) usedRanks[r] = true;
-    });
-    var nextRank = 1;
-    fallbackUnranked.forEach(function(s) {
-      while (usedRanks[nextRank]) nextRank++;
-      computedRanks[s.id] = nextRank;
-      usedRanks[nextRank] = true;
-      nextRank++;
-    });
-  }
 
   return computedRanks;
 }

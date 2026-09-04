@@ -174,26 +174,13 @@ def compute_rankings(scullers, caught):
                     nr = computed[np['id']]
                     if nr > 0:
                         prev_rank = nr
+            if prev_rank == 0:
+                continue
             next_rank = prev_rank + 1
             while next_rank in used_ranks:
                 next_rank += 1
             computed[s['id']] = next_rank
             used_ranks[next_rank] = True
-
-    lineup_unranked = [s for s in starters if computed[s['id']] == 0]
-    if lineup_unranked:
-        used_ranks = {}
-        for s in scullers:
-            r = computed[s['id']]
-            if r > 0:
-                used_ranks[r] = True
-        next_rank = 1
-        for s in lineup_unranked:
-            while next_rank in used_ranks:
-                next_rank += 1
-            computed[s['id']] = next_rank
-            used_ranks[next_rank] = True
-            next_rank += 1
 
     return computed
 
