@@ -473,11 +473,12 @@ function renderTable() {
               delete s._lastOrder;
               delete s._sortKey;
             });
-            var rankings = computeRankings(scullers, myCaught);
-            scullers.forEach(function(s) {
-              if (rankings[s.id] !== undefined) s.newRank = String(rankings[s.id]);
+            saveScullers(scullers).then(function() {
+              return loadScullers();
+            }).then(function(data) {
+              scullers = data;
+              renderTable();
             });
-            saveScullers(scullers).then(function() { renderTable(); });
           } else {
             val = parseInt(val);
             if (isNaN(val) || val < 0) { renderTable(); return; }
