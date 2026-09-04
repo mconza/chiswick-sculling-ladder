@@ -192,13 +192,10 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
             self.end_headers()
             scullers = load_scullers()
-            needs_save = False
+            caught = load_votes().get('caught', {})
+            computed = compute_rankings(scullers, caught)
             for s in scullers:
-                if 'newRank' not in s or s.get('newRank') is None:
-                    s['newRank'] = s.get('rank')
-                    needs_save = True
-            if needs_save:
-                save_scullers(scullers)
+                s['newRank'] = str(computed.get(s['id'], 0))
             self.wfile.write(json.dumps(scullers).encode())
         elif parsed.path == "/api/config":
             self.send_response(200)
@@ -347,19 +344,15 @@ class CSLHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length)
             try:
                 new_scullers = json.loads(body)
-                existing = load_scullers()
-                existing_map = {s['id']: s for s in existing}
+                caught = load_votes().get('caught', {})
+                computed = compute_rankings(new_scullers, caught)
                 for s in new_scullers:
-                    if 'newRank' not in s or s.get('newRank') is None:
-                        prev = existing_map.get(s['id'])
-                        if prev and prev.get('newRank') is not None:
-                            s['newRank'] = prev['newRank']
-                        else:
-                            s['newRank'] = s.get('rank')
+                    s['newRank'] = str(computed.get(s['id'], 0))
                 save_scullers(new_scullers)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
                 self.end_headers()
                 self.wfile.write(json.dumps({"ok": True}).encode())
             except Exception as e:
