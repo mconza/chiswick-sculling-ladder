@@ -22,17 +22,25 @@ export function computeRankings(scullers, myCaught) {
     return myCaught[s.id] !== undefined ? myCaught[s.id] : s.lastCaught;
   }
 
+  function isRanked(s) {
+    return s.rank && parseInt(s.rank) > 0;
+  }
+
   var chains = [];
   var i = 0;
   while (i < starters.length) {
     var caught = getCaught(starters[i]);
 
-    if (caught === 'No') {
+    if (caught === 'No' && isRanked(starters[i])) {
       var noPeople = [];
       var boundary = null;
 
-      while (i < starters.length && getCaught(starters[i]) === 'No') {
+      while (i < starters.length && getCaught(starters[i]) === 'No' && isRanked(starters[i])) {
         noPeople.push(starters[i]);
+        i++;
+      }
+
+      while (i < starters.length && getCaught(starters[i]) === 'No' && !isRanked(starters[i])) {
         i++;
       }
 
@@ -42,8 +50,8 @@ export function computeRankings(scullers, myCaught) {
       }
 
       var allRanks = noPeople.map(function(s) { return computedRanks[s.id]; });
-      if (boundary) allRanks.push(computedRanks[boundary.id]);
-      var fastestRank = Math.min.apply(null, allRanks);
+      if (boundary && isRanked(boundary)) allRanks.push(computedRanks[boundary.id]);
+      var fastestRank = allRanks.length > 0 ? Math.min.apply(null, allRanks) : 0;
 
       chains.push({
         noPeople: noPeople,
@@ -85,8 +93,10 @@ export function computeRankings(scullers, myCaught) {
       rank++;
     });
     if (chain.boundary) {
-      computedRanks[chain.boundary.id] = rank;
-      chainRanks[rank] = true;
+      if (isRanked(chain.boundary)) {
+        computedRanks[chain.boundary.id] = rank;
+        chainRanks[rank] = true;
+      }
       rank++;
     }
   });
@@ -95,6 +105,7 @@ export function computeRankings(scullers, myCaught) {
   Object.keys(chainRanks).forEach(function(r) { occupied[r] = true; });
 
   var nonChain = scullers.filter(function(s) {
+    if (!s.rank || parseInt(s.rank) === 0) return false;
     return !chains.some(function(c) {
       return c.noPeople.some(function(p) { return p.id === s.id; }) ||
              (c.boundary && c.boundary.id === s.id);
@@ -112,6 +123,15 @@ export function computeRankings(scullers, myCaught) {
       computedRanks[s.id] = rank;
       occupied[rank] = true;
     }
+  });
+
+  var unrankedIds = {};
+  scullers.forEach(function(s) {
+    if (!s.rank || parseInt(s.rank) === 0) unrankedIds[s.id] = true;
+  });
+
+  Object.keys(unrankedIds).forEach(function(id) {
+    computedRanks[id] = 0;
   });
 
   return computedRanks;
