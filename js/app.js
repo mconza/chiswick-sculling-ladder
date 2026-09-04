@@ -337,7 +337,7 @@ function renderTable() {
     '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
     (isAdmin ? '<td class="col-separator"></td>' : '') +
     (isAdmin ? '<td class="col-rank">' + caughtBtns + '</td>' : '') +
-    (isAdmin ? '<td class="col-rank">' + (s.lastStartPos || '<span class="muted">-</span>') + '</td>' : '') +
+    (isAdmin ? '<td class="col-rank"><span class="editable-cell" data-field="lastStartPos" data-id="' + s.id + '">' + (s.lastStartPos || '<span class="muted">-</span>') + '</span></td>' : '') +
     '<td class="col-rank">' + rankCell + '</td>' +
     (isAdmin ? '<td class="col-next">' + (liveRank || '<span class="muted">-</span>') + '</td>' : '') +
     '</tr>';
@@ -428,48 +428,84 @@ function renderTable() {
         e.stopPropagation();
         var field = this.dataset.field;
         var id = parseInt(this.dataset.id);
-        var currentVal = myManualStarts[id] || '';
+        var isLast = field === 'lastStartPos';
         var orig = this;
         var input = document.createElement('input');
         input.type = 'number';
         input.min = '0';
-        input.value = currentVal || '';
         input.className = 'inline-edit-input';
         input.style.width = '50px';
+        var sc = isLast ? scullers.find(function(s) { return s.id === id; }) : null;
+        input.value = isLast ? (sc ? sc.lastStartPos || '' : '') : (myManualStarts[id] || '');
         orig.textContent = '';
         orig.appendChild(input);
         input.focus();
         input.select();
+
         function save() {
-          var val = parseInt(input.value);
-          if (isNaN(val) || val < 0) { renderTable(); return; }
-          var curPositions = computeNextPositions(scullers, myManualStarts);
-          var oldStart = curPositions[id] || null;
-          if (oldStart !== null && oldStart !== val) {
-            var shift2 = val < oldStart ? 1 : -1;
-            var lo2 = Math.min(oldStart, val);
-            var hi2 = Math.max(oldStart, val);
-            scullers.forEach(function(sc) {
-              if (sc.id === id) return;
-              var cur = curPositions[sc.id];
-              if (cur != null && cur >= lo2 && cur <= hi2) {
-                var newCur = cur + shift2;
-                myManualStarts[sc.id] = newCur;
+          var val = input.value.trim();
+          if (isLast) {
+            if (val === '' || parseInt(val) <= 0) {
+              sc.lastStartPos = null;
+              sc.lastCaught = null;
+            } else {
+              sc._lastOrder = parseInt(val);
+            }
+            var starters = scullers.filter(function(s) { return s.lastStartPos != null || s._lastOrder != null; });
+            var edited = null;
+            var others = [];
+            starters.forEach(function(s) {
+              if (s._lastOrder != null) {
+                edited = s;
+              } else {
+                others.push(s);
               }
             });
-          }
-          myManualStarts[id] = val;
-          localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
-          var payload = { manualStarts: {} };
-          for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
-          postVotes(payload).then(function(data) {
-            if (data && data.rankings) applyServerRankings(data.rankings);
-            if (field === 'startPos') {
+            others.sort(function(a, b) {
+              return parseInt(a.lastStartPos) - parseInt(b.lastStartPos);
+            });
+            if (edited) {
+              var insertIdx = Math.min(val, others.length + 1) - 1;
+              others.splice(insertIdx, 0, edited);
+            }
+            others.forEach(function(s, i) {
+              s.lastStartPos = String(i + 1);
+              delete s._lastOrder;
+              delete s._sortKey;
+            });
+            var rankings = computeRankings(scullers, myCaught);
+            scullers.forEach(function(s) {
+              if (rankings[s.id] !== undefined) s.newRank = String(rankings[s.id]);
+            });
+            saveScullers(scullers).then(function() { renderTable(); });
+          } else {
+            val = parseInt(val);
+            if (isNaN(val) || val < 0) { renderTable(); return; }
+            var curPositions = computeNextPositions(scullers, myManualStarts);
+            var oldStart = curPositions[id] || null;
+            if (oldStart !== null && oldStart !== val) {
+              var shift = val < oldStart ? 1 : -1;
+              var lo = Math.min(oldStart, val);
+              var hi = Math.max(oldStart, val);
+              scullers.forEach(function(sc) {
+                if (sc.id === id) return;
+                var cur = curPositions[sc.id];
+                if (cur != null && cur >= lo && cur <= hi) {
+                  myManualStarts[sc.id] = cur + shift;
+                }
+              });
+            }
+            myManualStarts[id] = val;
+            localStorage.setItem('csl_manualStarts', JSON.stringify(myManualStarts));
+            var payload = { manualStarts: {} };
+            for (var k in myManualStarts) { payload.manualStarts[k] = myManualStarts[k]; }
+            postVotes(payload).then(function(data) {
+              if (data && data.rankings) applyServerRankings(data.rankings);
               currentSort = 'nextStartPos';
               currentDir = 1;
-            }
-            renderTable();
-          });
+              renderTable();
+            });
+          }
         }
         input.addEventListener('keydown', function(ev) {
           if (ev.key === 'Enter') { ev.preventDefault(); save(); }
