@@ -52,22 +52,38 @@ def compute_rankings(scullers, caught):
     i = 0
     while i < len(starters):
         c = get_caught(starters[i])
-        if c == 'No' and is_ranked(starters[i]):
+        unranked_yes = (not is_ranked(starters[i])) and c == 'Yes'
+
+        if unranked_yes:
+            i += 1
+            continue
+
+        if c == 'No':
             no_people = []
             boundary = None
-            while i < len(starters) and get_caught(starters[i]) == 'No' and is_ranked(starters[i]):
-                no_people.append(starters[i])
-                i += 1
+            while i < len(starters) and get_caught(starters[i]) == 'No':
+                s = starters[i]
+                u = not is_ranked(s)
+                if u:
+                    i += 1
+                else:
+                    no_people.append(s)
+                    i += 1
+
             while i < len(starters) and get_caught(starters[i]) == 'No' and not is_ranked(starters[i]):
                 i += 1
+
             if i < len(starters):
                 boundary = starters[i]
                 i += 1
 
+            if not no_people:
+                continue
+
             all_ranks = [computed[s['id']] for s in no_people]
-            if boundary and is_ranked(boundary):
+            if boundary:
                 all_ranks.append(computed[boundary['id']])
-            fastest_rank = min(all_ranks) if all_ranks else 0
+            fastest_rank = min(all_ranks)
 
             chains.append({
                 'noPeople': no_people,
@@ -102,9 +118,8 @@ def compute_rankings(scullers, caught):
             chain_ranks[rank] = True
             rank += 1
         if chain['boundary']:
-            if is_ranked(chain['boundary']):
-                computed[chain['boundary']['id']] = rank
-                chain_ranks[rank] = True
+            computed[chain['boundary']['id']] = rank
+            chain_ranks[rank] = True
             rank += 1
 
     occupied = dict(chain_ranks)
@@ -116,7 +131,7 @@ def compute_rankings(scullers, caught):
         if c['boundary']:
             chain_ids.add(c['boundary']['id'])
 
-    non_chain = [s for s in scullers if s['id'] not in chain_ids and is_ranked(s)]
+    non_chain = [s for s in scullers if s['id'] not in chain_ids]
     non_chain.sort(key=lambda s: computed[s['id']])
 
     for s in non_chain:
@@ -126,6 +141,14 @@ def compute_rankings(scullers, caught):
                 rank += 1
             computed[s['id']] = rank
             occupied[rank] = True
+
+    for s in scullers:
+        rank = int(s.get('rank') or 0)
+        if rank == 0:
+            has_last_start = s.get('lastStartPos') is not None
+            c = get_caught(s)
+            if not has_last_start or c == 'Yes':
+                computed[s['id']] = 0
 
     return computed
 
