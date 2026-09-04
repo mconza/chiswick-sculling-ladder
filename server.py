@@ -44,7 +44,7 @@ def compute_rankings(scullers, caught):
     def is_ranked(s):
         return s.get('rank') and int(s['rank']) > 0
 
-    starters = [s for s in starters if not (not is_ranked(s) and get_caught(s) == 'Yes')]
+    starters = [s for s in starters if is_ranked(s)]
 
     if not starters:
         return computed
@@ -84,8 +84,6 @@ def compute_rankings(scullers, caught):
             })
         else:
             i += 1
-
-    all_chains = list(chains)
 
     def chain_filter(c):
         first_real_rank = 0
@@ -144,43 +142,6 @@ def compute_rankings(scullers, caught):
                 rank += 1
             computed[s['id']] = rank
             occupied[rank] = True
-
-    for filtered_chain in all_chains:
-        if filtered_chain in chains:
-            continue
-
-        unranked_in_chain = [s for s in filtered_chain['noPeople'] if computed[s['id']] == 0]
-        if not unranked_in_chain:
-            continue
-
-        used_ranks = {}
-        for s in scullers:
-            r = computed[s['id']]
-            if r > 0:
-                used_ranks[r] = True
-
-        for s in unranked_in_chain:
-            prev_rank = 0
-            idx = unranked_in_chain.index(s)
-            for p in range(idx - 1, -1, -1):
-                pr = computed[unranked_in_chain[p]['id']]
-                if pr > 0:
-                    prev_rank = pr
-                    break
-            if prev_rank == 0:
-                for j, np in enumerate(filtered_chain['noPeople']):
-                    if np['id'] == s['id']:
-                        break
-                    nr = computed[np['id']]
-                    if nr > 0:
-                        prev_rank = nr
-            if prev_rank == 0:
-                continue
-            next_rank = prev_rank + 1
-            while next_rank in used_ranks:
-                next_rank += 1
-            computed[s['id']] = next_rank
-            used_ranks[next_rank] = True
 
     return computed
 

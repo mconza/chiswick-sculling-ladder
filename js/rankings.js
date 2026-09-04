@@ -27,7 +27,7 @@ export function computeRankings(scullers, myCaught) {
   }
 
   starters = starters.filter(function(s) {
-    return !( !isRanked(s) && getCaught(s) === 'Yes' );
+    return isRanked(s);
   });
 
   if (starters.length === 0) return computedRanks;
@@ -143,41 +143,6 @@ export function computeRankings(scullers, myCaught) {
       computedRanks[s.id] = rank;
       occupied[rank] = true;
     }
-  });
-
-  allChains.forEach(function(chain) {
-    if (chains.indexOf(chain) !== -1) return;
-
-    var unrankedInChain = chain.noPeople.filter(function(s) {
-      return computedRanks[s.id] === 0;
-    });
-    if (unrankedInChain.length === 0) return;
-
-    var usedRanks = {};
-    scullers.forEach(function(s) {
-      var r = computedRanks[s.id];
-      if (r > 0) usedRanks[r] = true;
-    });
-
-    unrankedInChain.forEach(function(s, idx) {
-      var prevRank = 0;
-      for (var p = idx - 1; p >= 0; p--) {
-        var pr = computedRanks[unrankedInChain[p].id];
-        if (pr > 0) { prevRank = pr; break; }
-      }
-      if (prevRank === 0) {
-        for (var j = 0; j < chain.noPeople.length; j++) {
-          if (chain.noPeople[j].id === s.id) break;
-          var nr = computedRanks[chain.noPeople[j].id];
-          if (nr > 0) prevRank = nr;
-        }
-      }
-      if (prevRank === 0) return;
-      var nextRank = prevRank + 1;
-      while (usedRanks[nextRank]) nextRank++;
-      computedRanks[s.id] = nextRank;
-      usedRanks[nextRank] = true;
-    });
   });
 
   return computedRanks;
