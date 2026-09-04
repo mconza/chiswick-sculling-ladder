@@ -31,11 +31,7 @@ def compute_rankings(scullers, caught):
 
     starters = [s for s in scullers if s.get('lastStartPos') is not None]
     if not starters:
-    for s in scullers:
-        if not s.get('rank') or int(s['rank']) == 0:
-            computed[s['id']] = 0
-
-    return computed
+        return computed
 
     starters.sort(key=lambda s: int(s['lastStartPos']))
 
@@ -48,40 +44,22 @@ def compute_rankings(scullers, caught):
     def is_ranked(s):
         return s.get('rank') and int(s['rank']) > 0
 
+    starters = [s for s in starters if not (not is_ranked(s) and get_caught(s) == 'Yes')]
+
+    if not starters:
+        return computed
+
     chains = []
     i = 0
     while i < len(starters):
         c = get_caught(starters[i])
-        unranked_yes = (not is_ranked(starters[i])) and c == 'Yes'
-
-        if unranked_yes:
-            i += 1
-            continue
 
         if c == 'No':
             no_people = []
             boundary = None
             while i < len(starters) and get_caught(starters[i]) == 'No':
-                s = starters[i]
-                u = not is_ranked(s)
-                if u:
-                    i += 1
-                else:
-                    no_people.append(s)
-                    i += 1
-
-            while i < len(starters) and get_caught(starters[i]) == 'No' and not is_ranked(starters[i]):
+                no_people.append(starters[i])
                 i += 1
-
-            while i < len(starters):
-                bs = starters[i]
-                bc = get_caught(bs)
-                bu = not is_ranked(bs)
-                if bu and bc == 'Yes':
-                    i += 1
-                else:
-                    break
-
             if i < len(starters):
                 boundary = starters[i]
                 i += 1
@@ -92,7 +70,10 @@ def compute_rankings(scullers, caught):
             all_ranks = [computed[s['id']] for s in no_people]
             if boundary:
                 all_ranks.append(computed[boundary['id']])
-            fastest_rank = min(all_ranks)
+            real_ranks = [r for r in all_ranks if r > 0]
+            if not real_ranks:
+                continue
+            fastest_rank = min(real_ranks)
 
             chains.append({
                 'noPeople': no_people,
@@ -104,7 +85,20 @@ def compute_rankings(scullers, caught):
         else:
             i += 1
 
-    chains = [c for c in chains if c['fastestRank'] < computed[c['noPeople'][0]['id']]]
+    all_chains = list(chains)
+
+    def chain_filter(c):
+        first_real_rank = 0
+        for p in c['noPeople']:
+            r = computed[p['id']]
+            if r > 0:
+                first_real_rank = r
+                break
+        if first_real_rank == 0 and c['boundary']:
+            first_real_rank = computed[c['boundary']['id']]
+        return first_real_rank > 0 and c['fastestRank'] < first_real_rank
+
+    chains = [c for c in chains if chain_filter(c)]
     chains.sort(key=lambda c: c['startPos'], reverse=True)
 
     chain_ranks = {}
@@ -151,13 +145,55 @@ def compute_rankings(scullers, caught):
             computed[s['id']] = rank
             occupied[rank] = True
 
-    for s in scullers:
-        rank = int(s.get('rank') or 0)
-        if rank == 0:
-            has_last_start = s.get('lastStartPos') is not None
-            c = get_caught(s)
-            if not has_last_start or c == 'Yes':
-                computed[s['id']] = 0
+    for filtered_chain in all_chains:
+        if filtered_chain in chains:
+            continue
+
+        unranked_in_chain = [s for s in filtered_chain['noPeople'] if computed[s['id']] == 0]
+        if not unranked_in_chain:
+            continue
+
+        used_ranks = {}
+        for s in scullers:
+            r = computed[s['id']]
+            if r > 0:
+                used_ranks[r] = True
+
+        for s in unranked_in_chain:
+            prev_rank = 0
+            idx = unranked_in_chain.index(s)
+            for p in range(idx - 1, -1, -1):
+                pr = computed[unranked_in_chain[p]['id']]
+                if pr > 0:
+                    prev_rank = pr
+                    break
+            if prev_rank == 0:
+                for j, np in enumerate(filtered_chain['noPeople']):
+                    if np['id'] == s['id']:
+                        break
+                    nr = computed[np['id']]
+                    if nr > 0:
+                        prev_rank = nr
+            next_rank = prev_rank + 1
+            while next_rank in used_ranks:
+                next_rank += 1
+            computed[s['id']] = next_rank
+            used_ranks[next_rank] = True
+
+    lineup_unranked = [s for s in starters if computed[s['id']] == 0]
+    if lineup_unranked:
+        used_ranks = {}
+        for s in scullers:
+            r = computed[s['id']]
+            if r > 0:
+                used_ranks[r] = True
+        next_rank = 1
+        for s in lineup_unranked:
+            while next_rank in used_ranks:
+                next_rank += 1
+            computed[s['id']] = next_rank
+            used_ranks[next_rank] = True
+            next_rank += 1
 
     return computed
 

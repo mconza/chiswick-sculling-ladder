@@ -615,6 +615,165 @@ console.log('Test 32: N participants → always positions 1 through N');
   }
 })();
 
+console.log('\n=== Unranked Sculler Tests ===\n');
+
+function scUnranked(id, lastStartPos, lastCaught) {
+  return {
+    id: id, name: 'U' + id, club: 'PTRC',
+    rank: '0',
+    lastStartPos: lastStartPos != null ? String(lastStartPos) : null,
+    lastCaught: lastCaught || null,
+    nextParticipating: null,
+    nextStartPos: null,
+  };
+}
+
+console.log('U1: Unranked + Yes → N/A, does not corrupt others');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), scUnranked(2,2,'Yes'), sc(3,20,3,'No')],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10');
+  assertEqual(r[2], 0, 'Unranked stays 0 (N/A)');
+  assertEqual(r[3], 20, 'C stays 20');
+})();
+
+console.log('U2: Unranked + No → follows normal flow');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), scUnranked(2,2,'No'), sc(3,20,3,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10');
+  assertEqual(r[2], 11, 'Unranked(No) enters chain → gets rank');
+  assertEqual(r[3], 20, 'C stays 20 (endpoint)');
+})();
+
+console.log('U3: Unranked + not in lineup → N/A');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), scUnranked(2,null,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10');
+  assertEqual(r[2], 0, 'Unranked not in lineup stays 0');
+})();
+
+console.log('U4: Unranked + Yes between two chains → invisible');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), sc(2,11,2,'Yes'),
+     scUnranked(3,3,'Yes'),
+     sc(4,12,4,'No'), sc(5,13,5,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10 (chain fastest)');
+  assertEqual(r[2], 11, 'B stays 11 (boundary)');
+  assertEqual(r[3], 0, 'Unranked stays 0');
+  assertEqual(r[4], 12, 'D stays 12 (chain fastest)');
+  assertEqual(r[5], 13, 'E stays 13 (endpoint)');
+})();
+
+console.log('U5: Multiple unranked+Yes → all invisible');
+(function() {
+  var r = runTest(
+    [scUnranked(1,1,'Yes'), sc(2,10,2,'No'),
+     scUnranked(3,3,'Yes'), sc(4,20,4,null)],
+    {}
+  );
+  assertEqual(r[1], 0, 'Unranked1 stays 0');
+  assertEqual(r[2], 10, 'B stays 10 (chain fastest)');
+  assertEqual(r[3], 0, 'Unranked2 stays 0');
+  assertEqual(r[4], 20, 'D stays 20');
+})();
+
+console.log('U6: Unranked+Yes as potential boundary → skipped, next ranked used');
+(function() {
+  var r = runTest(
+    [sc(1,10,1,'No'), scUnranked(2,2,'Yes'), sc(3,20,3,'No')],
+    {}
+  );
+  assertEqual(r[1], 10, 'A stays 10');
+  assertEqual(r[2], 0, 'Unranked stays 0');
+  assertEqual(r[3], 20, 'C stays 20 (was boundary, not unranked)');
+})();
+
+console.log('\n=== Mandatory Admin Edit Tests ===\n');
+
+console.log('M1: rank preserved after Last Session edit');
+(function() {
+  var scullers = [sc(1,206,1,'No'), sc(2,50,2,'No')];
+  var r = runTest(scullers, {});
+  assertEqual(scullers[0].rank, '206', 'input rank not modified');
+  assertEqual(scullers[1].rank, '50', 'input rank not modified');
+  assertEqual(typeof r[1], 'number', 'computedRank is a number');
+  assertEqual(typeof r[2], 'number', 'computedRank is a number');
+})();
+
+console.log('M2: Position change → only ranking changes');
+(function() {
+  var r1 = runTest([sc(1,50,1,'No'), sc(2,40,2,'Yes'), sc(3,30,3,null)], {});
+  assertEqual(r1[1], 40, 'Pos1: chain → 40');
+  assertEqual(r1[2], 41, 'Pos2: boundary → 41');
+  assertEqual(r1[3], 30, 'Pos3: stays 30');
+  var r2 = runTest([sc(1,50,2,'No'), sc(2,40,1,'Yes'), sc(3,30,3,null)], {});
+  assertEqual(r2[1], 30, 'Swapped: A chain → 30');
+  assertEqual(r2[2], 40, 'Swapped: B stays 40');
+  assertEqual(r2[3], 31, 'Swapped: C boundary → 31');
+})();
+
+console.log('M3: Removal → others recalculated correctly');
+(function() {
+  var r1 = runTest([sc(1,50,1,'No'), sc(2,40,2,'Yes'), sc(3,30,3,null)], {});
+  assertEqual(r1[1], 40, 'Before: A→40');
+  assertEqual(r1[2], 41, 'Before: B→41');
+  assertEqual(r1[3], 30, 'Before: C stays 30');
+  var r2 = runTest([sc(1,50,1,'No'), sc(3,30,2,null)], {});
+  assertEqual(r2[1], 30, 'After removal: A recalculated → 30');
+  assertEqual(r2[3], 31, 'After removal: C boundary → 31');
+})();
+
+console.log('M4: Add ranked sculler → consistent ranking');
+(function() {
+  var r = runTest([sc(1,50,1,'No'), sc(2,40,2,'Yes'), sc(3,30,3,null)], {});
+  assertEqual(r[1], 40, 'Chain: A→40');
+  assertEqual(r[2], 41, 'Boundary: B→41');
+  assertEqual(r[3], 30, 'C stays 30');
+})();
+
+console.log('M5: Add unranked sculler → N/A, does not corrupt others');
+(function() {
+  var r = runTest(
+    [sc(1,50,1,'No'), sc(2,40,2,'Yes'), scUnranked(99,3,'Yes'), sc(3,30,4,null)],
+    {}
+  );
+  assertEqual(r[1], 40, 'Chain: A→40');
+  assertEqual(r[2], 41, 'Boundary: B→41');
+  assertEqual(r[99], 0, 'Unranked stays 0');
+  assertEqual(r[3], 30, 'C stays 30 (unranked invisible)');
+})();
+
+console.log('M6: Persistence — reload returns same values');
+(function() {
+  var r1 = runTest([sc(1,50,1,'No'), sc(2,40,2,'Yes'), scUnranked(99,3,'Yes')], {});
+  var r2 = runTest([sc(1,50,1,'No'), sc(2,40,2,'Yes'), scUnranked(99,3,'Yes')], {});
+  assertEqual(r1[1], r2[1], 'Rank stable across reload');
+  assertEqual(r1[2], r2[2], 'Rank stable across reload');
+  assertEqual(r1[99], r2[99], 'Unranked stable across reload');
+})();
+
+console.log('M7: Two clients see same newRank');
+(function() {
+  var scullers = [sc(1,50,1,'No'), sc(2,40,2,'Yes'), scUnranked(99,3,'Yes')];
+  var caught = {};
+  var r1 = runTest(scullers, caught);
+  var r2 = runTest(scullers, caught);
+  assertEqual(r1[1], r2[1], 'Client1=Client2 for id1');
+  assertEqual(r1[2], r2[2], 'Client1=Client2 for id2');
+  assertEqual(r1[99], r2[99], 'Client1=Client2 for unranked');
+})();
+
 // ═══════════════════════════════════════
 // RESULTS
 // ═══════════════════════════════════════

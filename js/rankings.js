@@ -26,45 +26,24 @@ export function computeRankings(scullers, myCaught) {
     return s.rank && parseInt(s.rank) > 0;
   }
 
+  starters = starters.filter(function(s) {
+    return !( !isRanked(s) && getCaught(s) === 'Yes' );
+  });
+
+  if (starters.length === 0) return computedRanks;
+
   var chains = [];
   var i = 0;
   while (i < starters.length) {
     var caught = getCaught(starters[i]);
-    var unranked = !starters[i].rank || parseInt(starters[i].rank) === 0;
-
-    if (caught === 'Yes' && unranked) {
-      i++;
-      continue;
-    }
 
     if (caught === 'No') {
       var noPeople = [];
       var boundary = null;
 
       while (i < starters.length && getCaught(starters[i]) === 'No') {
-        var s = starters[i];
-        var u = !s.rank || parseInt(s.rank) === 0;
-        if (u) {
-          i++;
-        } else {
-          noPeople.push(s);
-          i++;
-        }
-      }
-
-      while (i < starters.length && getCaught(starters[i]) === 'No' && (!starters[i].rank || parseInt(starters[i].rank) === 0)) {
+        noPeople.push(starters[i]);
         i++;
-      }
-
-      while (i < starters.length) {
-        var bs = starters[i];
-        var bc = getCaught(bs);
-        var bu = !bs.rank || parseInt(bs.rank) === 0;
-        if (bu && bc === 'Yes') {
-          i++;
-        } else {
-          break;
-        }
       }
 
       if (i < starters.length) {
@@ -76,7 +55,9 @@ export function computeRankings(scullers, myCaught) {
 
       var allRanks = noPeople.map(function(s) { return computedRanks[s.id]; });
       if (boundary) allRanks.push(computedRanks[boundary.id]);
-      var fastestRank = Math.min.apply(null, allRanks);
+      var realRanks = allRanks.filter(function(r) { return r > 0; });
+      if (realRanks.length === 0) continue;
+      var fastestRank = Math.min.apply(null, realRanks);
 
       chains.push({
         noPeople: noPeople,
@@ -90,9 +71,26 @@ export function computeRankings(scullers, myCaught) {
     }
   }
 
+  var allChains = chains.map(function(c) {
+    return {
+      noPeople: c.noPeople.slice(),
+      boundary: c.boundary,
+      fastestRank: c.fastestRank,
+      totalLen: c.totalLen,
+      startPos: c.startPos,
+    };
+  });
+
   chains = chains.filter(function(chain) {
-    var firstRank = computedRanks[chain.noPeople[0].id];
-    return chain.fastestRank < firstRank;
+    var firstRealRank = 0;
+    for (var j = 0; j < chain.noPeople.length; j++) {
+      var r = computedRanks[chain.noPeople[j].id];
+      if (r > 0) { firstRealRank = r; break; }
+    }
+    if (firstRealRank === 0 && chain.boundary) {
+      firstRealRank = computedRanks[chain.boundary.id];
+    }
+    return firstRealRank > 0 && chain.fastestRank < firstRealRank;
   });
 
   chains.sort(function(a, b) { return b.startPos - a.startPos; });
@@ -147,16 +145,57 @@ export function computeRankings(scullers, myCaught) {
     }
   });
 
-  scullers.forEach(function(s) {
-    var rank = s.rank ? parseInt(s.rank) : 0;
-    if (rank === 0) {
-      var hasLastStart = s.lastStartPos != null;
-      var caught = getCaught(s);
-      if (!hasLastStart || caught === 'Yes') {
-        computedRanks[s.id] = 0;
+  allChains.forEach(function(chain) {
+    if (chains.indexOf(chain) !== -1) return;
+
+    var unrankedInChain = chain.noPeople.filter(function(s) {
+      return computedRanks[s.id] === 0;
+    });
+    if (unrankedInChain.length === 0) return;
+
+    var usedRanks = {};
+    scullers.forEach(function(s) {
+      var r = computedRanks[s.id];
+      if (r > 0) usedRanks[r] = true;
+    });
+
+    unrankedInChain.forEach(function(s, idx) {
+      var prevRank = 0;
+      for (var p = idx - 1; p >= 0; p--) {
+        var pr = computedRanks[unrankedInChain[p].id];
+        if (pr > 0) { prevRank = pr; break; }
       }
-    }
+      if (prevRank === 0) {
+        for (var j = 0; j < chain.noPeople.length; j++) {
+          if (chain.noPeople[j].id === s.id) break;
+          var nr = computedRanks[chain.noPeople[j].id];
+          if (nr > 0) prevRank = nr;
+        }
+      }
+      var nextRank = prevRank + 1;
+      while (usedRanks[nextRank]) nextRank++;
+      computedRanks[s.id] = nextRank;
+      usedRanks[nextRank] = true;
+    });
   });
+
+  var fallbackUnranked = starters.filter(function(s) {
+    return computedRanks[s.id] === 0;
+  });
+  if (fallbackUnranked.length > 0) {
+    var usedRanks = {};
+    scullers.forEach(function(s) {
+      var r = computedRanks[s.id];
+      if (r > 0) usedRanks[r] = true;
+    });
+    var nextRank = 1;
+    fallbackUnranked.forEach(function(s) {
+      while (usedRanks[nextRank]) nextRank++;
+      computedRanks[s.id] = nextRank;
+      usedRanks[nextRank] = true;
+      nextRank++;
+    });
+  }
 
   return computedRanks;
 }
