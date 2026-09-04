@@ -699,6 +699,30 @@ console.log('U6: Unranked+Yes as potential boundary → skipped, next ranked use
   assertEqual(r[3], 20, 'C stays 20 (was boundary, not unranked)');
 })();
 
+console.log('U7: Unranked inserted between ranked — gets rank from chain, not #1');
+(function() {
+  var r = runTest(
+    [sc(1,20,1,'No'), scUnranked(2,2,'No'), sc(3,10,3,'No'), sc(4,30,4,null)],
+    {}
+  );
+  assertEqual(r[1], 10, 'A gets 10 (chain fastest)');
+  assertEqual(r[2], 11, 'Unranked gets 11 (after A)');
+  assertEqual(r[3], 12, 'C gets 12 (after unranked)');
+  assertEqual(r[4], 13, 'D boundary follows');
+  assertEqual(r[2] === 1 ? 'BUG' : 'OK', 'OK', 'Unranked must NOT get rank #1');
+})();
+
+console.log('U8: Unranked with no ranked predecessor stays 0');
+(function() {
+  var r = runTest(
+    [scUnranked(1,1,'No'), sc(2,10,2,'No'), sc(3,20,3,null)],
+    {}
+  );
+  assertEqual(r[1], 0, 'Unranked with no ranked predecessor stays 0');
+  assertEqual(r[2], 10, 'B stays 10');
+  assertEqual(r[3], 20, 'C boundary stays 20');
+})();
+
 console.log('\n=== Mandatory Admin Edit Tests ===\n');
 
 console.log('M1: rank preserved after Last Session edit');
