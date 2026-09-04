@@ -722,6 +722,26 @@ console.log('U8: Unranked with no ranked predecessor stays 0');
   assertEqual(r[3], 20, 'C boundary stays 20');
 })();
 
+console.log('U9: Ranked No + unranked after → ranked keeps rank, unranked stays 0');
+(function() {
+  var r = runTest(
+    [sc(1,50,1,'No'), scUnranked(2,2,null)],
+    {}
+  );
+  assertEqual(r[1], 50, 'A stays 50');
+  assertEqual(r[2], 0, 'B stays 0');
+})();
+
+console.log('U10: Ranked Yes + unranked after → ranked keeps rank, unranked stays 0');
+(function() {
+  var r = runTest(
+    [sc(1,50,1,'No'), scUnranked(2,2,'Yes')],
+    {}
+  );
+  assertEqual(r[1], 50, 'A stays 50');
+  assertEqual(r[2], 0, 'B stays 0');
+})();
+
 console.log('\n=== Mandatory Admin Edit Tests ===\n');
 
 console.log('M1: rank preserved after Last Session edit');
