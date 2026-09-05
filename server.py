@@ -48,7 +48,7 @@ def compute_rankings(scullers, caught):
     def is_ranked(s):
         return s.get('rank') and int(s['rank']) > 0
 
-    starters = [s for s in starters if is_ranked(s)]
+    starters = [s for s in starters if is_ranked(s) or get_caught(s) != 'Yes']
 
     if not starters:
         return computed
@@ -88,6 +88,8 @@ def compute_rankings(scullers, caught):
             })
         else:
             i += 1
+
+    all_chains = list(chains)
 
     def chain_filter(c):
         first_real_rank = 0
@@ -129,8 +131,48 @@ def compute_rankings(scullers, caught):
 
     occupied = dict(chain_ranks)
 
+    # allChains: handle unranked+No in non-moving chains
+    for chain in all_chains:
+        if chain in chains:
+            continue
+        unranked_no = [s for s in chain['noPeople'] if computed[s['id']] == 0 and get_caught(s) == 'No']
+        if not unranked_no:
+            continue
+        used_ranks = dict(occupied)
+        for s in unranked_no:
+            prev_rank = 0
+            for j in range(len(chain['noPeople'])):
+                if chain['noPeople'][j]['id'] == s['id']:
+                    break
+                nr = computed[chain['noPeople'][j]['id']]
+                if nr > 0:
+                    prev_rank = nr
+            if prev_rank == 0:
+                for j2 in range(len(chain['noPeople'])):
+                    if chain['noPeople'][j2]['id'] == s['id']:
+                        continue
+                    nr2 = computed[chain['noPeople'][j2]['id']]
+                    if nr2 > 0:
+                        prev_rank = nr2
+                        break
+            if prev_rank == 0 and chain['boundary']:
+                prev_rank = computed[chain['boundary']['id']]
+            if prev_rank == 0:
+                continue
+            next_rank = prev_rank + 1
+            while next_rank in used_ranks:
+                next_rank += 1
+            computed[s['id']] = next_rank
+            used_ranks[next_rank] = True
+            occupied[next_rank] = True
+
     chain_ids = set()
     for c in chains:
+        for p in c['noPeople']:
+            chain_ids.add(p['id'])
+        if c['boundary']:
+            chain_ids.add(c['boundary']['id'])
+    for c in all_chains:
         for p in c['noPeople']:
             chain_ids.add(p['id'])
         if c['boundary']:

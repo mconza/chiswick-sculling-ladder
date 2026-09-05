@@ -639,14 +639,14 @@ console.log('U1: Unranked + Yes → N/A, does not corrupt others');
   assertEqual(r[3], 20, 'C stays 20');
 })();
 
-console.log('U2: Unranked + No → stays N/A, does not enter chain');
+console.log('U2: Unranked + No → enters chain, gets rank from predecessor');
 (function() {
   var r = runTest(
     [sc(1,10,1,'No'), scUnranked(2,2,'No'), sc(3,20,3,null)],
     {}
   );
   assertEqual(r[1], 10, 'A stays 10');
-  assertEqual(r[2], 0, 'Unranked stays 0');
+  assertEqual(r[2], 11, 'Unranked gets 11 (after A)');
   assertEqual(r[3], 20, 'C stays 20 (endpoint)');
 })();
 
@@ -699,40 +699,40 @@ console.log('U6: Unranked+Yes as potential boundary → skipped, next ranked use
   assertEqual(r[3], 20, 'C stays 20 (was boundary, not unranked)');
 })();
 
-console.log('U7: Unranked between ranked — unranked stays 0, chain skips it');
+console.log('U7: Unranked between ranked — gets rank from chain');
 (function() {
   var r = runTest(
     [sc(1,20,1,'No'), scUnranked(2,2,'No'), sc(3,10,3,'No'), sc(4,30,4,null)],
     {}
   );
   assertEqual(r[1], 10, 'A gets 10 (chain fastest)');
-  assertEqual(r[2], 0, 'Unranked stays 0');
-  assertEqual(r[3], 11, 'C gets 11');
-  assertEqual(r[4], 12, 'D boundary follows');
+  assertEqual(r[2], 11, 'Unranked gets 11 (after A)');
+  assertEqual(r[3], 12, 'C gets 12');
+  assertEqual(r[4], 13, 'D boundary follows');
 })();
 
-console.log('U8: Unranked with no ranked predecessor stays 0');
+console.log('U8: Unranked No first, ranked after → unranked gets rank from next ranked');
 (function() {
   var r = runTest(
     [scUnranked(1,1,'No'), sc(2,10,2,'No'), sc(3,20,3,null)],
     {}
   );
-  assertEqual(r[1], 0, 'Unranked with no ranked predecessor stays 0');
-  assertEqual(r[2], 10, 'B stays 10');
+  assertEqual(r[1], 11, 'Unranked gets 11 (after B)');
+  assertEqual(r[2], 10, 'B keeps 10');
   assertEqual(r[3], 20, 'C boundary stays 20');
 })();
 
-console.log('U9: Ranked No + unranked after → ranked keeps rank, unranked stays 0');
+console.log('U9: Ranked No + unranked No after → ranked keeps rank, unranked gets next rank');
 (function() {
   var r = runTest(
-    [sc(1,50,1,'No'), scUnranked(2,2,null)],
+    [sc(1,50,1,'No'), scUnranked(2,2,'No')],
     {}
   );
   assertEqual(r[1], 50, 'A stays 50');
-  assertEqual(r[2], 0, 'B stays 0');
+  assertEqual(r[2], 51, 'B gets 51 (after A)');
 })();
 
-console.log('U10: Ranked Yes + unranked after → ranked keeps rank, unranked stays 0');
+console.log('U10: Ranked No + unranked Yes after → ranked keeps rank, unranked stays 0');
 (function() {
   var r = runTest(
     [sc(1,50,1,'No'), scUnranked(2,2,'Yes')],
