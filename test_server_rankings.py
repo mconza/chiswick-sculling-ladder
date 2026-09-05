@@ -124,6 +124,45 @@ r = compute_rankings(
 check("A stays 0", r[1], 0)
 check("B stays 0", r[2], 0)
 
+print("\n=== Unranked sculler tests ===\n")
+
+# TEST A: unranked + Yes → stays 0
+print("TEST A: unranked(Yes) → stays n/a")
+r = compute_rankings(
+    [sc(1, 0, 1, "Yes"), sc(2, 50, 2, "No")],
+    {}
+)
+check("unranked stays 0", r[1], 0)
+check("ranked stays 50", r[2], 50)
+
+# TEST B: unranked + No + ranked after → gets calculated rank
+print("TEST B: unranked(No) + ranked after → gets calculated rank")
+r = compute_rankings(
+    [sc(1, 0, 1, "No"), sc(2, 50, 2, "No")],
+    {}
+)
+check("unranked gets 51 (after ranked)", r[1], 51)
+check("ranked stays 50", r[2], 50)
+
+# TEST C: ranked(No) + unranked(Yes) → ranked keeps newRank, unranked stays 0
+print("TEST C: ranked(No) + unranked(Yes) → ranked keeps newRank, unranked stays 0")
+r = compute_rankings(
+    [sc(1, 50, 1, "No"), sc(2, 0, 2, "Yes")],
+    {}
+)
+check("ranked stays 50", r[1], 50)
+check("unranked stays 0", r[2], 0)
+
+# TEST D: ranked(No) + unranked(No) → unranked gets next rank after ranked
+print("TEST D: ranked(No) + unranked(No) + ranked(last) → unranked between them")
+r = compute_rankings(
+    [sc(1, 50, 1, "No"), sc(2, 0, 2, "No"), sc(3, 60, 3, None)],
+    {}
+)
+check("ranked stays 50", r[1], 50)
+check("unranked gets 51 (after ranked)", r[2], 51)
+check("boundary stays 60", r[3], 60)
+
 print(f"\n=== Results: {passed} passed, {failed} failed ===")
 if failed:
     sys.exit(1)
