@@ -89,90 +89,71 @@ def compute_rankings(scullers, caught):
         else:
             i += 1
 
-    all_chains = list(chains)
-
-    def chain_filter(c):
-        first_real_rank = 0
-        for p in c['noPeople']:
-            r = computed[p['id']]
-            if r > 0:
-                first_real_rank = r
-                break
-        if first_real_rank == 0 and c['boundary']:
-            first_real_rank = computed[c['boundary']['id']]
-        return first_real_rank > 0 and c['fastestRank'] < first_real_rank
-
-    chains = [c for c in chains if chain_filter(c)]
     chains.sort(key=lambda c: c['startPos'], reverse=True)
 
     chain_ranks = {}
     for chain in chains:
-        chain_len = len(chain['noPeople']) + (1 if chain['boundary'] else 0)
-        start_rank = chain['fastestRank']
-        while True:
-            available = True
-            for k in range(chain_len):
-                if (start_rank + k) in chain_ranks:
-                    available = False
-                    break
-            if available:
+        first_real_rank = 0
+        for p in chain['noPeople']:
+            r = computed[p['id']]
+            if r > 0:
+                first_real_rank = r
                 break
-            start_rank += 1
+        if first_real_rank == 0 and chain['boundary']:
+            first_real_rank = computed[chain['boundary']['id']]
 
-        rank = start_rank
-        for s in chain['noPeople']:
-            computed[s['id']] = rank
-            chain_ranks[rank] = True
-            rank += 1
-        if chain['boundary']:
-            computed[chain['boundary']['id']] = rank
-            chain_ranks[rank] = True
-            rank += 1
+        if first_real_rank == 0:
+            continue
+
+        has_unranked_no = any(
+            computed[s['id']] == 0 and get_caught(s) == 'No'
+            for s in chain['noPeople']
+        )
+
+        if chain['fastestRank'] < first_real_rank:
+            chain_len = len(chain['noPeople']) + (1 if chain['boundary'] else 0)
+            start_rank = chain['fastestRank']
+            while True:
+                available = True
+                for k in range(chain_len):
+                    if (start_rank + k) in chain_ranks:
+                        available = False
+                        break
+                if available:
+                    break
+                start_rank += 1
+
+            rank = start_rank
+            for s in chain['noPeople']:
+                computed[s['id']] = rank
+                chain_ranks[rank] = True
+                rank += 1
+            if chain['boundary']:
+                computed[chain['boundary']['id']] = rank
+                chain_ranks[rank] = True
+                rank += 1
+
+        elif has_unranked_no:
+            last_ranked_rank = 0
+            for p in chain['noPeople']:
+                r = computed[p['id']]
+                if r > 0 and r > last_ranked_rank:
+                    last_ranked_rank = r
+            next_rank = last_ranked_rank + 1
+            while next_rank in chain_ranks:
+                next_rank += 1
+            for s in chain['noPeople']:
+                if computed[s['id']] == 0 and get_caught(s) == 'No':
+                    computed[s['id']] = next_rank
+                    chain_ranks[next_rank] = True
+                    next_rank += 1
+                    while next_rank in chain_ranks:
+                        next_rank += 1
 
     occupied = dict(chain_ranks)
 
-    # allChains: handle unranked+No in non-moving chains
-    for chain in all_chains:
-        if chain in chains:
-            continue
-        unranked_no = [s for s in chain['noPeople'] if computed[s['id']] == 0 and get_caught(s) == 'No']
-        if not unranked_no:
-            continue
-        used_ranks = dict(occupied)
-        for s in unranked_no:
-            prev_rank = 0
-            for j in range(len(chain['noPeople'])):
-                if chain['noPeople'][j]['id'] == s['id']:
-                    break
-                nr = computed[chain['noPeople'][j]['id']]
-                if nr > 0:
-                    prev_rank = nr
-            if prev_rank == 0:
-                for j2 in range(len(chain['noPeople'])):
-                    if chain['noPeople'][j2]['id'] == s['id']:
-                        continue
-                    nr2 = computed[chain['noPeople'][j2]['id']]
-                    if nr2 > 0:
-                        prev_rank = nr2
-                        break
-            if prev_rank == 0 and chain['boundary']:
-                prev_rank = computed[chain['boundary']['id']]
-            if prev_rank == 0:
-                continue
-            next_rank = prev_rank + 1
-            while next_rank in used_ranks:
-                next_rank += 1
-            computed[s['id']] = next_rank
-            used_ranks[next_rank] = True
-            occupied[next_rank] = True
-
     chain_ids = set()
     for c in chains:
-        for p in c['noPeople']:
-            chain_ids.add(p['id'])
-        if c['boundary']:
-            chain_ids.add(c['boundary']['id'])
-    for c in all_chains:
         for p in c['noPeople']:
             chain_ids.add(p['id'])
         if c['boundary']:

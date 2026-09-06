@@ -115,14 +115,14 @@ r = compute_rankings(
 check("A stays 10", r[1], 10)
 check("B stays 20", r[2], 20)
 
-# Empty ranks
-print("Test: Empty ranks")
+# All unranked, no ranked reference → stays 0 (no real ranks in chain)
+print("Test: All unranked, no ranked reference")
 r = compute_rankings(
     [sc(1,0,1,"No"), sc(2,0,2,"No")],
     {}
 )
-check("A stays 0", r[1], 0)
-check("B stays 0", r[2], 0)
+check("A stays 0 (no ranked reference)", r[1], 0)
+check("B stays 0 (no ranked reference)", r[2], 0)
 
 print("\n=== Unranked sculler tests ===\n")
 
