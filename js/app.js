@@ -543,7 +543,7 @@ function renderHistoryTable() {
   '<th class="sortable col-last" data-sort="caught">' +
   '<span class="th-label">Caught?</span>' +
   '</th>' +
-  '<th class="sortable col-rank" data-sort="rank">' +
+  '<th class="sortable col-rank hide-sm" data-sort="rank">' +
   '<span class="th-label">Starting Rank</span>' +
   '<span class="th-sub">Before race</span>' +
   '</th>' +
@@ -600,8 +600,8 @@ function renderHistoryTable() {
     '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
     '<td class="col-last">' + (s.startPos || '<span class="muted">-</span>') + '</td>' +
     '<td class="col-last">' + caughtIcon + '</td>' +
-    '<td class="col-rank">' + (s.rank || '<span class="muted">n/a</span>') + ' ' + diff + '</td>' +
-    '<td class="col-next">' + (s.newRank || '<span class="muted">-</span>') + '</td>' +
+    '<td class="col-rank hide-sm">' + (s.rank || '<span class="muted">n/a</span>') + '</td>' +
+    '<td class="col-next">' + (s.newRank || '<span class="muted">-</span>') + ' ' + diff + '</td>' +
     '</tr>';
   }).join('');
   document.getElementById('tableBody').innerHTML = rows || '<tr><td colspan="5" class="empty-state">No participants found</td></tr>';
