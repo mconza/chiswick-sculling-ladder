@@ -717,9 +717,9 @@ console.log('U8: Unranked No first, ranked after → unranked gets rank from nex
     [scUnranked(1,1,'No'), sc(2,10,2,'No'), sc(3,20,3,null)],
     {}
   );
-  assertEqual(r[1], 11, 'Unranked gets 11 (after B)');
-  assertEqual(r[2], 10, 'B keeps 10');
-  assertEqual(r[3], 20, 'C boundary stays 20');
+  assertEqual(r[1], 10, 'Unranked takes the first available rank');
+  assertEqual(r[2], 11, 'B follows the unranked sculler in the chain');
+  assertEqual(r[3], 12, 'C boundary follows the complete chain');
 })();
 
 console.log('U9: Ranked No + unranked No after → ranked keeps rank, unranked gets next rank');
@@ -740,6 +740,45 @@ console.log('U10: Ranked No + unranked Yes after → ranked keeps rank, unranked
   );
   assertEqual(r[1], 50, 'A stays 50');
   assertEqual(r[2], 0, 'B stays 0');
+})();
+
+console.log('U11: A stale persisted newRank must not rank an unranked sculler');
+(function() {
+  var unranked = scUnranked(2, 2, 'Yes');
+  unranked.newRank = '1'; // Value left over from an earlier manual edit.
+  var r = runTest([sc(1, 50, 1, 'No'), unranked], {});
+  assertEqual(r[1], 50, 'Ranked sculler keeps rank');
+  assertEqual(r[2], 0, 'Unranked + Yes stays N/A despite stale newRank');
+})();
+
+console.log('U12: Clearing No immediately returns an unranked sculler to N/A');
+(function() {
+  var scs = [scUnranked(1, 1, null), sc(2, 50, 2, 'No')];
+  var beforeClear = runTest(scs, { 1: 'No' });
+  var afterClear = runTest(scs, {});
+  assertEqual(beforeClear[1], 50, 'Unranked + No receives a calculated rank');
+  assertEqual(afterClear[1], 0, 'Unranked + - immediately returns to N/A');
+})();
+
+console.log('U13: Unranked + Yes is a chain boundary, not invisible');
+(function() {
+  var r = runTest(
+    [sc(1, 50, 1, 'No'), scUnranked(2, 2, 'Yes'), sc(3, 10, 3, 'No')],
+    {}
+  );
+  assertEqual(r[1], 50, 'A cannot use the ranked sculler after the N/A boundary');
+  assertEqual(r[2], 0, 'Unranked boundary stays N/A');
+  assertEqual(r[3], 10, 'C starts its own chain');
+})();
+
+console.log('U14: Unranked No before a ranked boundary never becomes rank 1');
+(function() {
+  var r = runTest(
+    [scUnranked(1, 1, 'No'), sc(2, 50, 2, 'Yes')],
+    {}
+  );
+  assertEqual(r[1], 50, 'Unranked sculler takes the boundary rank');
+  assertEqual(r[2], 51, 'Ranked boundary follows the unranked sculler');
 })();
 
 console.log('\n=== Mandatory Admin Edit Tests ===\n');

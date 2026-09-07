@@ -39,9 +39,10 @@ function computeRankingsLocal() {
 }
 
 function initComputedRanksFromNewRank() {
-  scullers.forEach(function(s) {
-    computedRanks[s.id] = parseRank(s.newRank) || parseRank(s.rank);
-  });
+  // `newRank` is persisted as a convenience for the public ranking page, but
+  // it can be stale while an admin is editing the previous session.  Always
+  // derive the live table from the source rank, lineup and caught answers.
+  computeRankingsLocal();
 }
 
 function applyServerRankings(rankings) {
@@ -57,6 +58,9 @@ function applyServerRankings(rankings) {
 }
 
 function getComputedRankLocal(s) {
+  if (Object.prototype.hasOwnProperty.call(computedRanks, s.id)) {
+    return computedRanks[s.id];
+  }
   return parseRank(s.newRank) || parseRank(s.rank);
 }
 
@@ -324,7 +328,7 @@ function renderTable() {
       '</select>';
     }
     var startingRank = parseRank(s.rank) || null;
-    var liveRank = parseRank(s.newRank) || startingRank;
+    var liveRank = getComputedRankLocal(s);
     var diff = '';
     if (startingRank && liveRank) {
       var d = startingRank - liveRank;
@@ -393,11 +397,15 @@ function renderTable() {
       var store = myCaught;
       if (val === '' || val === null) { delete store[id]; val = null; }
       else { store[id] = val; }
+      // Recalculate before the request completes so clearing "No" immediately
+      // removes a provisional rank from an unranked sculler.
+      computeRankingsLocal();
       localStorage.setItem('csl_caught', JSON.stringify(store));
       var payload = { caught: {} };
       payload.caught[id] = val;
       postVotes(payload).then(function(data) {
         if (data && data.rankings) applyServerRankings(data.rankings);
+        computeRankingsLocal();
         renderTable();
         checkAutoSave();
       });
@@ -481,6 +489,7 @@ function renderTable() {
               return loadScullers();
             }).then(function(data) {
               scullers = data;
+              computeRankingsLocal();
               renderTable();
             });
           } else {

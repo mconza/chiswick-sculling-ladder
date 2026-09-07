@@ -8,10 +8,9 @@ var nextLadder = {};
 var lastLadder = {};
 
 function updateHomeDate() {
-  var banner = document.querySelector('.next-banner');
-  if (!banner) return;
-  banner.querySelector('strong').textContent = nextLadder.date;
-  banner.querySelector('p').innerHTML =
+  var el = document.getElementById('nextLadderDate');
+  if (!el) return;
+  el.innerHTML =
     '<strong>' + nextLadder.date + '</strong> at ' + nextLadder.time +
     ' — ' + nextLadder.start + ' to ' + nextLadder.finish;
 }

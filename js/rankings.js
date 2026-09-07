@@ -27,12 +27,6 @@ export function computeRankings(scullers, myCaught) {
     return s.rank && parseInt(s.rank) > 0;
   }
 
-  starters = starters.filter(function(s) {
-    return isRanked(s) || getCaught(s) !== 'Yes';
-  });
-
-  if (starters.length === 0) return computedRanks;
-
   var chains = [];
   var i = 0;
   while (i < starters.length) {
@@ -63,8 +57,11 @@ export function computeRankings(scullers, myCaught) {
       chains.push({
         noPeople: noPeople,
         boundary: boundary,
+        // An unranked sculler who was caught stops the preceding chain, but
+        // remains unranked and must not consume a rank in that chain.
+        boundaryGetsRank: boundary && isRanked(boundary),
         fastestRank: fastestRank,
-        totalLen: noPeople.length + (boundary ? 1 : 0),
+        totalLen: noPeople.length + (boundary && isRanked(boundary) ? 1 : 0),
         startPos: parseInt(noPeople[0].lastStartPos),
       });
     } else {
@@ -91,9 +88,12 @@ export function computeRankings(scullers, myCaught) {
     var hasUnrankedNo = chain.noPeople.some(function(s) {
       return computedRanks[s.id] === 0 && getCaught(s) === 'No';
     });
+    var firstNoIsUnranked = computedRanks[chain.noPeople[0].id] === 0;
 
-    if (chain.fastestRank < firstRealRank) {
-      var chainLen = chain.noPeople.length + (chain.boundary ? 1 : 0);
+    // If the chain starts with an unranked "No", its first real rank is
+    // further down the chain. Allocate from that rank, never from 0 + 1.
+    if (chain.fastestRank < firstRealRank || firstNoIsUnranked) {
+      var chainLen = chain.noPeople.length + (chain.boundaryGetsRank ? 1 : 0);
       var startRank = chain.fastestRank;
       while (true) {
         var available = true;
@@ -110,7 +110,7 @@ export function computeRankings(scullers, myCaught) {
         chainRanks[rank] = true;
         rank++;
       });
-      if (chain.boundary) {
+      if (chain.boundaryGetsRank) {
         computedRanks[chain.boundary.id] = rank;
         chainRanks[rank] = true;
         rank++;

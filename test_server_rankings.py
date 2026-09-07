@@ -141,8 +141,8 @@ r = compute_rankings(
     [sc(1, 0, 1, "No"), sc(2, 50, 2, "No")],
     {}
 )
-check("unranked gets 51 (after ranked)", r[1], 51)
-check("ranked stays 50", r[2], 50)
+check("unranked gets 50", r[1], 50)
+check("ranked follows at 51", r[2], 51)
 
 # TEST C: ranked(No) + unranked(Yes) → ranked keeps newRank, unranked stays 0
 print("TEST C: ranked(No) + unranked(Yes) → ranked keeps newRank, unranked stays 0")
@@ -162,6 +162,27 @@ r = compute_rankings(
 check("ranked stays 50", r[1], 50)
 check("unranked gets 51 (after ranked)", r[2], 51)
 check("boundary stays 60", r[3], 60)
+
+# An unranked sculler caught in the middle is a hard boundary: it stays 0 and
+# the ranked sculler after it cannot improve the sculler before it.
+print("TEST E: unranked(Yes) ends preceding chain")
+r = compute_rankings(
+    [sc(1, 50, 1, "No"), sc(2, 0, 2, "Yes"), sc(3, 10, 3, "No")],
+    {}
+)
+check("sculler before boundary stays 50", r[1], 50)
+check("unranked boundary stays 0", r[2], 0)
+check("sculler after boundary stays 10", r[3], 10)
+
+# An unranked No before a ranked boundary takes the boundary's rank. It must
+# never fall through to rank 1 simply because no earlier ranked No exists.
+print("TEST F: unranked(No) before ranked boundary never becomes rank 1")
+r = compute_rankings(
+    [sc(1, 0, 1, "No"), sc(2, 50, 2, "Yes")],
+    {}
+)
+check("unranked gets 50", r[1], 50)
+check("ranked boundary gets 51", r[2], 51)
 
 print(f"\n=== Results: {passed} passed, {failed} failed ===")
 if failed:

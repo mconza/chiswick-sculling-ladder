@@ -48,11 +48,6 @@ def compute_rankings(scullers, caught):
     def is_ranked(s):
         return s.get('rank') and int(s['rank']) > 0
 
-    starters = [s for s in starters if is_ranked(s) or get_caught(s) != 'Yes']
-
-    if not starters:
-        return computed
-
     chains = []
     i = 0
     while i < len(starters):
@@ -82,8 +77,11 @@ def compute_rankings(scullers, caught):
             chains.append({
                 'noPeople': no_people,
                 'boundary': boundary,
+                # An unranked sculler who was caught ends the preceding chain
+                # without receiving or consuming a rank.
+                'boundaryGetsRank': bool(boundary and is_ranked(boundary)),
                 'fastestRank': fastest_rank,
-                'totalLen': len(no_people) + (1 if boundary else 0),
+                'totalLen': len(no_people) + (1 if boundary and is_ranked(boundary) else 0),
                 'startPos': int(no_people[0]['lastStartPos']),
             })
         else:
@@ -109,9 +107,12 @@ def compute_rankings(scullers, caught):
             computed[s['id']] == 0 and get_caught(s) == 'No'
             for s in chain['noPeople']
         )
+        first_no_is_unranked = computed[chain['noPeople'][0]['id']] == 0
 
-        if chain['fastestRank'] < first_real_rank:
-            chain_len = len(chain['noPeople']) + (1 if chain['boundary'] else 0)
+        # A chain beginning with unranked "No" scullers allocates from its
+        # first real rank, never from 0 + 1.
+        if chain['fastestRank'] < first_real_rank or first_no_is_unranked:
+            chain_len = len(chain['noPeople']) + (1 if chain['boundaryGetsRank'] else 0)
             start_rank = chain['fastestRank']
             while True:
                 available = True
@@ -128,7 +129,7 @@ def compute_rankings(scullers, caught):
                 computed[s['id']] = rank
                 chain_ranks[rank] = True
                 rank += 1
-            if chain['boundary']:
+            if chain['boundaryGetsRank']:
                 computed[chain['boundary']['id']] = rank
                 chain_ranks[rank] = True
                 rank += 1
