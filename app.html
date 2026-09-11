@@ -108,6 +108,7 @@
         </div>
         <div class="table-topbar-right">
           <button class="btn btn-sm btn-outline" id="editLadderBtn" style="display:none">Edit Ladder Info</button>
+          <button class="btn btn-sm btn-accent" id="addScullerBtn" style="display:none">+ Add Sculler</button>
           <select id="historyDate" class="history-select" style="display:none">
             <option value="">-- seleziona data --</option>
           </select>
@@ -171,6 +172,29 @@
       <div class="modal-actions">
         <button class="btn btn-sm btn-outline" id="modalCancel">Cancel</button>
         <button class="btn btn-sm btn-accent" id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Sculler -->
+  <div id="scullerModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 class="modal-title" id="scullerModalTitle">Add Sculler</h3>
+
+      <label class="modal-field">
+        <span class="modal-label">Name</span>
+        <input type="text" id="scullerName" class="modal-input" placeholder="e.g. John Smith" autocomplete="off">
+      </label>
+
+      <label class="modal-field modal-field-last">
+        <span class="modal-label">Club</span>
+        <input type="text" id="scullerClub" class="modal-input" placeholder="e.g. PTRC" autocomplete="off">
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn btn-sm btn-outline" id="scullerModalCancel">Cancel</button>
+        <button class="btn btn-sm btn-danger" id="scullerModalDelete" style="display:none">Delete</button>
+        <button class="btn btn-sm btn-accent" id="scullerModalSave">Save</button>
       </div>
     </div>
   </div>

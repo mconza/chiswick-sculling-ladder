@@ -83,3 +83,12 @@
   gap: 0.75rem;
   justify-content: flex-end;
 }
+
+.btn-danger {
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #b91c1c; }

@@ -340,7 +340,7 @@ function renderTable() {
       ? (startingRank || '<span class="muted">n/a</span>') + ' ' + diff
       : (liveRank || '<span class="muted">n/a</span>') + ' ' + diff;
     return '<tr' + (isMyRow ? ' class="my-row"' : '') + '>' +
-    '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
+    '<td class="col-name">' + (isAdmin ? '<span class="editable-cell" data-action="editSculler" data-id="' + s.id + '">' : '<span class="sculler-name">') + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
     (isAdmin ? '<td class="col-next"><div class="btn-group btn-group-3">' + confirmBtns + '</div></td>' : '') +
     '<td class="col-next pos-cell">' + (isAdmin ? '<span class="editable-cell" data-field="startPos" data-id="' + s.id + '">' + (startPos || '<span class="muted">-</span>') + '</span>' : (startPos || '<span class="muted">-</span>')) + '</td>' +
     (isAdmin ? '<td class="col-separator"></td>' : '') +
@@ -438,6 +438,11 @@ function renderTable() {
     document.querySelectorAll('.editable-cell').forEach(function(cell) {
       cell.addEventListener('click', function(e) {
         e.stopPropagation();
+        if (this.dataset.action === 'editSculler') {
+          var s = scullers.find(function(s) { return s.id === parseInt(cell.dataset.id); });
+          if (s) openScullerModal(s);
+          return;
+        }
         var field = this.dataset.field;
         var id = parseInt(this.dataset.id);
         var isLast = field === 'lastStartPos';
@@ -686,6 +691,57 @@ function loadHistoryDates() {
   }).catch(function() {});
 }
 
+var editingScullerId = null;
+
+function openScullerModal(sculler) {
+  editingScullerId = sculler ? sculler.id : null;
+  document.getElementById('scullerModalTitle').textContent = sculler ? 'Edit Sculler' : 'Add Sculler';
+  document.getElementById('scullerName').value = sculler ? sculler.name : '';
+  document.getElementById('scullerClub').value = sculler ? sculler.club : '';
+  document.getElementById('scullerModalDelete').style.display = sculler ? '' : 'none';
+  document.getElementById('scullerModal').style.display = 'flex';
+  document.getElementById('scullerName').focus();
+}
+
+function closeScullerModal() {
+  document.getElementById('scullerModal').style.display = 'none';
+  editingScullerId = null;
+}
+
+function saveScullerFromModal() {
+  var name = document.getElementById('scullerName').value.trim();
+  var club = document.getElementById('scullerClub').value.trim();
+  if (!name) { showToast('Name is required', 'error'); return; }
+  if (!club) { showToast('Club is required', 'error'); return; }
+  if (editingScullerId) {
+    var s = scullers.find(function(s) { return s.id === editingScullerId; });
+    if (s) { s.name = name; s.club = club; }
+  } else {
+    var maxId = scullers.reduce(function(m, s) { return Math.max(m, s.id); }, 0);
+    scullers.push({
+      id: maxId + 1, name: name, club: club, rank: '0',
+      lastStartPos: null, lastCaught: null,
+      nextParticipating: null, nextStartPos: null, newRank: 'n/a'
+    });
+  }
+  saveScullers(scullers).then(function() {
+    closeScullerModal();
+    renderTable();
+    showToast(editingScullerId ? 'Sculler updated' : 'Sculler added');
+  });
+}
+
+function deleteScullerFromModal() {
+  if (!editingScullerId) return;
+  if (!confirm('Delete this sculler? This cannot be undone.')) return;
+  scullers = scullers.filter(function(s) { return s.id !== editingScullerId; });
+  saveScullers(scullers).then(function() {
+    closeScullerModal();
+    renderTable();
+    showToast('Sculler deleted');
+  });
+}
+
 function initEventListeners() {
   document.getElementById('searchInput').addEventListener('input', function() {
     renderTable();
@@ -699,6 +755,10 @@ function initEventListeners() {
     document.getElementById('editLadderBtn').style.display = '';
     document.getElementById('editLadderBtn').addEventListener('click', function() {
       openModal(nextLadder);
+    });
+    document.getElementById('addScullerBtn').style.display = '';
+    document.getElementById('addScullerBtn').addEventListener('click', function() {
+      openScullerModal(null);
     });
   }
 
@@ -715,6 +775,19 @@ function initEventListeners() {
 
   document.getElementById('ladderModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
+  });
+
+  document.getElementById('scullerModalCancel').addEventListener('click', function() {
+    closeScullerModal();
+  });
+  document.getElementById('scullerModalSave').addEventListener('click', function() {
+    saveScullerFromModal();
+  });
+  document.getElementById('scullerModalDelete').addEventListener('click', function() {
+    deleteScullerFromModal();
+  });
+  document.getElementById('scullerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeScullerModal();
   });
 
   document.addEventListener('click', function(e) {

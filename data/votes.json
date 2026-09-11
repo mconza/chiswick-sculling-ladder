@@ -1,28 +1,8 @@
 {
   "caught": {
-    "173": "No",
-    "2": "No",
-    "60": "No",
-    "1": "Yes",
-    "3": "Yes",
-    "208": "No",
-    "4": "No",
-    "5": "No",
-    "209": "Yes",
-    "210": "No",
-    "211": "No"
+    "1": "No"
   },
-  "participation": {
-    "173": "Yes",
-    "1": "PathFind",
-    "2": "Yes",
-    "60": "Yes"
-  },
-  "manualStarts": {
-    "1": 2,
-    "2": 2,
-    "60": 3,
-    "173": 8
-  },
+  "participation": {},
+  "manualStarts": {},
   "requests": []
 }
