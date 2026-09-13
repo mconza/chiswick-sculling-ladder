@@ -220,6 +220,10 @@ function renderTable() {
     renderHistoryTable();
     return;
   }
+  if (activeTab === 'previous') {
+    renderPreviousTable();
+    return;
+  }
   var lastLadderLabel = 'Last Session<br>' + lastLadder.date + '<br><small>(' + lastLadder.time + ', ' + lastLadder.start + ')</small>';
   var nextLadderLabel = 'Next Session<br>' + nextLadder.date + '<br><small>(' + nextLadder.time + ', ' + nextLadder.start + ')</small>';
   document.getElementById('tableHead').innerHTML =
@@ -536,6 +540,57 @@ function renderTable() {
     var btn = document.getElementById('saveSessionBtn');
     if (btn) btn.style.display = (isAdmin && activeTab === 'next') ? '' : 'none';
   }
+}
+
+function renderPreviousTable() {
+  var participants = scullers.filter(function(s) { return s.lastStartPos != null; });
+  if (!participants.length) {
+    document.getElementById('tableHead').innerHTML =
+    '<tr><th>Sculler</th><th>Start</th><th>Caught</th><th>Rank</th><th>New Rank</th></tr>';
+    document.getElementById('tableBody').innerHTML =
+    '<tr><td colspan="5" class="empty-state">No previous session data</td></tr>';
+    document.getElementById('searchCount').textContent = '0 participants';
+    return;
+  }
+  var q = document.getElementById('searchInput').value.toLowerCase().trim();
+  if (q) {
+    participants = participants.filter(function(s) {
+      return s.name.toLowerCase().indexOf(q) !== -1 || s.club.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  participants.sort(function(a, b) { return parseInt(a.lastStartPos) - parseInt(b.lastStartPos); });
+  document.getElementById('tableHead').innerHTML =
+  '<tr>' +
+  '<th class="col-name">Sculler</th>' +
+  '<th class="col-rank">Start</th>' +
+  '<th class="col-rank">Caught</th>' +
+  '<th class="col-rank">Rank</th>' +
+  '<th class="col-rank">New Rank</th>' +
+  '</tr>';
+  var total = scullers.filter(function(s) { return s.lastStartPos != null; }).length;
+  document.getElementById('searchCount').textContent = participants.length + ' of ' + total + ' participants';
+  var rows = participants.map(function(s) {
+    var caught = s.lastCaught || '<span class="muted">-</span>';
+    if (s.lastCaught === 'Yes') caught = '<span class="btn-table btn-yes" style="cursor:default;">Yes</span>';
+    else if (s.lastCaught === 'No') caught = '<span class="btn-table btn-no" style="cursor:default;">No</span>';
+    else if (s.lastCaught === 'PathFind') caught = '<span class="btn-table btn-pf" style="cursor:default;">PathFind</span>';
+    var rank = s.rank || '<span class="muted">n/a</span>';
+    var newRank = s.newRank || '<span class="muted">-</span>';
+    var diff = '';
+    if (s.rank && s.newRank && s.rank !== '0' && s.newRank !== 'n/a') {
+      var d = parseRank(s.rank) - parseRank(s.newRank);
+      if (d > 0) diff = ' <span style="color:var(--success);font-weight:700;">&#9650;' + d + '</span>';
+      else if (d < 0) diff = ' <span style="color:var(--danger);font-weight:700;">&#9660;' + Math.abs(d) + '</span>';
+    }
+    return '<tr>' +
+    '<td class="col-name"><span class="sculler-name">' + escHtml(s.name) + '</span> <span class="sculler-club-tag">' + escHtml(s.club) + '</span></td>' +
+    '<td class="col-rank">' + s.lastStartPos + '</td>' +
+    '<td class="col-rank">' + caught + '</td>' +
+    '<td class="col-rank">' + rank + '</td>' +
+    '<td class="col-rank">' + newRank + diff + '</td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('tableBody').innerHTML = rows;
 }
 
 function renderHistoryTable() {
@@ -979,6 +1034,14 @@ function initEventListeners() {
         document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\u23F3';
         document.getElementById('historyDate').style.display = 'none';
         currentSort = 'nextStartPos';
+        currentDir = 1;
+        renderTable();
+      } else if (tab === 'previous') {
+        document.getElementById('userCard').style.display = 'none';
+        document.getElementById('nextLadderInfo').textContent = lastLadder.date ? ('Previous Ladder ' + lastLadder.date) : 'Previous Ladder';
+        document.getElementById('topbarLeft').querySelector('.th-icon').textContent = '\uD83D\uDCC4';
+        document.getElementById('historyDate').style.display = 'none';
+        currentSort = 'lastStartPos';
         currentDir = 1;
         renderTable();
       } else {
