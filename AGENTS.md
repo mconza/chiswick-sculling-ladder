@@ -2,7 +2,7 @@
 
 ## Overview
 Website for the Chiswick Sculling Ladder, a rowing training group on the Thames Tideway.
-Three HTML pages: `index.html` (landing/login), `app.html` (admin/user ladder), `ranking.html` (public rankings).
+HTML pages: `index.html` (landing/login), `app.html` (admin/user ladder), `ranking.html` (public rankings), `scullers-head.html` (race results), `pairs-head.html` (Quintin Pairs Head 2026 briefing).
 
 ## Architecture
 - **HTML**: Structural markup, links to CSS and JS modules
@@ -61,6 +61,8 @@ Each "No" sculler starts a chain of consecutive "No" people. The chain ends at t
 ├── index.html          (landing/login page)
 ├── app.html            (admin/user ladder page)
 ├── ranking.html        (public rankings page)
+├── scullers-head.html  (Scullers Head race results)
+├── pairs-head.html     (Quintin Pairs Head 2026 briefing)
 ├── server.py           (Python backend, port 8080)
 ├── test_rankings.js    (unit tests for rankings.js)
 ├── package.json        (Node.js config for ES module tests)
