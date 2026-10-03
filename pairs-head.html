@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
   <style>
-    /* ── Tabs ── */
     .tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0; }
     .tab-btn {
       padding: 0.6rem 1rem; border: none; background: transparent; cursor: pointer;
@@ -19,29 +18,20 @@
     }
     .tab-btn:hover { color: var(--primary); }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab-btn .tab-count {
-      display: inline-block; margin-left: 4px; padding: 0.1rem 0.45rem;
-      border-radius: 999px; font-size: 0.7rem; background: var(--border); color: var(--text-light);
-    }
-    .tab-btn.active .tab-count { background: var(--primary); color: white; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── Cards ── */
     .card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
     .card h3 { font-size: 1.05rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
     .card-header h3 { margin-bottom: 0; }
 
-    /* ── Badges ── */
     .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
     .badge-quintin { background: var(--primary); color: white; }
     .badge-threat { background: var(--danger-bg); color: var(--danger); }
     .badge-info { background: var(--warning-bg); color: var(--warning); }
     .badge-success { background: var(--success-bg); color: var(--success); }
-    .badge-purple { background: var(--purple-bg); color: var(--purple); }
 
-    /* ── Tables ── */
     table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
     table.data-table th { background: var(--primary); color: white; padding: 0.6rem 0.75rem; text-align: left; font-weight: 600; }
     table.data-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
@@ -55,55 +45,24 @@
     .pos-1 { color: var(--success); font-weight: 700; }
     .pos-2, .pos-3 { color: var(--primary); font-weight: 600; }
 
-    /* ── Stats ── */
-    .stats { display: flex; gap: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .stat-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 0.85rem 1.25rem; text-align: center; flex: 1; min-width: 130px; }
-    .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 0.8rem; color: var(--text-light); }
-
-    /* ── Threat list ── */
     .threat-list { list-style: none; padding: 0; margin: 0.5rem 0 0; }
     .threat-list li { padding: 0.55rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.4rem; }
     .threat-list li:last-child { border-bottom: none; }
 
-    /* ── Target box ── */
     .target-box { display: flex; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap; }
     .target-item { flex: 1; min-width: 120px; background: var(--bg); border-radius: var(--radius); padding: 0.65rem 0.9rem; text-align: center; }
     .target-value { font-size: 1.2rem; font-weight: 700; font-family: monospace; }
     .target-label { font-size: 0.78rem; color: var(--text-light); }
     .target-win .target-value { color: var(--success); }
     .target-podium .target-value { color: var(--primary); }
-    .target-solid .target-value { color: var(--warning); }
 
-    /* ── Split grid ── */
-    .split-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
-    .split-item { background: var(--bg); border-radius: var(--radius); padding: 0.75rem; text-align: center; }
-    .split-time { font-size: 1.3rem; font-weight: 700; color: var(--primary); font-family: monospace; }
-    .split-label { font-size: 0.78rem; color: var(--text-light); margin-top: 0.15rem; }
-
-    /* ── Conditions table ── */
-    .conditions-table td:first-child { font-weight: 600; }
-    .condition-fast { color: var(--success); font-weight: 600; }
-    .condition-normal { color: var(--primary); font-weight: 600; }
-    .condition-slow { color: var(--danger); font-weight: 600; }
-
-    /* ── Note ── */
     .note { background: var(--warning-bg); border-radius: var(--radius); padding: 0.7rem 1rem; margin-top: 0.75rem; font-size: 0.88rem; }
     .note-purple { background: var(--purple-bg); }
-    .note-blue { background: var(--primary-light); color: white; }
-    .note-blue strong { color: white; }
-    .note-red { background: var(--danger-bg); }
 
-    /* ── Search bar ── */
     .search-bar { display: flex; gap: 0.75rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
     .search-bar input { padding: 0.5rem 1rem; border: 2px solid var(--border); border-radius: 8px; font-size: 0.9rem; flex: 1; min-width: 200px; font-family: var(--font); }
     .search-bar input:focus { outline: none; border-color: var(--primary); }
 
-    /* ── Section title ── */
-    .page-title h1 { margin-bottom: 0.15rem; }
-    .page-title p { color: var(--text-light); margin-bottom: 0; }
-
-    /* ── Sub-tabs for results ── */
     .sub-tabs { display: flex; gap: 0.35rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
     .sub-tab-btn {
       padding: 0.35rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px;
@@ -115,7 +74,6 @@
 
     @media (max-width: 768px) {
       .tab-btn { padding: 0.5rem 0.65rem; font-size: 0.8rem; }
-      .stats { flex-direction: column; }
       table.data-table { font-size: 0.8rem; }
       table.data-table th, table.data-table td { padding: 0.45rem 0.4rem; }
       .target-box { flex-direction: column; }
@@ -157,7 +115,6 @@
   </script>
 
   <div class="container">
-    <!-- ═══════════════════ TABS ═══════════════════ -->
     <div class="tabs" id="tabs">
       <button class="tab-btn active" data-tab="w-mas-c">W MasC 2x</button>
       <button class="tab-btn" data-tab="w-mas-d">W MasD 2x</button>
@@ -170,32 +127,34 @@
     </div>
 
     <!-- ═══════════════════ W MasC 2x ═══════════════════ -->
-    <div class="tab-panel" id="panel-w-mas-c">
+    <div class="tab-panel active" id="panel-w-mas-c">
       <div class="card">
         <div class="card-header">
           <h3>W MasC 2x <span class="badge badge-quintin">Crew 17: Anderson / Russell-Duff</span></h3>
         </div>
         <div class="target-box">
-          <div class="target-item target-win"><div class="target-value">~17:10</div><div class="target-label">Win</div></div>
-          <div class="target-item target-podium"><div class="target-value">~17:45</div><div class="target-label">Podium</div></div>
+          <div class="target-item target-win"><div class="target-value">~16:30</div><div class="target-label">Win</div></div>
+          <div class="target-item target-podium"><div class="target-value">~17:15</div><div class="target-label">Podium</div></div>
         </div>
       </div>
 
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Dodsworth / Gilliver</span><span>Broxbourne &mdash; won 2022 &amp; 2023</span><span class="badge badge-threat">2x Winner</span></li>
-          <li><span class="crew-name">Trehane / Lister</span><span>Norwich &mdash; fastest winner (15:29)</span><span class="badge badge-info">2024</span></li>
+          <li><span class="crew-name">Allen / Rosenfeld</span><span>Bewl Bridge &mdash; won 2024 (14:52)</span><span class="badge badge-info">2024</span></li>
+          <li><span class="crew-name">O'LEARY / McGuigan</span><span>Walton &mdash; won 2023 (15:51)</span><span class="badge badge-info">2023</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-w-mas-c">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
           <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2020">2020</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="w-mas-c" placeholder="Search by name or club...">
@@ -204,22 +163,28 @@
           <table class="data-table" id="table-w-mas-c">
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
-              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Trehane / Lister</td><td>Norwich</td><td class="time-cell">15:29.4</td></tr>
-              <tr data-year="2024"><td>2024</td><td>2</td><td class="crew-name">Ramsbottom / Wills</td><td>Chester-le-Street</td><td class="time-cell">15:46.4</td></tr>
-              <tr data-year="2024"><td>2024</td><td>3</td><td class="crew-name">Foster / Smith</td><td>Nottingham</td><td class="time-cell">16:05.8</td></tr>
-              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">16:18.8</td></tr>
-              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Jones / Evans</td><td>Cardiff Bay</td><td class="time-cell">16:45.8</td></tr>
-              <tr data-year="2024"><td>2024</td><td>6</td><td class="crew-name">Brown / Wilson</td><td>Banstead</td><td class="time-cell">17:01.7</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Dodsworth / Gilliver</td><td>Broxbourne</td><td class="time-cell">16:41.2</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Hart / White</td><td>Lee Valley</td><td class="time-cell">17:03.1</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">17:15.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">17:40.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">18:02.6</td></tr>
-              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Dodsworth / Gilliver</td><td>Broxbourne</td><td class="time-cell">16:41.2</td></tr>
-              <tr data-year="2022"><td>2022</td><td>2</td><td class="crew-name">Adams / Baker</td><td>Staines</td><td class="time-cell">17:09.0</td></tr>
-              <tr data-year="2022"><td>2022</td><td>3</td><td class="crew-name">Clark / Lewis</td><td>Lee Valley</td><td class="time-cell">17:32.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Hall / Allen</td><td>Worcester</td><td class="time-cell">17:56.8</td></tr>
-              <tr data-year="2022"><td>2022</td><td>5</td><td class="crew-name">Young / King</td><td>Banstead</td><td class="time-cell">18:20.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Allen / Rosenfeld</td><td>Bewl Bridge</td><td class="time-cell">14:52.6</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">McGuigan / O'LEARY</td><td>Walton</td><td class="time-cell">15:00.3</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Primmer / Primmer</td><td>Tideway Scullers</td><td class="time-cell">15:03.9</td></tr>
+              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Burrows / Vernon</td><td>Marlow</td><td class="time-cell">15:21.0</td></tr>
+              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Page / Sparrowhawk</td><td>Bradford on Avon</td><td class="time-cell">15:24.6</td></tr>
+              <tr data-year="2024"><td>2024</td><td>6</td><td class="crew-name">Trehane / Lister</td><td>Norwich</td><td class="time-cell">15:29.4</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">O'LEARY / McGuigan</td><td>Walton</td><td class="time-cell">15:51.57</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Vernon / Pressling</td><td>Marlow</td><td class="time-cell">16:23.46</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Dodsworth / Gilliver</td><td>Broxbourne</td><td class="time-cell">16:41.18</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Nidai / Hilton</td><td>HSBC</td><td class="time-cell">16:48.82</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Collowey / Stozek</td><td>Broxbourne</td><td class="time-cell">17:19.27</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Primmer / Primmer</td><td>Tideway Scullers</td><td class="time-cell">15:39.70</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">Hewitt / Moon</td><td>Eton Excelsior</td><td class="time-cell">15:41.39</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">REDDY / Johnson</td><td>Guildford</td><td class="time-cell">16:01.62</td></tr>
+              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Dodsworth / Gilliver</td><td>Broxbourne</td><td class="time-cell">16:25.56</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-1">1</td><td class="crew-name">Gapper / Ramsden</td><td>MAA</td><td class="time-cell">16:41.2</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-2">2</td><td class="crew-name">Bakkeren / Stackhouse</td><td>Barnes Bridge Ladies</td><td class="time-cell">16:57.8</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-3">3</td><td class="crew-name">Fontaine / Fahey</td><td>Auriol Kensington</td><td class="time-cell">19:15.3</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Gapper / Ramsden</td><td>MAA</td><td class="time-cell">15:15.65</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Bakkeren / Stackhouse</td><td>Barnes Bridge Ladies</td><td class="time-cell">15:20.14</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Hague / Moon</td><td>Eton Excelsior</td><td class="time-cell">15:44.96</td></tr>
+              <tr data-year="2019"><td>2019</td><td>4</td><td class="crew-name">Vine / Huddle</td><td>MAA</td><td class="time-cell">16:47.03</td></tr>
             </tbody>
           </table>
         </div>
@@ -233,8 +198,8 @@
           <h3>W MasD 2x Club <span class="badge badge-quintin">Crews 33 &amp; 34</span></h3>
         </div>
         <div class="target-box">
-          <div class="target-item target-win"><div class="target-value">~17:20</div><div class="target-label">Win</div></div>
-          <div class="target-item target-podium"><div class="target-value">~18:00</div><div class="target-label">Podium</div></div>
+          <div class="target-item target-win"><div class="target-value">~16:15</div><div class="target-label">Win</div></div>
+          <div class="target-item target-podium"><div class="target-value">~17:00</div><div class="target-label">Podium</div></div>
         </div>
         <div class="note note-purple"><strong>Two Quintin crews in this category</strong> &mdash; work together, don't fight for position.</div>
       </div>
@@ -242,13 +207,13 @@
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Cassini / Harmer</span><span>MAA &mdash; won 2024</span><span class="badge badge-info">2024</span></li>
-          <li><span class="crew-name">Bowden / Radley</span><span>Stratford &mdash; won 2023</span><span class="badge badge-info">2023</span></li>
+          <li><span class="crew-name">Cassini / Harmer</span><span>MAA &mdash; won 2024 (15:43)</span><span class="badge badge-info">2024</span></li>
+          <li><span class="crew-name">Bowden / Radley</span><span>Stratford &mdash; won 2023 (16:26)</span><span class="badge badge-info">2023</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-w-mas-d">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
@@ -262,13 +227,13 @@
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
               <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Cassini / Harmer</td><td>MAA</td><td class="time-cell">15:43.4</td></tr>
-              <tr data-year="2024"><td>2024</td><td>2</td><td class="crew-name">Green / Patel</td><td>Staines</td><td class="time-cell">16:20.3</td></tr>
-              <tr data-year="2024"><td>2024</td><td>3</td><td class="crew-name">Foster / Hall</td><td>Worcester</td><td class="time-cell">17:05.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Bowden / Radley</td><td>Stratford</td><td class="time-cell">16:26.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">17:03.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">17:32.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">18:00.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">18:25.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Peirse / Alexander</td><td>Walbrook</td><td class="time-cell">16:15.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Heaton / Browning</td><td>Fulham Reach</td><td class="time-cell">16:40.7</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Bowden / Radley</td><td>Stratford-upon-Avon</td><td class="time-cell">16:26.40</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Heaton / Browning</td><td>Fulham Reach</td><td class="time-cell">17:36.37</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Bellinger / Talbott</td><td>Tideway Scullers</td><td class="time-cell">17:44.07</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Simpson / Bowring</td><td>Eton Excelsior</td><td class="time-cell">17:52.53</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">pieretti / Fadlon</td><td>Putney Town</td><td class="time-cell">17:55.56</td></tr>
             </tbody>
           </table>
         </div>
@@ -282,25 +247,28 @@
           <h3>Op MasE 2x Club <span class="badge badge-quintin">Crew 107: Gonzalez Cotera / Must</span></h3>
         </div>
         <div class="target-box">
-          <div class="target-item target-win"><div class="target-value">~17:00</div><div class="target-label">Win</div></div>
-          <div class="target-item target-podium"><div class="target-value">~17:30</div><div class="target-label">Podium</div></div>
+          <div class="target-item target-win"><div class="target-value">~15:45</div><div class="target-label">Win</div></div>
+          <div class="target-item target-podium"><div class="target-value">~16:15</div><div class="target-label">Podium</div></div>
         </div>
       </div>
 
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Parkinson / Preston</span><span>Eton Excelsior &mdash; won 2024</span><span class="badge badge-info">2024</span></li>
-          <li><span class="crew-name">Cowderoy / Billin</span><span>Ardingly &mdash; won 2023</span><span class="badge badge-info">2023</span></li>
+          <li><span class="crew-name">Leonard / Mepham</span><span>Walton &mdash; won 2024 (13:48)</span><span class="badge badge-info">2024</span></li>
+          <li><span class="crew-name">Rothwell / Ballsdon</span><span>Reading &mdash; won 2023 (15:51)</span><span class="badge badge-info">2023</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-op-mas-e-club">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
+          <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2020">2020</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="op-mas-e-club" placeholder="Search by name or club...">
@@ -309,16 +277,25 @@
           <table class="data-table" id="table-op-mas-e-club">
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
-              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Parkinson / Preston</td><td>Eton Excelsior</td><td class="time-cell">15:28.3</td></tr>
-              <tr data-year="2024"><td>2024</td><td>2</td><td class="crew-name">Green / Patel</td><td>Staines</td><td class="time-cell">16:10.7</td></tr>
-              <tr data-year="2024"><td>2024</td><td>3</td><td class="crew-name">Foster / Hall</td><td>Worcester</td><td class="time-cell">16:50.5</td></tr>
-              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">17:20.2</td></tr>
-              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">18:00.2</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Cowderoy / Billin</td><td>Ardingly</td><td class="time-cell">15:51.7</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:43.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">17:20.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Brown / Wilson</td><td>Banstead</td><td class="time-cell">18:00.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Jones / Evans</td><td>Cardiff Bay</td><td class="time-cell">18:40.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Leonard / Mepham</td><td>Walton</td><td class="time-cell">13:48.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Almand / O'Sullivan</td><td>Tideway Scullers</td><td class="time-cell">14:07.3</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Delahaye / Gosling</td><td>Warwick</td><td class="time-cell">14:43.9</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Rothwell / Ballsdon</td><td>Reading</td><td class="time-cell">15:51.21</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Cowderoy / Billin</td><td>Ardingly</td><td class="time-cell">15:51.65</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Quinn / Child</td><td>Marlow</td><td class="time-cell">16:50.43</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Ridley / Mott</td><td>Tideway Scullers</td><td class="time-cell">17:01.52</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Oswell / Fryer</td><td>Putney Town</td><td class="time-cell">18:06.79</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Harries / Theed</td><td>Wimbleball</td><td class="time-cell">13:59.74</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">Coneybeare / Day</td><td>Reading</td><td class="time-cell">14:44.27</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">Frost / Thomas</td><td>Bradford on Avon</td><td class="time-cell">14:54.58</td></tr>
+              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Skinner / Mayer</td><td>BTC Southampton</td><td class="time-cell">16:57.78</td></tr>
+              <tr data-year="2022"><td>2022</td><td>5</td><td class="crew-name">Fryer / Oswell</td><td>Putney Town</td><td class="time-cell">17:29.81</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-1">1</td><td class="crew-name">Bridger / McChesney</td><td>Tideway Scullers</td><td class="time-cell">16:11.0</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-2">2</td><td class="crew-name">Koepp / Bates</td><td>Bentham</td><td class="time-cell">16:31.9</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-3">3</td><td class="crew-name">Ratcliffe / Earnshaw</td><td>Tideway Scullers</td><td class="time-cell">16:50.3</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Hockley / Audinis</td><td>Norwich</td><td class="time-cell">13:57.14</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Davies / Bond</td><td>Norwich</td><td class="time-cell">15:20.03</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Sanders / Adebiyi</td><td>Walbrook</td><td class="time-cell">15:49.87</td></tr>
             </tbody>
           </table>
         </div>
@@ -335,24 +312,26 @@
           <div class="target-item target-win"><div class="target-value">~16:30</div><div class="target-label">Win</div></div>
           <div class="target-item target-podium"><div class="target-value">~17:00</div><div class="target-label">Podium</div></div>
         </div>
-        <div class="note"><strong>Note:</strong> Quintin has won this category twice (Bishop/Stewart, 2022 &amp; 2024) &mdash; high expectations.</div>
+        <div class="note"><strong>Note:</strong> Quintin has won this category twice (Bishop/Stewart, 2022 &amp; 2024).</div>
       </div>
 
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Atkinson / Stewart</span><span>Dart Totnes &mdash; won 2023</span><span class="badge badge-info">2023</span></li>
-          <li><span class="crew-name">Bishop / Stewart</span><span><strong>Quintin</strong> &mdash; won 2022 &amp; 2024</span><span class="badge badge-quintin">Clubmates</span></li>
+          <li><span class="crew-name">Atkinson / Stewart</span><span>Dart Totnes &mdash; won 2023 (15:46)</span><span class="badge badge-info">2023</span></li>
+          <li><span class="crew-name">Mew / Collett</span><span>Thames &mdash; 2nd 2024 (15:20)</span><span class="badge badge-info">2024</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-op-mas-hij">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
           <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
+          <button class="sub-tab-btn" data-sub="2017">2017</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="op-mas-hij" placeholder="Search by name or club...">
@@ -361,16 +340,23 @@
           <table class="data-table" id="table-op-mas-hij">
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
-              <tr data-year="2024" class="quintin-row"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Bishop / Stewart</td><td><strong>Quintin</strong></td><td class="time-cell">14:56.2</td></tr>
-              <tr data-year="2024"><td>2024</td><td>2</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">16:48.8</td></tr>
-              <tr data-year="2024"><td>2024</td><td>3</td><td class="crew-name">Jones / Evans</td><td>Cardiff Bay</td><td class="time-cell">17:15.5</td></tr>
-              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Brown / Wilson</td><td>Banstead</td><td class="time-cell">18:00.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Atkinson / Stewart</td><td>Dart Totnes</td><td class="time-cell">15:46.6</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">17:10.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Jones / Evans</td><td>Cardiff Bay</td><td class="time-cell">17:45.2</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Brown / Wilson</td><td>Banstead</td><td class="time-cell">18:30.2</td></tr>
-              <tr data-year="2022" class="quintin-row"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Stewart / Bishop</td><td><strong>Quintin</strong></td><td class="time-cell">14:27.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td>2</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">17:00.5</td></tr>
+              <tr data-year="2024" class="quintin-row"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Bishop / Stewart</td><td><strong>Quintin</strong></td><td class="time-cell">14:56.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Mew / Collett</td><td>Thames</td><td class="time-cell">15:20.4</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Watling / Hall</td><td>Guildford</td><td class="time-cell">16:46.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Metzger / Steele</td><td>Putney Town</td><td class="time-cell">16:27.5</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Atkinson / Stewart</td><td>Dart Totnes</td><td class="time-cell">15:46.58</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Pickles / Bainbridge</td><td>Tees</td><td class="time-cell">16:44.91</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Hill / Buckeridge</td><td>Marlow</td><td class="time-cell">17:16.24</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Cracknell / Suthers</td><td>Bewl Bridge</td><td class="time-cell">17:46.37</td></tr>
+              <tr data-year="2022" class="quintin-row"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Stewart / Bishop</td><td><strong>Quintin</strong></td><td class="time-cell">14:27.37</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">Swift / Watts</td><td>Tideway Scullers</td><td class="time-cell">15:47.92</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">Hopkins / Woowat</td><td>Guildford</td><td class="time-cell">16:36.02</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Watling / Hall</td><td>Guildford</td><td class="time-cell">16:11.28</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Fain / Lanzer</td><td>Walbrook</td><td class="time-cell">16:14.95</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Akehurst / Lynn</td><td>London</td><td class="time-cell">16:45.02</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-1">1</td><td class="crew-name">Hine / Bramah</td><td>Quintin</td><td class="time-cell">18:09.0</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-2">2</td><td class="crew-name">Robertson</td><td>Auriol Kensington</td><td class="time-cell">16:28.7</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-3">3</td><td class="crew-name">Hall</td><td>Guildford</td><td class="time-cell">18:53.2</td></tr>
             </tbody>
           </table>
         </div>
@@ -393,18 +379,19 @@
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Partridge / Cracknell</span><span>Upper Thames &mdash; won 2024 (13:41!)</span><span class="badge badge-threat">Elite</span></li>
-          <li><span class="crew-name">Dombrowe / Humphris</span><span>Ardingly &mdash; won 2022</span><span class="badge badge-info">2022</span></li>
+          <li><span class="crew-name">Dombrowe / Humphris</span><span>Ardingly &mdash; won 2022 (14:26) &amp; 2024 (14:31)</span><span class="badge badge-threat">2x Winner</span></li>
+          <li><span class="crew-name">Brown / Williamson</span><span>Kings School Canterbury &mdash; won 2023 (15:14)</span><span class="badge badge-info">2023</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-op-mas-d-2-">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
           <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="op-mas-d-2-" placeholder="Search by name or club...">
@@ -413,14 +400,20 @@
           <table class="data-table" id="table-op-mas-d-2-">
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
-              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Partridge / Cracknell</td><td>Upper Thames</td><td class="time-cell">13:40.7</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Brown / Williamson</td><td>KCA/LRC</td><td class="time-cell">15:14.3</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:00.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">16:45.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">17:20.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">18:00.8</td></tr>
-              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Dombrowe / Humphris</td><td>Ardingly</td><td class="time-cell">14:26.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:10.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Dombrowe / Humphris</td><td>Ardingly</td><td class="time-cell">14:31.9</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Cordal Suffert / Hume</td><td>Thames</td><td class="time-cell">14:58.2</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Dennis / Couper</td><td>Worcester</td><td class="time-cell">15:20.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Hinestrosa / Thurnham</td><td>Auriol Kensington</td><td class="time-cell">15:50.7</td></tr>
+              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Hutt / Petit</td><td>Curlew</td><td class="time-cell">16:56.9</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Brown / Williamson</td><td>Kings School Canterbury</td><td class="time-cell">15:14.34</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Dombrowe / Humphris</td><td>Ardingly</td><td class="time-cell">15:24.11</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Jacobs / Sadler</td><td>Upper Thames</td><td class="time-cell">15:46.81</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">burden / Lauerman</td><td>Bewl Bridge</td><td class="time-cell">16:07.02</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Tunnah / Dooley</td><td>Thames</td><td class="time-cell">16:24.99</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Dombrowe / Humphris</td><td>Ardingly</td><td class="time-cell">14:26.38</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">Kelso / O'Donohue</td><td>Upper Thames</td><td class="time-cell">14:54.85</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">Hunt / Creighton</td><td>Team Keane</td><td class="time-cell">15:09.85</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Howard / Tatton</td><td>Thames Tradesmen's</td><td class="time-cell">15:35.36</td></tr>
             </tbody>
           </table>
         </div>
@@ -434,25 +427,28 @@
           <h3>Op MasE 2- <span class="badge badge-quintin">Crew 144: Creighton / Allen</span></h3>
         </div>
         <div class="target-box">
-          <div class="target-item target-win"><div class="target-value">~16:30</div><div class="target-label">Win</div></div>
-          <div class="target-item target-podium"><div class="target-value">~17:00</div><div class="target-label">Podium</div></div>
+          <div class="target-item target-win"><div class="target-value">~16:00</div><div class="target-label">Win</div></div>
+          <div class="target-item target-podium"><div class="target-value">~16:45</div><div class="target-label">Podium</div></div>
         </div>
-        <div class="note"><strong>Note:</strong> Creighton has done 15:09 in a pair before (2022, Team Keane) &mdash; competitive here.<br><strong>Club rivalry:</strong> Upper Thames has won this category two years running.</div>
+        <div class="note"><strong>Note:</strong> Creighton raced in this category in 2022 with Hunt (Team Keane, 3rd, 15:09).</div>
       </div>
 
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">O'Donohue / Kelso</span><span>Upper Thames &mdash; won 2023 &amp; 2024</span><span class="badge badge-threat">2x Winner</span></li>
+          <li><span class="crew-name">O'Donohue / Kelso</span><span>Upper Thames &mdash; won 2024 (14:45)</span><span class="badge badge-info">2024</span></li>
+          <li><span class="crew-name">Howe / Carter</span><span>Ardingly &mdash; 2nd 2024 (15:03) &amp; 2023 (15:49)</span><span class="badge badge-info">Consistent</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-op-mas-e-2-">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
+          <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="op-mas-e-2-" placeholder="Search by name or club...">
@@ -462,11 +458,20 @@
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
               <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">O'Donohue / Kelso</td><td>Upper Thames</td><td class="time-cell">14:45.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Kelso / O'Donohue</td><td>Upper Thames</td><td class="time-cell">15:29.6</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:15.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">16:55.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">17:30.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">18:10.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Howe / Carter</td><td>Ardingly</td><td class="time-cell">15:03.8</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Young / muecke</td><td>Sons of the Thames</td><td class="time-cell">15:33.0</td></tr>
+              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Stevens / Waumsley</td><td>Nottingham and Union</td><td class="time-cell">15:37.0</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Kelso / O'Donohue</td><td>Upper Thames</td><td class="time-cell">15:29.59</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Howe / Carter</td><td>Ardingly</td><td class="time-cell">15:49.14</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">McConnell / Horne</td><td>Upper Thames</td><td class="time-cell">16:16.87</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Young / muecke</td><td>Sons of the Thames</td><td class="time-cell">16:29.48</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Desmond / Carroll</td><td>Putney Town</td><td class="time-cell">16:34.72</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">muecke / Young</td><td>Sons of the Thames</td><td class="time-cell">15:33.41</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">James / Wakeling</td><td>Upper Thames</td><td class="time-cell">15:36.29</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">Bailey / Goyder</td><td>X-Press</td><td class="time-cell">15:58.80</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Edge / King</td><td>Wallingford</td><td class="time-cell">14:36.69</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Graywood / Tomalin</td><td>Walton</td><td class="time-cell">15:16.21</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Reed / Howe</td><td>Ardingly</td><td class="time-cell">15:41.72</td></tr>
             </tbody>
           </table>
         </div>
@@ -482,7 +487,6 @@
         <div class="target-box">
           <div class="target-item target-win"><div class="target-value">~16:00</div><div class="target-label">Win</div></div>
           <div class="target-item target-podium"><div class="target-value">~16:30</div><div class="target-label">Podium</div></div>
-          <div class="target-item target-solid"><div class="target-value">~17:00</div><div class="target-label">Your Pace</div></div>
         </div>
         <div class="note"><strong>Note:</strong> No one has gone sub-14:00 on 4,000m (≈15:45 on 4,500m). Fastest ever: 14:09 (2024).</div>
       </div>
@@ -490,26 +494,24 @@
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Clarke / Lewis</span><span>Greenbank Falmouth &mdash; won 2023 &amp; 2024</span><span class="badge badge-threat">Benchmark</span></li>
-          <li><span class="crew-name">O'Boyle / O'Boyle</span><span>Marlow &mdash; won Op MasB/C 2- twice</span><span class="badge badge-threat">Favourite</span></li>
+          <li><span class="crew-name">Clarke / Lewis</span><span>Greenbank Falmouth &mdash; won 2023 (14:54) &amp; 2024 (14:09)</span><span class="badge badge-threat">2x Winner</span></li>
+          <li><span class="crew-name">Medling / Vendrell</span><span>Falcon &mdash; 2nd 2024 (14:34)</span><span class="badge badge-info">2024</span></li>
         </ul>
         <h3 style="margin-top:1.25rem; font-size:0.95rem;">Other Crews to Watch</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Geater-Piekarska / Geater</span><span>Champion of the Thames &mdash; 5th (2024), 9th (2023)</span></li>
-          <li><span class="crew-name">Sparrowhawk / Coles</span><span>Bradford on Avon &mdash; 4th in this category (2023)</span></li>
+          <li><span class="crew-name">Geater-Piekarska / Geater</span><span>City of Cambridge &mdash; 5th 2024, 9th 2023</span></li>
+          <li><span class="crew-name">Hubbard / Sparrowhawk</span><span>Bradford on Avon &mdash; 4th 2023</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-mx-mas-bc">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2024">2024</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
-          <button class="sub-tab-btn" data-sub="2022">2022</button>
           <button class="sub-tab-btn" data-sub="2019">2019</button>
           <button class="sub-tab-btn" data-sub="2017">2017</button>
-          <button class="sub-tab-btn" data-sub="2016">2016</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="mx-mas-bc" placeholder="Search by name or club...">
@@ -519,43 +521,30 @@
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
               <tr data-year="2024"><td>2024</td><td class="pos-1">1</td><td class="crew-name">Clarke / Lewis</td><td>Greenbank Falmouth</td><td class="time-cell">14:09.5</td></tr>
-              <tr data-year="2024"><td>2024</td><td>2</td><td class="crew-name">Gargiulo / Conza</td><td>Quintin</td><td class="time-cell">14:26.4</td></tr>
-              <tr data-year="2024"><td>2024</td><td>3</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">14:33.4</td></tr>
-              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">14:40.8</td></tr>
-              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">14:50.1</td></tr>
-              <tr data-year="2024"><td>2024</td><td>6</td><td class="crew-name">Coles / Sparrowhawk</td><td>Bradford on Avon</td><td class="time-cell">15:00.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Clarke / Lewis</td><td>Greenbank Falmouth</td><td class="time-cell">14:54.6</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Shepherd / Bateman</td><td>Reading</td><td class="time-cell">15:05.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Campbell / Lester</td><td>MAA</td><td class="time-cell">15:10.6</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Sparrowhawk / Coles</td><td>Bradford on Avon</td><td class="time-cell">15:15.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">15:20.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>6</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">15:25.8</td></tr>
-              <tr data-year="2023"><td>2023</td><td>7</td><td class="crew-name">O'Boyle / O'Boyle</td><td>Marlow</td><td class="time-cell">15:30.1</td></tr>
-              <tr data-year="2023"><td>2023</td><td>8</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">15:40.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>9</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">15:45.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">O'Boyle / O'Boyle</td><td>Marlow</td><td class="time-cell">14:52.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td>2</td><td class="crew-name">Shepherd / Bateman</td><td>Reading</td><td class="time-cell">15:10.6</td></tr>
-              <tr data-year="2022"><td>2022</td><td>3</td><td class="crew-name">Campbell / Lester</td><td>MAA</td><td class="time-cell">15:20.8</td></tr>
-              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">15:35.4</td></tr>
-              <tr data-year="2022"><td>2022</td><td>5</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">15:45.4</td></tr>
-              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Pascovitch / Fullman</td><td>Monmouth</td><td class="time-cell">14:19.8</td></tr>
-              <tr data-year="2019"><td>2019</td><td>2</td><td class="crew-name">Shepherd / Bateman</td><td>Reading</td><td class="time-cell">14:35.4</td></tr>
-              <tr data-year="2019"><td>2019</td><td>3</td><td class="crew-name">Campbell / Lester</td><td>MAA</td><td class="time-cell">14:45.6</td></tr>
-              <tr data-year="2019"><td>2019</td><td>4</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">15:00.4</td></tr>
-              <tr data-year="2019"><td>2019</td><td>5</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">15:15.4</td></tr>
-              <tr data-year="2019"><td>2019</td><td>6</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">15:30.4</td></tr>
-              <tr data-year="2017"><td>2017</td><td class="pos-1">1</td><td class="crew-name">Pascovitch / Fullman</td><td>Monmouth</td><td class="time-cell">14:25.4</td></tr>
-              <tr data-year="2017"><td>2017</td><td>2</td><td class="crew-name">Shepherd / Bateman</td><td>Reading</td><td class="time-cell">14:40.6</td></tr>
-              <tr data-year="2017"><td>2017</td><td>3</td><td class="crew-name">Campbell / Lester</td><td>MAA</td><td class="time-cell">14:50.8</td></tr>
-              <tr data-year="2017"><td>2017</td><td>4</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">15:05.4</td></tr>
-              <tr data-year="2017"><td>2017</td><td>5</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">15:20.4</td></tr>
-              <tr data-year="2017"><td>2017</td><td>6</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">15:35.4</td></tr>
-              <tr data-year="2016"><td>2016</td><td class="pos-1">1</td><td class="crew-name">Edgar / Roots</td><td>Quintin</td><td class="time-cell">15:51.6</td></tr>
-              <tr data-year="2016"><td>2016</td><td>2</td><td class="crew-name">Shepherd / Bateman</td><td>Reading</td><td class="time-cell">16:05.4</td></tr>
-              <tr data-year="2016"><td>2016</td><td>3</td><td class="crew-name">Campbell / Lester</td><td>MAA</td><td class="time-cell">16:15.6</td></tr>
-              <tr data-year="2016"><td>2016</td><td>4</td><td class="crew-name">Robotham / Stapleton</td><td>Peterborough City</td><td class="time-cell">16:30.4</td></tr>
-              <tr data-year="2016"><td>2016</td><td>5</td><td class="crew-name">Kantsedikas / Matteotti</td><td>Auriol Kensington</td><td class="time-cell">16:45.4</td></tr>
-              <tr data-year="2016"><td>2016</td><td>6</td><td class="crew-name">Geater-Piekarska / Geater</td><td>Champion of the Thames</td><td class="time-cell">17:00.4</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-2">2</td><td class="crew-name">Medling / Vendrell</td><td>Falcon</td><td class="time-cell">14:34.2</td></tr>
+              <tr data-year="2024"><td>2024</td><td class="pos-3">3</td><td class="crew-name">Podinovskaia / Westmore</td><td>Warwick</td><td class="time-cell">14:56.2</td></tr>
+              <tr data-year="2024"><td>2024</td><td>4</td><td class="crew-name">Forster / Whateley</td><td>London</td><td class="time-cell">14:45.5</td></tr>
+              <tr data-year="2024"><td>2024</td><td>5</td><td class="crew-name">Geater-Piekarska / Geater</td><td>City of Cambridge</td><td class="time-cell">15:40.2</td></tr>
+              <tr data-year="2024"><td>2024</td><td>6</td><td class="crew-name">Flynn / Hurd</td><td>Sudbury</td><td class="time-cell">15:55.3</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Clarke / Lewis</td><td>Greenbank Falmouth</td><td class="time-cell">14:54.57</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Eddie / Forczek</td><td>London</td><td class="time-cell">15:14.87</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Wesley / Giles</td><td>Warwick</td><td class="time-cell">15:43.61</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Hubbard / Sparrowhawk</td><td>Bradford on Avon</td><td class="time-cell">15:49.30</td></tr>
+              <tr data-year="2023"><td>2023</td><td>5</td><td class="crew-name">Lukes / Lukes</td><td>Walbrook</td><td class="time-cell">16:08.77</td></tr>
+              <tr data-year="2023"><td>2023</td><td>6</td><td class="crew-name">Scrine / Scrine</td><td>Sons of the Thames</td><td class="time-cell">16:18.48</td></tr>
+              <tr data-year="2023"><td>2023</td><td>7</td><td class="crew-name">Jahnich / Plail</td><td>Bewl Bridge</td><td class="time-cell">16:21.58</td></tr>
+              <tr data-year="2023"><td>2023</td><td>8</td><td class="crew-name">Hurd / Flynn</td><td>Sudbury</td><td class="time-cell">16:15.77</td></tr>
+              <tr data-year="2023"><td>2023</td><td>9</td><td class="crew-name">Geater / Geater-Piekarska</td><td>City of Cambridge</td><td class="time-cell">16:39.14</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Pascovitch / Fullman</td><td>Monmouth</td><td class="time-cell">14:19.82</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Jackson / Heywood</td><td>Walton</td><td class="time-cell">14:46.09</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Scott / Van Leemputten</td><td>Upper Thames</td><td class="time-cell">15:13.06</td></tr>
+              <tr data-year="2019"><td>2019</td><td>4</td><td class="crew-name">Ablitt / Coles</td><td>London</td><td class="time-cell">15:33.14</td></tr>
+              <tr data-year="2019"><td>2019</td><td>5</td><td class="crew-name">Perkins / Lewis</td><td>&mdash;</td><td class="time-cell">15:33.14</td></tr>
+              <tr data-year="2019"><td>2019</td><td>6</td><td class="crew-name">Dix / Len</td><td>Eton Excelsior</td><td class="time-cell">17:25.50</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-1">1</td><td class="crew-name">Butler</td><td>Monmouth</td><td class="time-cell">14:36.6</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-2">2</td><td class="crew-name">Jackson</td><td>Walton</td><td class="time-cell">14:52.6</td></tr>
+              <tr data-year="2017"><td>2017</td><td class="pos-3">3</td><td class="crew-name">Chatwin / Edgar</td><td>Quintin</td><td class="time-cell">15:00.2</td></tr>
+              <tr data-year="2017"><td>2017</td><td>4</td><td class="crew-name">Baron</td><td>York City</td><td class="time-cell">15:29.8</td></tr>
             </tbody>
           </table>
         </div>
@@ -570,7 +559,7 @@
         </div>
         <div class="target-box">
           <div class="target-item target-win"><div class="target-value">~16:30</div><div class="target-label">Win</div></div>
-          <div class="target-item target-podium"><div class="target-value">~17:00</div><div class="target-label">Podium</div></div>
+          <div class="target-item target-podium"><div class="target-value">~17:15</div><div class="target-label">Podium</div></div>
         </div>
         <div class="note"><strong>Note:</strong> Hunt / Rimmer did 15:16 last year (Brentford, Mx MasD/E 2x) &mdash; should be competitive.</div>
       </div>
@@ -578,17 +567,19 @@
       <div class="card">
         <h3>Top Threats</h3>
         <ul class="threat-list">
-          <li><span class="crew-name">Heywood / Jackson</span><span>Walton &mdash; won 2022</span><span class="badge badge-info">2022</span></li>
-          <li><span class="crew-name">Byrnes / Burke</span><span>Exeter &mdash; won 2023</span><span class="badge badge-info">2023</span></li>
+          <li><span class="crew-name">Byrnes / Burke</span><span>Exeter &mdash; won 2023 (15:52)</span><span class="badge badge-info">2023</span></li>
+          <li><span class="crew-name">Scrivener / Scrivener</span><span>Upton &mdash; won 2022 (15:15)</span><span class="badge badge-info">2022</span></li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>All Finishers</h3>
+        <h3>Historical Results</h3>
         <div class="sub-tabs" id="subtabs-mx-mas-e">
           <button class="sub-tab-btn active" data-sub="all">All Years</button>
           <button class="sub-tab-btn" data-sub="2023">2023</button>
           <button class="sub-tab-btn" data-sub="2022">2022</button>
+          <button class="sub-tab-btn" data-sub="2020">2020</button>
+          <button class="sub-tab-btn" data-sub="2019">2019</button>
         </div>
         <div class="search-bar">
           <input type="text" class="table-search" data-target="mx-mas-e" placeholder="Search by name or club...">
@@ -597,15 +588,24 @@
           <table class="data-table" id="table-mx-mas-e">
             <thead><tr><th>Year</th><th>Pos</th><th>Crew</th><th>Club</th><th>Time</th></tr></thead>
             <tbody>
-              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Byrnes / Burke</td><td>Exeter</td><td class="time-cell">15:52.4</td></tr>
-              <tr data-year="2023"><td>2023</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:30.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">17:05.5</td></tr>
-              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">17:40.8</td></tr>
-              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Heywood / Jackson</td><td>Walton</td><td class="time-cell">14:50.7</td></tr>
-              <tr data-year="2022"><td>2022</td><td>2</td><td class="crew-name">Miller / Clark</td><td>Staines</td><td class="time-cell">16:00.5</td></tr>
-              <tr data-year="2022"><td>2022</td><td>3</td><td class="crew-name">Taylor / Johnson</td><td>Worcester</td><td class="time-cell">16:35.5</td></tr>
-              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Davies / Williams</td><td>Tideway</td><td class="time-cell">17:10.8</td></tr>
-              <tr data-year="2022"><td>2022</td><td>5</td><td class="crew-name">Wilson / Parker</td><td>Doncaster</td><td class="time-cell">17:50.8</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-1">1</td><td class="crew-name">Byrnes / Burke</td><td>Exeter</td><td class="time-cell">15:52.40</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-2">2</td><td class="crew-name">Cloherty / Auty-Jacklin</td><td>Tideway Scullers</td><td class="time-cell">16:21.73</td></tr>
+              <tr data-year="2023"><td>2023</td><td class="pos-3">3</td><td class="crew-name">Masoud / Debois</td><td>Putney Town</td><td class="time-cell">16:38.32</td></tr>
+              <tr data-year="2023"><td>2023</td><td>4</td><td class="crew-name">Brecknock / Wlodarczyk</td><td>Putney Town</td><td class="time-cell">18:29.57</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-1">1</td><td class="crew-name">Scrivener / Scrivener</td><td>Upton</td><td class="time-cell">15:15.92</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-2">2</td><td class="crew-name">Thiemann / Thiemann</td><td>Walton</td><td class="time-cell">15:16.51</td></tr>
+              <tr data-year="2022"><td>2022</td><td class="pos-3">3</td><td class="crew-name">Sturtridge / Jillings</td><td>Molesey</td><td class="time-cell">15:16.79</td></tr>
+              <tr data-year="2022"><td>2022</td><td>4</td><td class="crew-name">Suthers / Maycock</td><td>Bewl Bridge</td><td class="time-cell">15:26.85</td></tr>
+              <tr data-year="2022"><td>2022</td><td>5</td><td class="crew-name">Fricker / Mitring</td><td>Maidenhead</td><td class="time-cell">15:27.56</td></tr>
+              <tr data-year="2022"><td>2022</td><td>6</td><td class="crew-name">Grant / Snowden</td><td>Bewl Bridge</td><td class="time-cell">15:29.96</td></tr>
+              <tr data-year="2022"><td>2022</td><td>7</td><td class="crew-name">Maury / Brecknock</td><td>Putney Town</td><td class="time-cell">16:45.01</td></tr>
+              <tr data-year="2022"><td>2022</td><td>8</td><td class="crew-name">Holmes-Siedle / Brace</td><td>Putney Town</td><td class="time-cell">16:49.65</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-1">1</td><td class="crew-name">Cook / Carpenter</td><td>MAA</td><td class="time-cell">17:09.2</td></tr>
+              <tr data-year="2020"><td>2020</td><td class="pos-2">2</td><td class="crew-name">Smith / Mackie</td><td>Sons of the Thames</td><td class="time-cell">17:25.7</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-1">1</td><td class="crew-name">Morris / Morris</td><td>Bewl Bridge</td><td class="time-cell">14:57.01</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-2">2</td><td class="crew-name">Scrivener / Scrivener</td><td>Upton</td><td class="time-cell">15:11.30</td></tr>
+              <tr data-year="2019"><td>2019</td><td class="pos-3">3</td><td class="crew-name">Grant / Snowden</td><td>Bewl Bridge</td><td class="time-cell">16:10.36</td></tr>
+              <tr data-year="2019"><td>2019</td><td>4</td><td class="crew-name">Jones / Brace</td><td>Ross</td><td class="time-cell">17:02.03</td></tr>
             </tbody>
           </table>
         </div>
@@ -615,64 +615,46 @@
   </div>
 
   <script>
-    // Tab switching
     document.getElementById('tabs').addEventListener('click', function(e) {
       var btn = e.target.closest('.tab-btn');
       if (!btn) return;
       var tab = btn.getAttribute('data-tab');
-
       this.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-
       document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
       document.getElementById('panel-' + tab).classList.add('active');
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Sub-tab filtering (year filter)
     document.querySelectorAll('.sub-tabs').forEach(function(subTabs) {
       subTabs.addEventListener('click', function(e) {
         var btn = e.target.closest('.sub-tab-btn');
         if (!btn) return;
         var panelId = this.id.replace('subtabs-', '');
         var year = btn.getAttribute('data-sub');
-
         this.querySelectorAll('.sub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-
         var table = document.getElementById('table-' + panelId);
         if (!table) return;
-        var rows = table.querySelectorAll('tbody tr');
-        rows.forEach(function(row) {
-          if (year === 'all') {
-            row.style.display = '';
-          } else {
-            row.style.display = (row.getAttribute('data-year') === year) ? '' : 'none';
-          }
+        table.querySelectorAll('tbody tr').forEach(function(row) {
+          row.style.display = (year === 'all' || row.getAttribute('data-year') === year) ? '' : 'none';
         });
-
-        // Reset search when changing year
         var searchInput = document.querySelector('.table-search[data-target="' + panelId + '"]');
         if (searchInput) searchInput.value = '';
       });
     });
 
-    // Table search
     document.querySelectorAll('.table-search').forEach(function(input) {
       input.addEventListener('input', function() {
         var target = this.getAttribute('data-target');
         var table = document.getElementById('table-' + target);
         if (!table) return;
         var query = this.value.toLowerCase();
-        var rows = table.querySelectorAll('tbody tr');
-        rows.forEach(function(row) {
-          var text = row.textContent.toLowerCase();
-          row.style.display = (text.indexOf(query) !== -1) ? '' : 'none';
+        table.querySelectorAll('tbody tr').forEach(function(row) {
+          row.style.display = (row.textContent.toLowerCase().indexOf(query) !== -1) ? '' : 'none';
         });
       });
     });
-
   </script>
 
   <footer style="text-align:center; padding:2rem; color:var(--text-light); font-size:0.85rem;">
